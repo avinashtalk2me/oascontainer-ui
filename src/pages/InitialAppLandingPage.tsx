@@ -48,6 +48,8 @@ const InitialAppLandingPage: React.FC = () => {
             if (value) {
               if (platForm === "android") {
                 window.open("https://play.google.com/store/apps/details?id=com.oastrade.containermanifest");
+              } else if(platForm === "ios") {
+                window.open("itms-apps://itunes.apple.com/app/com.oastrade.containermanifest")
               }
               MobileApp.exitApp();
             } else {
