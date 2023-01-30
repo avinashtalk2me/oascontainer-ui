@@ -12,7 +12,9 @@ const InitialAppLandingPage: React.FC = () => {
 
   const platForm = Capacitor.getPlatform();
 
-  const [isLatestVersion, setIsLatestVersion] = useState(false);
+  const [isLatestVersion, setIsLatestVersion] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUserAccepted, setIsUserAccepted] = useState(false)
 
   const [appInfo, setAppInfo] = useState<any>({});
 
@@ -30,7 +32,6 @@ const InitialAppLandingPage: React.FC = () => {
 
         try {
           const { data: { data } } = await getAppVersionAPI();
-          debugger;
           const appBuildNo = data[`${platForm}_build`].toString();
           const appVersionNo = data[`${platForm}_version`].toString().trim();
 
@@ -39,25 +40,39 @@ const InitialAppLandingPage: React.FC = () => {
             loadInitialScreen();
           } else {
             setIsLatestVersion(false);
-            const { value } = await Dialog.confirm({
-              title: "New version",
-              message: `A newer version is available. You have to download and install before you can continue to use the app.`,
-              okButtonTitle: "Update",
-            });
+            setIsLoading(false);
 
-            if (value) {
-              if (platForm === "android") {
+            if (platForm === "android") {
+              const { value } = await Dialog.confirm({
+                title: "Updates available",
+                message: `A newer version is available. You have to download and install before you can continue to use the app.`,
+                okButtonTitle: "Update",
+                cancelButtonTitle: 'No, Thanks'
+              });
+              if (value) {
                 window.open("https://play.google.com/store/apps/details?id=com.oastrade.containermanifest");
-              } else if(platForm === "ios") {
-                window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")
+                setIsUserAccepted(true)
+              } else {
+                MobileApp.exitApp()
               }
-              MobileApp.exitApp();
             } else {
-              MobileApp.exitApp()
+              const { value } = await Dialog.confirm({
+                title: "Updates available",
+                message: `A newer version is available. You have to download and install before you can continue to use the app.`,
+                okButtonTitle: "Update",
+                cancelButtonTitle: "Not Now"
+              });
+              if (value) {
+                window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362");
+                setIsUserAccepted(true)
+              } else {
+                // MobileApp.exitApp()
+                loadInitialScreen();
+              }
             }
           }
         } catch (ex) {
-            await Dialog.alert({
+          await Dialog.alert({
             title: "Application unavailable",
             message: `Application is currently not available. Please try after sometime.`,
           });
@@ -89,6 +104,8 @@ const InitialAppLandingPage: React.FC = () => {
       else {
         return history.replace("/login");
       }
+      setIsLoading(false);
+
     }, 2000)
   }
 
@@ -99,12 +116,29 @@ const InitialAppLandingPage: React.FC = () => {
           <IonImg src={'/assets/images/icon.png'} style={{ height: '80px' }} />
           <IonText>OAS Container Manifest</IonText>
         </div>
-        <div className='header-landing'>
-          <IonText> Loading</IonText>
-          <div>
-            <div className="dot-pulse"></div>
+        {isLoading  && <>
+          <div className='header-landing'>
+            <IonText> Loading</IonText>
+            <div>
+              <div className="dot-pulse"></div>
+            </div>
           </div>
-        </div>
+        </>}
+        {!isLoading && !isLatestVersion && isUserAccepted && <>
+          <div className="header-update-landing">
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              marginBottom: '1.25rem'
+            }}>
+              <IonText>Update in progress.</IonText>
+              <div style={{alignSelf:'center'}}>
+                <div className="dot-pulse"></div>
+              </div>
+            </div>
+            <IonText>Close this window & relauch again.</IonText>
+          </div>
+        </>}
         <div className='version-landing'>
           <IonNote>Version: {appInfo?.version}</IonNote>
         </div>
