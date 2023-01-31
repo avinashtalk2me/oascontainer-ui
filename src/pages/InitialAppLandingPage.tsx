@@ -145,8 +145,7 @@ const InitialAppLandingPage: React.FC = () => {
               marginBottom: '1.25rem'
             }}>
               <IonText>There is a new version of OAS Container Manifest. You must update before accessing.</IonText>
-              <IonText><a onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")}>Click here</a> 
-              to go to App Store and apply update to continue.</IonText>
+              <IonText><a onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")}>Click here </a>to go to App Store and apply update to continue.</IonText>
           </div>
         </div>
         </>}
