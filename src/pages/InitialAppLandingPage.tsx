@@ -8,14 +8,13 @@ import { Dialog } from '@capacitor/dialog';
 
 
 const InitialAppLandingPage: React.FC = () => {
-  const history = useHistory();
 
+  const history = useHistory();
   const platForm = Capacitor.getPlatform();
 
   const [isLatestVersion, setIsLatestVersion] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [isUserAccepted, setIsUserAccepted] = useState(false)
-
+  const [isUserAccepted, setIsUserAccepted] = useState<string>('');
   const [appInfo, setAppInfo] = useState<any>({});
 
   useEffect(() => {
@@ -51,7 +50,7 @@ const InitialAppLandingPage: React.FC = () => {
               });
               if (value) {
                 window.open("https://play.google.com/store/apps/details?id=com.oastrade.containermanifest");
-                setIsUserAccepted(true)
+                setIsUserAccepted('yes')
               } else {
                 MobileApp.exitApp()
               }
@@ -64,10 +63,10 @@ const InitialAppLandingPage: React.FC = () => {
               });
               if (value) {
                 window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362");
-                setIsUserAccepted(true)
+                setIsUserAccepted('yes')
               } else {
                 // MobileApp.exitApp()
-                loadInitialScreen();
+                setIsUserAccepted('no');
               }
             }
           }
@@ -116,7 +115,7 @@ const InitialAppLandingPage: React.FC = () => {
           <IonImg src={'/assets/images/icon.png'} style={{ height: '80px' }} />
           <IonText>OAS Container Manifest</IonText>
         </div>
-        {isLoading  && <>
+        {isLoading && <>
           <div className='header-landing'>
             <IonText> Loading</IonText>
             <div>
@@ -132,19 +131,32 @@ const InitialAppLandingPage: React.FC = () => {
               marginBottom: '1.25rem'
             }}>
               <IonText>Update in progress.</IonText>
-              <div style={{alignSelf:'center'}}>
+              <div style={{ alignSelf: 'center' }}>
                 <div className="dot-pulse"></div>
               </div>
             </div>
             <IonText>Close this window & relauch again.</IonText>
           </div>
         </>}
-        <div className='version-landing'>
-          <IonNote>Version: {appInfo?.version}</IonNote>
+        {!isLoading && !isLatestVersion && isUserAccepted === 'no' && platForm === 'ios' && <>
+          <div className="header-update-landing">
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              marginBottom: '1.25rem'
+            }}>
+              <IonText>There is a new version of OAS Container Manifest. You must update before accessing.</IonText>
+              <IonText><a onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")}>Click</a>
+              to go to App Store and apply update to continue</IonText>
+          </div>
         </div>
-      </IonContent>
+        </>}
+      <div className='version-landing'>
+        <IonNote>Version: {appInfo?.version}</IonNote>
+      </div>
+    </IonContent>
 
-    </IonPage>
+    </IonPage >
   );
 }
 
