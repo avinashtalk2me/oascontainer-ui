@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { App as MobileApp } from "@capacitor/app";
 import { useHistory } from 'react-router';
-import { IonContent, IonImg, IonNote, IonPage, IonText } from '@ionic/react';
+import { IonButton, IonContent, IonImg, IonItem, IonLabel, IonNote, IonPage, IonText } from '@ionic/react';
 import { Capacitor } from '@capacitor/core';
 import { getAppVersionAPI } from '../api/fetch';
 import { Dialog } from '@capacitor/dialog';
@@ -134,7 +134,7 @@ const InitialAppLandingPage: React.FC = () => {
               <div style={{ alignSelf: 'center' }}>
                 <div className="dot-pulse"></div>
               </div>
-            </div> 
+            </div>
           </div>
         </>}
         {!isLoading && !isLatestVersion && isUserAccepted === 'no' && platForm === 'ios' && <>
@@ -144,15 +144,19 @@ const InitialAppLandingPage: React.FC = () => {
               flexDirection: 'column',
               marginBottom: '1.25rem'
             }}>
-              <IonText>There is a new version of OAS Container Manifest. You must update before accessing.</IonText>
-              <IonText><a onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")}>Click here </a>to go to App Store and apply update to continue.</IonText>
+              <IonText>There is a new version of OAS Container Manifest. <br />You must update before accessing.</IonText>
+              <IonText>Click below button to apply update to continue.</IonText>
+              <IonItem className="ion-no-padding" lines='none'>               
+                <IonButton onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")} style={{ width: '50%', margin:'auto'}}>GO TO APP STORE</IonButton> 
+              </IonItem>
+              {/* <IonText><a onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")}>Click here </a>to go to App Store and apply update to continue.</IonText> */}
+            </div>
           </div>
-        </div>
         </>}
-      <div className='version-landing'>
-        <IonNote>Version: {appInfo?.version}</IonNote>
-      </div>
-    </IonContent>
+        <div className='version-landing'>
+          <IonNote>Version: {appInfo?.version}</IonNote>
+        </div>
+      </IonContent>
 
     </IonPage >
   );
