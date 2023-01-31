@@ -135,8 +135,7 @@ const InitialAppLandingPage: React.FC = () => {
               <div style={{alignSelf:'center'}}>
                 <div className="dot-pulse"></div>
               </div>
-            </div>
-            <IonText>Close this window & relauch again.</IonText>
+            </div> 
           </div>
         </>}
         <div className='version-landing'>
