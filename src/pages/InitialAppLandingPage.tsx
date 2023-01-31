@@ -123,7 +123,7 @@ const InitialAppLandingPage: React.FC = () => {
             </div>
           </div>
         </>}
-        {!isLoading && !isLatestVersion && isUserAccepted && <>
+        {!isLoading && !isLatestVersion && isUserAccepted === "yes" && <>
           <div className="header-update-landing">
             <div style={{
               display: 'flex',
