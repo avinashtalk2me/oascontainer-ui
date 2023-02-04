@@ -18,7 +18,7 @@ import {
     DELETE_PALLET_REQUEST,
     DELETE_PALLET_SUCCESS,
     DELETE_PALLET_ERROR,
-} from '../types'
+} from '../../types'
 
 const initialPalletState = {
     isloading: false,

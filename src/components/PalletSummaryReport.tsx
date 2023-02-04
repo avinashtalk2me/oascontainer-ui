@@ -15,7 +15,7 @@ import {
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Pallet } from "../model/pallet";
+import { IPallet } from "../model/pallet";
 import { PDFGenerator } from "@awesome-cordova-plugins/pdf-generator";
 import { PalletReportPDF } from "../utils/PalletReportPDF";
 import {
@@ -46,7 +46,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
     if (palletManifest && palletManifest?.data?.length > 0) {
       setUniquePallets(
         Array.from(
-          new Set(palletManifest.data.map((item: Pallet) => item.palletNo))
+          new Set(palletManifest.data.map((item: IPallet) => item.palletNo))
         )
       );
     }
@@ -142,7 +142,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
 
   const getPalletDetails = (palletNo: number) => {
     const palletsByPalletNo = palletManifest.data.filter(
-      (pallet: Pallet) => pallet.palletNo === palletNo
+      (pallet: IPallet) => pallet.palletNo === palletNo
     );
     return palletsByPalletNo.length > 1 ? (
       <IonGrid>

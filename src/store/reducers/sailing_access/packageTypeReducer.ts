@@ -3,7 +3,7 @@ import {
     GET_PACKAGETYPE_ERROR,
     ADD_PACKAGETYPE_SUCCESS,
     ADD_PACKAGETYPE_ERROR
-} from '../types'
+} from '../../types'
 
 const initialState = {
     packageTypes: [],

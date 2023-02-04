@@ -36,6 +36,7 @@ import { useHistory, useParams } from "react-router";
 
 export interface PalletProps {
   isNew: boolean;
+  isEditAllowed: boolean;
   // selectedSailId: string;
   // selectedPalletId: string;
   // onDismiss: () => void;
@@ -44,6 +45,7 @@ export interface PalletProps {
 
 const AddEditPallet: React.FC<PalletProps> = ({
   isNew,
+  isEditAllowed
   // onDismiss,
   // setIsTransComplete,
   // selectedSailId,
@@ -163,6 +165,10 @@ const AddEditPallet: React.FC<PalletProps> = ({
     }
   };
   const onSubmit = (data: any) => {
+    if (!isEditAllowed) {
+      closePage();
+      return
+    }
     if (isNew) {
       dispatch(insertPallet(sailId, data));
     } else {
@@ -174,14 +180,17 @@ const AddEditPallet: React.FC<PalletProps> = ({
     <>
       <IonHeader>
         <IonToolbar>
-          <IonText className="modalheader-menu">
+          {isEditAllowed && <IonText className="modalheader-menu">
             {isNew ? "Add Pallet" : "Edit Pallet"}
-          </IonText>
+          </IonText>}
+          {!isEditAllowed && <IonText className="modalheader-menu">
+            View Pallet
+          </IonText>}
           <IonButtons
             slot="end"
             onClick={() => closePage()}
             className="closeIcon"
-          > 
+          >
             <IonIcon icon={closeIcon} slot="icon-only" />
           </IonButtons>
         </IonToolbar>
@@ -200,6 +209,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                 </IonLabel>
                 <IonInput
                   readonly
+                  disabled={!isEditAllowed}
                   aria-invalid={errors && errors["palletNo"] ? "true" : "false"}
                   aria-describedby={`${"palletNo"}Error`}
                   {...register("palletNo")}
@@ -217,6 +227,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                   Type
                 </IonLabel>
                 <IonSelect
+                  disabled={!isEditAllowed}
                   interface="popover"
                   {...register("palletType")}
                   onIonChange={handleShowHideDesc}
@@ -239,6 +250,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                   </IonLabel>
                   <IonTextarea
                     rows={3}
+                    disabled={!isEditAllowed}
                     aria-invalid={
                       errors && errors["palletDesc"] ? "true" : "false"
                     }
@@ -263,6 +275,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                   </IonLabel>
                   <IonInput
                     type="number"
+                    disabled={!isEditAllowed}
                     aria-invalid={
                       errors && errors["palletWeight"] ? "true" : "false"
                     }
@@ -309,7 +322,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
             {error && error.status === -1 && (
               <ServerError errorMsg={error.message} />
             )}
-            <IonButton
+            {isEditAllowed && <IonButton
               type="submit"
               className="ion-margin-top"
               color="primary"
@@ -317,6 +330,15 @@ const AddEditPallet: React.FC<PalletProps> = ({
             >
               {isNew ? "Save" : "Update"}
             </IonButton>
+            }
+            {!isEditAllowed && <IonButton
+              type="submit"
+              className="ion-margin-top"
+              color="primary"
+              expand="block"
+            >
+              RETURN
+            </IonButton>}
           </IonList>
         </form>
       </IonContent>

@@ -21,7 +21,7 @@ import {
     DELETE_CONTAINER_REQUEST,
     DELETE_CONTAINER_SUCCESS,
     DELETE_CONTAINER_ERROR,
-} from '../types'
+} from '../../types'
 
 const initialContainerState = {
     isloading: false,

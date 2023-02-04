@@ -18,7 +18,7 @@ import {
   DELETE_PALLET_REQUEST,
   DELETE_PALLET_SUCCESS,
   DELETE_PALLET_ERROR,
-} from "../../types";
+} from "../../../types";
 
 import {
   getPalletsBySailIdAPI,
@@ -27,7 +27,7 @@ import {
   getSelectedPalletByAPI,
   updatePalletAPI,
   deletePalletByIdAPI,
-} from "../../../api/fetch";
+} from "../../../../api/fetch";
 
 export const getPalletsBySailId = (sailId: string) => async (dispatch: any) => {
   dispatch({ type: GET_PALLETS_REQUEST });

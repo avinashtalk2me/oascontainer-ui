@@ -1,4 +1,4 @@
-import { Pallet } from "../model/pallet";
+import { IPallet } from "../model/pallet";
 
 const PalletReportPDF = (
   sailDesc: string,
@@ -8,9 +8,9 @@ const PalletReportPDF = (
 ) => {
   const getPalletTotalDetails = (palletNo: number) => {
     const { quantity, total } = palletManifest.data
-      .filter((item: Pallet) => item.palletNo === palletNo)
+      .filter((item: IPallet) => item.palletNo === palletNo)
       .reduce(
-        ({ quantity, total }: any, item: Pallet, index: number) => ({
+        ({ quantity, total }: any, item: IPallet, index: number) => ({
           quantity: index + 1,
           total: total + item.packageCount,
         }),
@@ -24,8 +24,8 @@ const PalletReportPDF = (
   };
 
   const getPalletDetails = (palletNo: number) => {
-    let filteredPallets: Pallet[] = palletManifest.data.filter(
-      (item: Pallet) => item.palletNo === palletNo
+    let filteredPallets: any[] = palletManifest.data.filter(
+      (item: IPallet) => item.palletNo === palletNo
     );
 
     filteredPallets =

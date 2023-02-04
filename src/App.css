@@ -4,17 +4,17 @@ ion-toolbar {
     font-size: 5vw; */
 }
 
+ion-label, ion-text {
+  opacity: 1 !important;
+}
+
 ion-item {
   --inner-padding-bottom: 0;
   --inner-padding-end: 0;
   --inner-padding-start: 0;
   --inner-padding-top: 0;
 }
-
-.ion-page {
-  background-color: red;
-}
-
+ 
 .page.ion-page {
   background-color: #fff;
 }

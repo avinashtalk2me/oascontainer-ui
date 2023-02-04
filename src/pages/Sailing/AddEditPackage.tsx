@@ -51,9 +51,10 @@ import NoItemFound from "../../components/NoItemFound";
 
 interface AddEditPackageProps {
   isNew: boolean;
+  isEditAllowed: boolean;
 }
 
-const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
+const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { palletId, packageId, hwbNo }: any = useParams();
@@ -200,8 +201,12 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
 
   const onSubmit = (data: any) => {
     let newDataObj = data;
-    if (!isHWBScanned && selectedHwbInfo.isExistingHwb) {
+    // if (!isHWBScanned && selectedHwbInfo.isExistingHwb) {
 
+    // }
+    if(!isEditAllowed) {
+      closePage();
+      return;
     }
     if (isNew) {
       dispatch(insertPackage(palletId, newDataObj));
@@ -357,7 +362,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
   }
 
   const handleOpenAddPackageNoModal = () => {
-    if (watchHwbNo) {
+    if (watchHwbNo && isEditAllowed) {
       setIsModal(true);
       setValue("newPackageNo", "")
     }
@@ -434,6 +439,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
           </IonLabel>
           <IonInput
             maxlength={15}
+            disabled={!isEditAllowed}
             readonly={(!watchHwbNo || isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
             aria-invalid={errors && errors["shipperName"] ? "true" : "false"}
             aria-describedby={`${"shipperName"}Error`}
@@ -454,6 +460,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
           </IonLabel>
           <IonInput
             maxlength={50}
+            disabled={!isEditAllowed}
             readonly={(!watchHwbNo || isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
             aria-invalid={errors && errors["shipperContactName"] ? "true" : "false"}
             aria-describedby={`${"shipperContactName"}Error`}
@@ -474,6 +481,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
           </IonLabel>
           <IonInput
             maxlength={50}
+            disabled={!isEditAllowed}
             readonly={(!watchHwbNo || isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
             aria-invalid={errors && errors["shipperEmail"] ? "true" : "false"}
             aria-describedby={`${"shipperEmail"}Error`}
@@ -500,6 +508,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
           <IonInput
             type="tel"
             maxlength={50}
+            disabled={!isEditAllowed}
             readonly={(!watchHwbNo || isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
             aria-invalid={errors && errors["shipperPhone"] ? "true" : "false"}
             aria-describedby={`${"shipperPhone"}Error`}
@@ -526,37 +535,72 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
   )
 
   return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
-              {isNew ? "Add Package" : "Edit Package"}
-            </IonText>
-            <IonButtons
-              hidden={!!hideBg}
-              slot="end"
-              onClick={() => closePage()}
-              className="closeIcon"
-            >
-              <IonIcon icon={closeIcon} slot="icon-only" />
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className={`ion-padding ${hideBg}`}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <IonList hidden={!!hideBg}>
-              {isNew && <div className="ion-padding-bottom">
-                <IonItem lines="none" className="ion-no-padding">
-                  <IonLabel
-                    color="medium"
-                    className="form-input"
-                    position="stacked">
-                    Scan HWB Number
-                  </IonLabel>
-                  <IonToggle color="primary" checked={isHWBScanned}
-                    onIonChange={(event) => handleToggleChange(event)} slot="end" />
-                </IonItem>
-              </div>}
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          {isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+            {isNew ? "Add Package" : "Edit Package"}
+          </IonText>}
+          {!isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+            View Package
+          </IonText>}
+          <IonButtons
+            hidden={!!hideBg}
+            slot="end"
+            onClick={() => closePage()}
+            className="closeIcon"
+          >
+            <IonIcon icon={closeIcon} slot="icon-only" />
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className={`ion-padding ${hideBg}`}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <IonList hidden={!!hideBg}>
+            {isNew && <div className="ion-padding-bottom">
+              <IonItem lines="none" className="ion-no-padding">
+                <IonLabel
+                  color="medium"
+                  className="form-input"
+                  position="stacked">
+                  Scan HWB Number
+                </IonLabel>
+                <IonToggle color="primary" checked={isHWBScanned}
+                  onIonChange={(event) => handleToggleChange(event)} slot="end" />
+              </IonItem>
+            </div>}
+            <div className="ion-padding-bottom">
+              <IonItem className="ion-no-padding">
+                <IonLabel
+                  color="medium"
+                  className="form-input"
+                  position="stacked"
+                >
+                  HWB Number
+                </IonLabel>
+                <IonInput
+                  maxlength={50}
+                  disabled={!isEditAllowed}
+                  readonly={(isHWBScanned || !isNew) ? true : false}
+                  aria-invalid={errors && errors["hwbNo"] ? "true" : "false"}
+                  aria-describedby={`${"hwbNo"}Error`}
+                  {...register("hwbNo", {
+                    required: "HWB No is required.",
+                    minLength: {
+                      value: 3,
+                      message: "Minimun 3 characters is required."
+                    }
+                  })}
+                  onIonChange={debouncedChangeHandler}
+                />
+                {isEditAllowed && <>
+                  {isHWBScanned && isNew && <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />}
+                </>
+                }
+              </IonItem>
+              <Error errors={errors} name="hwbNo" />
+            </div>
+            {((isHWBScanned && isScanSuccess) || (!isHWBScanned)) && <>
               <div className="ion-padding-bottom">
                 <IonItem className="ion-no-padding">
                   <IonLabel
@@ -564,101 +608,76 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
                     className="form-input"
                     position="stacked"
                   >
-                    HWB Number
+                    Package No(s)
                   </IonLabel>
-                  <IonInput
-                    maxlength={50}
-                    readonly={(isHWBScanned || !isNew) ? true : false}
-                    aria-invalid={errors && errors["hwbNo"] ? "true" : "false"}
-                    aria-describedby={`${"hwbNo"}Error`}
-                    {...register("hwbNo", {
-                      required: "HWB No is required.",
-                      minLength: {
-                        value: 3,
-                        message: "Minimun 3 characters is required."
-                      }
-                    })}
-                    onIonChange={debouncedChangeHandler}
-                  />
-                  {isHWBScanned && isNew && <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />}
-                </IonItem>
-                <Error errors={errors} name="hwbNo" />
-              </div>
-              {((isHWBScanned && isScanSuccess) || (!isHWBScanned)) && <>
-                <div className="ion-padding-bottom">
-                  <IonItem className="ion-no-padding">
-                    <IonLabel
-                      color="medium"
-                      className="form-input"
-                      position="stacked"
-                    >
-                      Package No(s)
-                    </IonLabel>
-                    {!isHWBScanned &&
-                      <IonTextarea
-                        rows={2}
-                        id="open-custom-dialog"
-                        // maxlength={15}
-                        readonly={true}
-                        aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
-                        aria-describedby={`${"pkgNo"}Error`}
-                        {...register("pkgNo", {
-                          required: "Package No(s) is required.",
-                        })}
-                        onClick={handleOpenAddPackageNoModal}
-                        onIonChange={(event) => setValue("pkgNo", event.detail.value)}
-                      />}
-                    {isNew && isHWBScanned &&
-                      <IonInput
-                        type="number"
-                        maxlength={15}
-                        readonly={(isHWBScanned || selectedHwbInfo?.isExistingHwb) && true}
-                        aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
-                        aria-describedby={`${"pkgNo"}Error`}
-                        {...register("pkgNo", {
-                          required: "Package No(s) is required.",
-                        })}
-                        onIonChange={(event) => setValue("pkgNo", event.detail.value)}
-                      />}
-                  </IonItem>
-                  {!isHWBScanned
-                    &&
-                    <>
-                      <IonText className="infotext">Mulitple Package No(s) will be displayed separated by commas.
-                      </IonText>
-                      <br />
-                    </>
-                  }
-                  <Error errors={errors} name="pkgNo" />
-                </div>
-                <div className="ion-padding-bottom">
-                  <IonItem className="ion-no-padding">
-                    <IonLabel
-                      color="medium"
-                      className="form-input"
-                      position="stacked"
-                    >
-                      Total HWB Packages
-                    </IonLabel>
+                  {!isHWBScanned &&
+                    <IonTextarea
+                      rows={2}
+                      id="open-custom-dialog"
+                      // maxlength={15}
+                      readonly={true}
+                      disabled={!isEditAllowed}
+                      aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
+                      aria-describedby={`${"pkgNo"}Error`}
+                      {...register("pkgNo", {
+                        required: "Package No(s) is required.",
+                      })}
+                      onClick={handleOpenAddPackageNoModal}
+                      onIonChange={(event) => setValue("pkgNo", event.detail.value)}
+                    />}
+                  {isNew && isHWBScanned &&
                     <IonInput
                       type="number"
                       maxlength={15}
-                      readonly={(isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
-                      aria-invalid={errors && errors["totalPkgs"] ? "true" : "false"}
-                      aria-describedby={`${"totalPkgs"}Error`}
-                      {...register("totalPkgs", {
-                        required: "Total HWB Packages is required.",
+                      disabled={!isEditAllowed}
+                      readonly={(isHWBScanned || selectedHwbInfo?.isExistingHwb) && true}
+                      aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
+                      aria-describedby={`${"pkgNo"}Error`}
+                      {...register("pkgNo", {
+                        required: "Package No(s) is required.",
                       })}
-                      onIonChange={(event) => setValue("totalPkgs", event.detail.value)}
-                    />
-                  </IonItem>
-                  <Error errors={errors} name="totalPkgs" />
-                </div>
-                {/* {isHWBScanned ? : { shipperInfo }} */}
-                {hwbAccordion}
-              </>}
+                      onIonChange={(event) => setValue("pkgNo", event.detail.value)}
+                    />}
+                </IonItem>
+                {!isHWBScanned
+                  &&
+                  <>
+                    <IonText className="infotext">Mulitple Package No(s) will be displayed separated by commas.
+                    </IonText>
+                    <br />
+                  </>
+                }
+                <Error errors={errors} name="pkgNo" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Total HWB Packages
+                  </IonLabel>
+                  <IonInput
+                    type="number"
+                    maxlength={15}
+                    disabled={!isEditAllowed}
+                    readonly={(isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
+                    aria-invalid={errors && errors["totalPkgs"] ? "true" : "false"}
+                    aria-describedby={`${"totalPkgs"}Error`}
+                    {...register("totalPkgs", {
+                      required: "Total HWB Packages is required.",
+                    })}
+                    onIonChange={(event) => setValue("totalPkgs", event.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="totalPkgs" />
+              </div>
+              {/* {isHWBScanned ? : { shipperInfo }} */}
+              {hwbAccordion}
+            </>}
 
-              {/* <div
+            {/* <div
               className="ion-padding-bottom ion-text-center"
               hidden={!!hideBg}
             >
@@ -678,7 +697,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
               
             </div> */}
 
-              {/* {!isNew && (
+            {/* {!isNew && (
               <div className="ion-padding-bottom" hidden={!!hideBg}>
                 <IonItem className="ion-no-padding" lines="none">
                   <IonLabel
@@ -717,112 +736,121 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew }) => {
               </div>
             )} */}
 
-              {error && error.status === -1 && (
-                <ServerError errorMsg={error.message} />
-              )}
-              <IonButton
-                hidden={!!hideBg}
-                type="submit"
-                className="ion-margin-top"
-                color="primary"
-                expand="block"
-              >
-                {isNew ? "Save" : "Update"}
-              </IonButton>
-            </IonList>
-          </form>
-          <IonButton
-            color="danger"
-            className="stop-scan-button"
-            hidden={!hideBg}
-            onClick={stopScan}
-          >
-            {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
-            Stop Scan
-          </IonButton>
-          <div hidden={!hideBg} className="scan-box" />
-        </IonContent>
-        <IonLoading
-          isOpen={isloading}
-          message="Please wait"
-          showBackdrop={false}
-          translucent={true}
-        />
-        {
-          isItemSaved && (
-            <ToastMsg
-              showToast={isItemSaved}
-              duration={5000}
-              message={
-                isNew
-                  ? "Package added successfully"
-                  : "Package updated successfully"
-              }
-              type={"green"}
-            />
-          )
-        }
-        <IonModal id="itemlist-modal" isOpen={isModal}
-          enterAnimation={enterAnimation}
-          leaveAnimation={leaveAnimation} canDismiss={handleModalDismiss}>
-          <IonHeader>
-            <IonToolbar>
-              <IonText className="modalheader-menu">
-                Add Package No
-              </IonText>
-              <IonButtons
-                slot="end"
-                onClick={() => setIsModal(false)}
-                className="closeIcon"
-              >
-                <IonIcon icon={closeIcon} slot="icon-only" />
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className={`ion-padding`}>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding" lines="none">
-                <IonItem className="ion-no-padding">
-                  <IonLabel
-                    color="medium"
-                    className="form-input"
-                    position="stacked"
-                  >
-                    Enter Package No.
-                  </IonLabel>
-                  <IonInput
-                    type="number"
-                    maxlength={4}
-                    aria-invalid={errors && errors["newPackageNo"] ? "true" : "false"}
-                    aria-describedby={`${"newPackageNo"}Error`}
-                    {...register("newPackageNo")}
-                    onIonChange={handleAddPackageNoChange}
-                  />
-                </IonItem>
-                <IonButton
-                  slot="end"
-                  type="submit"
-                  className="ion-margin-top modal-addBtn"
-                  color="primary"
-                  // expand="block"
-                  disabled={!watchNewPackageNo}
-                  onClick={handleAddNewPackageNo}
+            {error && error.status === -1 && (
+              <ServerError errorMsg={error.message} />
+            )}
+            {isEditAllowed && <IonButton
+              hidden={!!hideBg}
+              type="submit"
+              className="ion-margin-top"
+              color="primary"
+              expand="block"
+            >
+              {isNew ? "Save" : "Update"}
+            </IonButton>
+            }
+            {!isEditAllowed && <IonButton
+              type="submit"
+              className="ion-margin-top"
+              color="primary"
+              expand="block"
+            >
+              RETURN
+            </IonButton>}
+          </IonList>
+        </form>
+        <IonButton
+          color="danger"
+          className="stop-scan-button"
+          hidden={!hideBg}
+          onClick={stopScan}
+        >
+          {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
+          Stop Scan
+        </IonButton>
+        <div hidden={!hideBg} className="scan-box" />
+      </IonContent>
+      <IonLoading
+        isOpen={isloading}
+        message="Please wait"
+        showBackdrop={false}
+        translucent={true}
+      />
+      {
+        isItemSaved && (
+          <ToastMsg
+            showToast={isItemSaved}
+            duration={5000}
+            message={
+              isNew
+                ? "Package added successfully"
+                : "Package updated successfully"
+            }
+            type={"green"}
+          />
+        )
+      }
+      <IonModal id="itemlist-modal" isOpen={isModal}
+        enterAnimation={enterAnimation}
+        leaveAnimation={leaveAnimation} canDismiss={handleModalDismiss}>
+        <IonHeader>
+          <IonToolbar>
+            <IonText className="modalheader-menu">
+              Add Package No
+            </IonText>
+            <IonButtons
+              slot="end"
+              onClick={() => setIsModal(false)}
+              className="closeIcon"
+            >
+              <IonIcon icon={closeIcon} slot="icon-only" />
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className={`ion-padding`}>
+          <div className="ion-padding-bottom">
+            <IonItem className="ion-no-padding" lines="none">
+              <IonItem className="ion-no-padding">
+                <IonLabel
+                  color="medium"
+                  className="form-input"
+                  position="stacked"
                 >
-                  Add
-                </IonButton>
+                  Enter Package No.
+                </IonLabel>
+                <IonInput
+                  type="number"
+                  maxlength={4}
+                  aria-invalid={errors && errors["newPackageNo"] ? "true" : "false"}
+                  aria-describedby={`${"newPackageNo"}Error`}
+                  {...register("newPackageNo")}
+                  onIonChange={handleAddPackageNoChange}
+                />
               </IonItem>
-              <IonText color="danger" className="ion-no-padding">
-                <small>
-                  <span role="alert">
-                    {packageToastMsg}
-                  </span>
-                </small>
-              </IonText>
-              {!isHWBScanned && packageList}
-            </div>
-          </IonContent>
-        </IonModal>
-      </IonPage >
+              <IonButton
+                slot="end"
+                type="submit"
+                className="ion-margin-top modal-addBtn"
+                color="primary"
+                // expand="block"
+                disabled={!watchNewPackageNo}
+                onClick={handleAddNewPackageNo}
+              >
+                Add
+              </IonButton>
+            </IonItem>
+            <IonText color="danger" className="ion-no-padding">
+              <small>
+                <span role="alert">
+                  {packageToastMsg}
+                </span>
+              </small>
+            </IonText>
+            {!isHWBScanned && packageList}
+          </div>
+        </IonContent>
+      </IonModal>
+    </IonPage >
   );
 };
 

@@ -35,7 +35,13 @@ import { Container } from "../../model/container";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
 
-const Sailing: React.FC = () => {
+export interface SailingProps {
+  isEditAllowed: boolean;
+}
+
+const Sailing: React.FC<SailingProps> = ({
+  isEditAllowed
+}) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
@@ -165,14 +171,14 @@ const Sailing: React.FC = () => {
                   />
                 </IonButtons>
               </IonItem>
-              <IonItemOptions
+              {isEditAllowed && <IonItemOptions
                 side="end"
                 onIonSwipe={(e) => handleDeleteItem(e, container.sailId)}
               >
                 <IonItemOption color="danger">
                   <IonIcon slot="icon-only" icon={removeIcon} />
                 </IonItemOption>
-              </IonItemOptions>
+              </IonItemOptions>}
             </IonItemSliding>
           </div>
         ))}
@@ -180,7 +186,7 @@ const Sailing: React.FC = () => {
     );
 
   return (
-     <IonPage className="page">
+    <IonPage className="page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -190,9 +196,9 @@ const Sailing: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonButton expand="block" fill="outline" onClick={handleAddSailing}>
+        {isEditAllowed && <IonButton expand="block" fill="outline" onClick={handleAddSailing}>
           Add Sailing
-        </IonButton>
+        </IonButton>}
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}

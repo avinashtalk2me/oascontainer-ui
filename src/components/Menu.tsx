@@ -22,14 +22,17 @@ export const Menu: React.FC = () => {
   const dispatch = useDispatch();
 
   const selectedSailId = state.pallet.selectedSailId;
-  const userRoles = state.user?.user?.userRoles;
+  const authToken: any = JSON.parse(
+    localStorage.getItem("_authResponse") || "{}"
+  );
+  const userRoles = authToken && authToken.userRoles;
 
   const handleLogout = () => {
     dispatch({ type: LOGOUT });
     localStorage &&
       localStorage.getItem("_authResponse") &&
       localStorage.removeItem("_authResponse");
-      history.push('/login');
+    history.push('/login');
   };
 
   const handleUnsubscribe = (event: any) => {
@@ -60,11 +63,11 @@ export const Menu: React.FC = () => {
     return false
   }
 
-  const SailingAccess = userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1 && (
+  const SailingAccess = userRoles?.sailing_access !== 0 && (
     <div className={`${history.location.pathname.includes("sailing-container") && 'multimenu-header'}`}>
       <IonItem
         button
-        routerLink={`${history.location.pathname.includes("delivery-container") && "/sailing-container/sailing"}`}
+        routerLink={`/sailing-container/sailing`}
         className={`${history.location.pathname.includes("sailing-container") && 'multimenu-label'} ion-no-padding`}
       >
         <IonLabel>Sailing Access</IonLabel>
@@ -72,11 +75,11 @@ export const Menu: React.FC = () => {
     </div>
   )
 
-  const DeliveryAccess = userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1 && (
+  const DeliveryAccess =  userRoles?.delivery_access !== 0 && (
     <div className={`${history.location.pathname.includes("delivery-container") && 'multimenu-header'}`}>
       <IonItem
         button
-        routerLink={`${history.location.pathname.includes("sailing-container") && "/delivery-container/delivery"}`}
+        routerLink={`/delivery-container/delivery`}
         className={`${history.location.pathname.includes("delivery-container") && 'multimenu-label'} ion-no-padding`}
       >
         <IonLabel>Delivery Access</IonLabel>
@@ -88,7 +91,8 @@ export const Menu: React.FC = () => {
     <>
       {SailingAccess}
       {((userRoles?.sailing_access === 1 && userRoles?.delivery_access === 0)
-        || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)) ?
+        || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)
+        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2)) ?
         (
           <>
             {history.location.pathname.includes("sailing-container") && history.location.pathname.includes("pallet") && (
@@ -128,7 +132,8 @@ export const Menu: React.FC = () => {
         : (<></>)}
       {DeliveryAccess}
       {((userRoles?.sailing_access === 1 && userRoles?.delivery_access === 0)
-        || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)) ?
+        || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)
+        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2)) ?
         (
           <>
             {history.location.pathname.includes("delivery-container") && history.location.pathname.includes("pallet") && (

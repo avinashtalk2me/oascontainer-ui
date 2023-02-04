@@ -21,7 +21,7 @@ import {
   DELETE_CONTAINER_REQUEST,
   DELETE_CONTAINER_SUCCESS,
   DELETE_CONTAINER_ERROR,
-} from "../../types";
+} from "../../../types";
 
 import {
   getSailingListAPI,
@@ -31,7 +31,7 @@ import {
   getContainerManifestAPI,
   getPalletManifestAPI,
   deleteSailingByIdAPI,
-} from "../../../api/fetch";
+} from "../../../../api/fetch";
 
 export const getContainerSailing = () => async (dispatch: any) => {
   dispatch({ type: GET_CONTAINERS_REQUEST });

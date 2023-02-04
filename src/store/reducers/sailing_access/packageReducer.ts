@@ -21,7 +21,7 @@ import {
     GET_SELECTED_HWB_INFO_REQUEST,
     GET_SELECTED_HWB_INFO_SUCCESS,
     GET_SELECTED_HWB_INFO_ERROR
-} from '../types'
+} from '../../types'
 
 const initialPacakgeState = {
     isloading: false,

@@ -11,6 +11,8 @@ const ContainerDeliveryRoute: React.FC = () => {
     localStorage.getItem("_authResponse") || "{}"
   );
   const idToken = authToken && authToken.access_token;
+  const userRoles = authToken && authToken.userRoles;
+  const isEditAllowed = (userRoles.delivery_access === 2 || userRoles.sailing_access === 2) ? false : true
 
   if (!idToken) {
     return <Redirect to="/login" />;
@@ -19,7 +21,7 @@ const ContainerDeliveryRoute: React.FC = () => {
   return (
     <>
       <Route exact path="/delivery-container/delivery">
-        <Delivery />
+        <Delivery isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/delivery-container/delivery/add">
         <AddEditDelivery isNew={true} />

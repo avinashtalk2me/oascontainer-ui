@@ -32,9 +32,15 @@ import {
 import { getPalletsBySailId, deletePalletById } from "../../store/actions";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
-import { Pallet } from "../../model/pallet";
+import { IPallet } from "../../model/pallet";
 
-const Sailing: React.FC = () => {
+export interface PalletProps {
+  isEditAllowed: boolean;
+}
+
+const Pallet: React.FC<PalletProps> = ({
+  isEditAllowed
+}) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
@@ -60,7 +66,7 @@ const Sailing: React.FC = () => {
   useEffect(() => {
     dispatch({ type: "RESET_FORM" });
   }, [dispatch])
-  
+
   useEffect(() => {
     dispatch(getPalletsBySailId(selectedSailId));
   }, [dispatch, selectedSailId]);
@@ -75,7 +81,7 @@ const Sailing: React.FC = () => {
     return <Redirect to="/sailing-container/sailing" />;
   }
 
-  const handleNavigatePackage = (pallet: Pallet) => {
+  const handleNavigatePackage = (pallet: IPallet) => {
     if (pallet.palletType !== 'Loose') {
       dispatch({ type: "SELECTED_PALLETID", payload: pallet.palletId });
       history.push(`/sailing-container/sailing/package/${pallet.palletId}`);
@@ -171,14 +177,16 @@ const Sailing: React.FC = () => {
                   />
                 </IonButtons>
               </IonItem>
-              <IonItemOptions
-                side="end"
-                onIonSwipe={(e) => handleDeleteItem(e, pallet.palletId)}
-              >
-                <IonItemOption color="danger">
-                  <IonIcon slot="icon-only" icon={removeIcon} />
-                </IonItemOption>
-              </IonItemOptions>
+              {isEditAllowed &&
+                <IonItemOptions
+                  side="end"
+                  onIonSwipe={(e) => handleDeleteItem(e, pallet.palletId)}
+                >
+                  <IonItemOption color="danger">
+                    <IonIcon slot="icon-only" icon={removeIcon} />
+                  </IonItemOption>
+                </IonItemOptions>
+              }
             </IonItemSliding>
           </div>
         ))}
@@ -196,9 +204,10 @@ const Sailing: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonButton expand="block" fill="outline" onClick={handleAddPallet}>
-          Add Pallet
-        </IonButton>
+        {isEditAllowed &&
+          <IonButton expand="block" fill="outline" onClick={handleAddPallet}>
+            Add Pallet
+          </IonButton>}
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -241,4 +250,4 @@ const Sailing: React.FC = () => {
   );
 };
 
-export default Sailing;
+export default Pallet;

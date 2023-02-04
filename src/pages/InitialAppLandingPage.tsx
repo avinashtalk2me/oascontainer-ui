@@ -21,19 +21,18 @@ const InitialAppLandingPage: React.FC = () => {
     async function getAppInfo() {
       setAppInfo(await MobileApp.getInfo());
     }
-    getAppInfo();
-  }, []);
+    if (platForm !== 'web')
+      getAppInfo();
+  }, [platForm]);
 
 
   useEffect(() => {
     async function getAppInfo() {
       if (Object.keys(appInfo).length > 0) {
-
         try {
           const { data: { data } } = await getAppVersionAPI();
           const appBuildNo = data[`${platForm}_build`].toString();
           const appVersionNo = data[`${platForm}_version`].toString().trim();
-
           if (appBuildNo === appInfo.build && appVersionNo === appInfo.version) {
             setIsLatestVersion(true);
             loadInitialScreen();
@@ -78,7 +77,10 @@ const InitialAppLandingPage: React.FC = () => {
         }
       }
     }
-    getAppInfo();
+    if (platForm !== 'web')
+      getAppInfo();
+    else
+      loadInitialScreen()
   }, [appInfo, platForm]);
 
 
@@ -90,13 +92,14 @@ const InitialAppLandingPage: React.FC = () => {
 
     setTimeout(() => {
       if (idToken) {
-        if (authToken.userRoles.sailing_access === 1 && authToken.userRoles.delivery_access === 0) {
+        if ((authToken.userRoles.sailing_access === 1 || authToken.userRoles.sailing_access === 2) && authToken.userRoles.delivery_access === 0) {
           return history.replace("/sailing-container/sailing");
         }
-        else if (authToken.userRoles.sailing_access === 1 && authToken.userRoles.delivery_access === 1) {
+        else if ((authToken.userRoles.sailing_access === 1 || authToken.userRoles.sailing_access === 2) && (authToken.userRoles.delivery_access === 1 || authToken.userRoles.sailing_access === 2)) {
           return history.replace("/loadAccessModule");
         }
-        else if (authToken.userRoles.sailing_access === 0 && authToken.userRoles.delivery_access === 1) {
+        else if (authToken.userRoles.sailing_access === 0 && (authToken.userRoles.delivery_access === 1 ||
+          authToken.userRoles.delivery_access === 2)) {
           return history.replace("/delivery-container/delivery");
         }
       }
@@ -146,8 +149,8 @@ const InitialAppLandingPage: React.FC = () => {
             }}>
               <IonText>There is a new version of OAS Container Manifest. <br />You must update before accessing.</IonText>
               <IonText>Click below button to apply update to continue.</IonText>
-              <IonItem className="ion-no-padding" lines='none'>               
-                <IonButton onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")} style={{ width: '50%', margin:'auto'}}>GO TO APP STORE</IonButton> 
+              <IonItem className="ion-no-padding" lines='none'>
+                <IonButton onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")} style={{ width: '50%', margin: 'auto' }}>GO TO APP STORE</IonButton>
               </IonItem>
               {/* <IonText><a onClick={() => window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362")}>Click here </a>to go to App Store and apply update to continue.</IonText> */}
             </div>

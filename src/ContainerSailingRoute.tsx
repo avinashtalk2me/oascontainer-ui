@@ -14,6 +14,8 @@ const ContainerSailingRoute: React.FC = () => {
     localStorage.getItem("_authResponse") || "{}"
   );
   const idToken = authToken && authToken.access_token;
+  const userRoles = authToken && authToken.userRoles;
+  const isEditAllowed = (userRoles.delivery_access === 2 || userRoles.sailing_access === 2) ? false : true
 
   if (!idToken) {
     return <Redirect to="/login" />;
@@ -22,34 +24,34 @@ const ContainerSailingRoute: React.FC = () => {
   return (
     <>
       <Route exact path="/sailing-container/sailing">
-        <Sailing />
+        <Sailing isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/sailing-container/sailing/add">
-        <AddEditSailing isNew={true} />
+        <AddEditSailing isNew={true}  isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/sailing-container/sailing/edit/:sailId">
-        <AddEditSailing isNew={false} />
+        <AddEditSailing isNew={false} isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/sailing-container/sailing/report/:sailId">
         <ReportDetail />
       </Route>
       <Route exact path="/sailing-container/sailing/pallet/:sailId">
-        <Pallet />
+        <Pallet isEditAllowed={isEditAllowed}  />
       </Route>
       <Route exact path="/sailing-container/sailing/pallet/add/:sailId">
-        <AddEditPallet isNew={true} />
+        <AddEditPallet isNew={true}  isEditAllowed={isEditAllowed}/>
       </Route>
       <Route exact path="/sailing-container/sailing/pallet/edit/:sailId/:palletId">
-        <AddEditPallet isNew={false} />
+        <AddEditPallet isNew={false} isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/sailing-container/sailing/package/:palletId">
-        <Package />
+        <Package isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/sailing-container/sailing/package/add/:palletId">
-        <AddEditPackage isNew={true} />
+        <AddEditPackage isNew={true} isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/sailing-container/sailing/package/edit/:palletId/:packageId/:hwbNo">
-        <AddEditPackage isNew={false} />
+        <AddEditPackage isNew={false}  isEditAllowed={isEditAllowed} />
       </Route>
     </>
   );

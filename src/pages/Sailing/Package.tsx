@@ -28,7 +28,13 @@ import { NavButton } from "../../components/NavButton";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
 
-const Package: React.FC = () => {
+export interface PackageProps {
+  isEditAllowed: boolean;
+}
+
+const Package: React.FC<PackageProps> = ({
+  isEditAllowed
+}) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
@@ -127,14 +133,16 @@ const Package: React.FC = () => {
                   />
                 </IonButtons>
               </IonItem>
-              <IonItemOptions
-                side="end"
-                onIonSwipe={(e) => handleDeleteItem(e, packge.packageId)}
-              >
-                <IonItemOption color="danger">
-                  <IonIcon slot="icon-only" icon={removeIcon} />
-                </IonItemOption>
-              </IonItemOptions>
+              {isEditAllowed &&
+                <IonItemOptions
+                  side="end"
+                  onIonSwipe={(e) => handleDeleteItem(e, packge.packageId)}
+                >
+                  <IonItemOption color="danger">
+                    <IonIcon slot="icon-only" icon={removeIcon} />
+                  </IonItemOption>
+                </IonItemOptions>
+              }
             </IonItemSliding>
           </div>
         ))}
@@ -152,9 +160,9 @@ const Package: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className={`ion-padding`}>
-        <IonButton expand="block" fill="outline" onClick={handleAddPackage}>
+        {isEditAllowed && <IonButton expand="block" fill="outline" onClick={handleAddPackage}>
           Add Package
-        </IonButton>
+        </IonButton>}
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}

@@ -1,4 +1,4 @@
-export interface Pallet {
+export interface IPallet {
     palletId: number;
     sailId: number;
     palletNo?: number;

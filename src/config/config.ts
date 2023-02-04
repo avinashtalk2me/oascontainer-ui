@@ -25,7 +25,22 @@ const envDetails: any = {
         GET_CONTAINER_MANIFEST: "sailing/containermanifest/{sailId}",
         GET_PALLET_MANIFEST: "sailing/palletmanifest/{sailId}",
         GET_PACKAGE_PKG_NO: "package/getPkgNo/{palletId}",
-        GET_HWBNO_INFO: "package/getHWBInfo/{hwbNo}/{palletId}"
+        GET_HWBNO_INFO: "package/getHWBInfo/{hwbNo}/{palletId}",
+        GET_DELIVERIES: "delivery",
+        ADD_DELIVERY: "delivery",
+        GET_DELIVERY: "delivery/{deliveryId}",
+        UPDATE_DELIVERY: "delivery/{deliveryId}",
+        DELETE_DELIVERY: "delivery/{deliveryId}",
+        GET_LOCATIONS: "location",
+        ADD_LOCATION: "location/{deliveryId}",
+        GET_LOCATION: "location/{locationId}",
+        UPDATE_LOCATION: "location/{locationId}",
+        DELETE_LOCATION: "location/{locationId}",
+        GET_DROPOFFS: "dropoff",
+        ADD_DROPOFF: "dropoff/{locationId}",
+        GET_DROPOFF: "dropoff/{dropoffId}",
+        UPDATE_DROPOFF: "dropoff/{dropoffId}",
+        DELETE_DROPOFF: "dropoff/{dropoffId}",
     }
 }
 

@@ -37,6 +37,7 @@ import { format, parseISO } from "date-fns";
 
 export interface SailingProps {
   isNew: boolean;
+  isEditAllowed: boolean;
   // selectedSailId: string;
   // onDismiss: () => void;
   // setIsTransComplete: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,6 +45,7 @@ export interface SailingProps {
 
 const AddEditSailing: React.FC<SailingProps> = ({
   isNew,
+  isEditAllowed
   // onDismiss,
   // setIsTransComplete,
   // selectedSailId,
@@ -135,6 +137,10 @@ const AddEditSailing: React.FC<SailingProps> = ({
   };
 
   const onSubmit = (data: any) => {
+    if (!isEditAllowed) {
+      closePage();
+      return
+    }
     const formattedData: any = {
       ...data,
       sailDate: data.sailDate.split("T")[0],
@@ -160,9 +166,12 @@ const AddEditSailing: React.FC<SailingProps> = ({
     <>
       <IonHeader>
         <IonToolbar>
-          <IonText className="modalheader-menu">
+          {isEditAllowed && <IonText className="modalheader-menu">
             {isNew ? "Add Sailing" : "Edit Sailing"}
-          </IonText>
+          </IonText>}
+          {!isEditAllowed && <IonText className="modalheader-menu">
+            View Sailing
+          </IonText>}
           <IonButtons
             slot="end"
             onClick={() => closePage()}
@@ -186,6 +195,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
                 </IonLabel>
                 <IonTextarea
                   rows={3}
+                  disabled={!isEditAllowed}
                   aria-invalid={errors && errors["sailDesc"] ? "true" : "false"}
                   aria-describedby={`${"sailDesc"}Error`}
                   {...register("sailDesc", {
@@ -208,6 +218,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
                 <IonInput
                   id="date-input-2"
                   readonly
+                  disabled={!isEditAllowed}
                   aria-invalid={
                     errors && errors["displaySailDate"] ? "true" : "false"
                   }
@@ -216,26 +227,29 @@ const AddEditSailing: React.FC<SailingProps> = ({
                     required: "Date is required.",
                   })}
                 />
-                <IonButton
-                  slot="end"
-                  fill="clear"
-                  className="calendar-btn"
-                  id="open-date-input-2"
-                >
-                  <IonIcon icon={calendarIcon} />
-                </IonButton>
-                <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                  <IonDatetime
-                    min={new Date().getUTCFullYear().toString()}
-                    max={"3500"}
-                    // displayFormat="DD/MM/YYYY"
-                    
-                    showDefaultButtons={true}
-                    presentation="date"
-                    {...register("sailDate")}
-                    onIonChange={handleDateChange}
-                  />
-                </IonPopover>
+                {isEditAllowed && <>
+                  <IonButton
+                    slot="end"
+                    fill="clear"
+                    className="calendar-btn"
+                    id="open-date-input-2"
+                  >
+                    <IonIcon icon={calendarIcon} />
+                  </IonButton>
+                  <IonPopover trigger="open-date-input-2" showBackdrop={false}>
+                    <IonDatetime
+                      min={new Date().getUTCFullYear().toString()}
+                      max={"3500"}
+                      // displayFormat="DD/MM/YYYY"
+
+                      showDefaultButtons={true}
+                      presentation="date"
+                      {...register("sailDate")}
+                      onIonChange={handleDateChange}
+                    />
+                  </IonPopover>
+                </>}
+
                 {/* <IonDatetime
                   // displayFormat="DD/MM/YYYY"
                   min={new Date().getUTCFullYear().toString()}
@@ -263,6 +277,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
                   Sail Weight Unit
                 </IonLabel>
                 <IonSelect
+                  disabled={!isEditAllowed}
                   interface="popover"
                   {...register("sailUnit")}
                   onIonChange={(e: any) => setUnitType(e.target.value)}
@@ -273,14 +288,14 @@ const AddEditSailing: React.FC<SailingProps> = ({
               </IonItem>
               {/* <Error errors={errors} name="sailUnit" /> */}
               {!isNew
-              && container?.data?.palletCount > 0
-              && initialUnitType !== unitType &&
-              <IonText color="danger" className="infotext">Changing this field will change weight units for all pallets.
-                Weight fields will not be converted.
-              </IonText>
-            }
+                && container?.data?.palletCount > 0
+                && initialUnitType !== unitType &&
+                <IonText color="danger" className="infotext">Changing this field will change weight units for all pallets.
+                  Weight fields will not be converted.
+                </IonText>
+              }
             </div>}
-           
+
             {!isNew && container && (
               <div className="ion-padding-bottom">
                 <IonItem className="ion-no-padding" lines="none">
@@ -301,7 +316,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
             {error && error.status === -1 && (
               <ServerError errorMsg={error.message} />
             )}
-            <IonButton
+            {isEditAllowed && <IonButton
               type="submit"
               className="ion-margin-top"
               color="primary"
@@ -309,6 +324,15 @@ const AddEditSailing: React.FC<SailingProps> = ({
             >
               {isNew ? "Save" : "Update"}
             </IonButton>
+            }
+            {!isEditAllowed && <IonButton
+              type="submit"
+              className="ion-margin-top"
+              color="primary"
+              expand="block"
+            >
+              RETURN
+            </IonButton>}
           </IonList>
         </form>
       </IonContent>

@@ -21,7 +21,7 @@ import {
   GET_SELECTED_HWB_INFO_REQUEST,
   GET_SELECTED_HWB_INFO_SUCCESS,
   GET_SELECTED_HWB_INFO_ERROR
-} from "../../types";
+} from "../../../types";
 
 import {
   getPackagesByPalletIdAPI,
@@ -31,7 +31,7 @@ import {
   deletePackageByIdAPI,
   getSelectedPackagePkgNoAPI,
   getSelectedHWBInfoAPI
-} from "../../../api/fetch";
+} from "../../../../api/fetch";
 
 export const getPackageByPalletId =
   (palletId: string) => async (dispatch: any) => {
