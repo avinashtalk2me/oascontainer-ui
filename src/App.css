@@ -4,9 +4,35 @@ ion-toolbar {
     font-size: 5vw; */
 }
 
-ion-label, ion-text {
+ion-label,
+ion-text {
   opacity: 1 !important;
 }
+
+.roundDiv {
+  border: 2px solid #ddd;
+  height: 1.05em;
+  width: 1.05em;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.75em;
+}
+
+.red {
+  background-color: #ff2400;
+  border-color: #ff2400;
+}
+
+.yellow {
+  background-color: #fddd03;
+  border-color: #fddd03;
+}
+
+.green {
+  background-color: #0f7f20;
+  border-color: #0f7f20;
+}
+ 
 
 ion-item {
   --inner-padding-bottom: 0;
@@ -14,7 +40,7 @@ ion-item {
   --inner-padding-start: 0;
   --inner-padding-top: 0;
 }
- 
+
 .page.ion-page {
   background-color: #fff;
 }
@@ -209,10 +235,17 @@ ion-select-popover {
 }
 
 .packagelist-header {
-  font-size: 0.95em;
+  /* font-size: 0.95em;
   font-weight: bold;
   margin-top: 2em;
+  color: var(--ion-color-medium, #92949c) !important; */
+  font-size: 0.95em;
+  font-weight: bold;
+  margin-top: 1em;
   color: var(--ion-color-medium, #92949c) !important;
+  border-bottom: 0.2em solid #ddd;
+  width: 100%;
+  display: block;
 }
 
 .packageitem-list {
@@ -221,6 +254,11 @@ ion-select-popover {
   margin: 0.75em 0;
   flex-wrap: wrap;
   /* justify-content: center; */
+}
+
+.isSelectedForDropOff {
+  --background: #90EE90;
+  color: #fff;
 }
 
 .package-item {

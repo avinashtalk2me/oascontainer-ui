@@ -2,9 +2,9 @@ import {
   GET_PACKAGES_REQUEST,
   GET_PACKAGES_SUCCESS,
   GET_PACKAGES_ERROR,
-  GET_PACKAGE_REQUEST,
-  GET_PACKAGE_SUCCESS,
-  GET_PACKAGE_ERROR,
+  // GET_PACKAGE_REQUEST,
+  // GET_PACKAGE_SUCCESS,
+  // GET_PACKAGE_ERROR,
   ADD_PACKAGE_REQUEST,
   ADD_PACKAGE_SUCCESS,
   ADD_PACKAGE_ERROR,
@@ -26,7 +26,7 @@ import {
 import {
   getPackagesByPalletIdAPI,
   insertPackageAPI,
-  getSelectedPackageByAPI,
+  // getSelectedPackageByIdAPI,
   updatePackageAPI,
   deletePackageByIdAPI,
   getSelectedPackagePkgNoAPI,
@@ -63,24 +63,24 @@ export const insertPackage =
     }
   };
 
-export const getSelectedPackageById =
-  (selectedPalletId: string, selectedPackageId: string) =>
-    async (dispatch: any) => {
-      dispatch({ type: GET_PACKAGE_REQUEST });
-      try {
-        const palletData = await getSelectedPackageByAPI(
-          selectedPalletId,
-          selectedPackageId
-        );
-        dispatch({ type: GET_PACKAGE_SUCCESS, payload: palletData.data });
-      } catch (error: any) {
-        if (error.response === undefined) {
-          dispatch({ type: SERVER_ERROR, payload: { status: 500 } });
-        } else {
-          dispatch({ type: GET_PACKAGE_ERROR, payload: error.response.data });
-        }
-      }
-    };
+// export const getSelectedPackageById =
+//   (selectedPalletId: string, selectedPackageId: string) =>
+//     async (dispatch: any) => {
+//       dispatch({ type: GET_PACKAGE_REQUEST });
+//       try {
+//         const packageData = await getSelectedPackageByIdAPI(
+//           selectedPalletId,
+//           selectedPackageId
+//         );
+//         dispatch({ type: GET_PACKAGE_SUCCESS, payload: packageData.data });
+//       } catch (error: any) {
+//         if (error.response === undefined) {
+//           dispatch({ type: SERVER_ERROR, payload: { status: 500 } });
+//         } else {
+//           dispatch({ type: GET_PACKAGE_ERROR, payload: error.response.data });
+//         }
+//       }
+//     };
 
 export const updatePackage =
   (packageId: string, data: any) => async (dispatch: any) => {

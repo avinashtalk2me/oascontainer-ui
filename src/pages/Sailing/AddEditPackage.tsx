@@ -33,7 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Error from "../../components/Error";
 import {
   insertPackage,
-  getSelectedPackageById,
+  // getSelectedPackageById,
   updatePackage,
   getSelectedPackagePkgNo,
   getSelectedHWBInfo
@@ -253,18 +253,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     }
   }, [setValue, isValidPackagePkgNo, scanResult, isHWBScanned])
 
-  // const handleDecrementCount = () => {
-  //   setValue(
-  //     "packageCount",
-  //     watchPackageCount >= 1 ? watchPackageCount - 1 : 0
-  //   );
-  // };
-
-  // const handleIncrementCount = () => {
-  //   setValue("packageCount", watchPackageCount + 1);
-  // };
-
-  const closePage = () => {
+   const closePage = () => {
     dispatch({ type: "RESET_FORM" });
     history.goBack();
   };
@@ -405,9 +394,9 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
 
   const packageList = (
     <>
-      <IonItem class="ion-no-padding">
+      {/* <IonItem class="ion-no-padding"> */}
         <IonText class="packagelist-header">List of added Package No.(s)</IonText>
-      </IonItem>
+      {/* </IonItem> */}
       <IonList lines="none" class="ion-no-padding packageitem-list" >
         {!isHWBScanned && watchPkgNo ? (watchPkgNo &&
           watchPkgNo?.split(",")

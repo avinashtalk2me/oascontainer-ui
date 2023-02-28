@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import {
   createAnimation,
   IonButtons,
@@ -15,15 +15,21 @@ import {
   IonAvatar,
   IonImg,
   IonSkeletonText,
+  IonIcon,
 } from '@ionic/react';
 import '../../src/LoadAccessModule.css'
 import { useHistory } from 'react-router';
+import { powerOutline as logout } from "ionicons/icons";
+import { LOGOUT } from '../store/types';
+import { useDispatch } from 'react-redux';
+
 
 function LoadAccessModule() {
   const modal = useRef<HTMLIonModalElement>(null);
   const history = useHistory();
+  const dispatch = useDispatch();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     modal.current?.present();
   }, []);
 
@@ -36,7 +42,6 @@ function LoadAccessModule() {
       history.replace("/delivery-container/delivery");
     }
     modal.current?.dismiss();
-
   }
 
   const enterAnimation = (baseEl: HTMLElement) => {
@@ -64,6 +69,16 @@ function LoadAccessModule() {
     return enterAnimation(baseEl).direction('reverse');
   };
 
+  const handleLogout = () => {
+    modal.current?.dismiss();
+
+    dispatch({ type: LOGOUT });
+    localStorage &&
+      localStorage.getItem("_authResponse") &&
+      localStorage.removeItem("_authResponse");
+    history.replace('/login');
+  }
+
   return (
     <IonPage className="page">
       <IonContent className="ion-padding blurBox">
@@ -87,7 +102,7 @@ function LoadAccessModule() {
         ))}
         <IonModal id="example-modal" ref={modal} trigger="open-custom-dialog" backdropDismiss={false}>
           <div className="wrapper">
-            <h3>Select Access to load</h3>
+            <h3>Select an access</h3>
 
             <IonList lines="none">
               <IonItem button={true} detail={false} onClick={() => dismiss('sailing')}>
@@ -101,6 +116,16 @@ function LoadAccessModule() {
                 <IonLabel>Delivery Access</IonLabel>
               </IonItem>
             </IonList>
+            <div className='logout'>
+              <IonButton
+                fill='clear'
+                slot="end"
+                onClick={() => handleLogout()}
+                className="closeIcon"
+              >
+                <IonIcon icon={logout} slot="icon-only" />
+              </IonButton>
+            </div>
           </div>
         </IonModal>
       </IonContent>

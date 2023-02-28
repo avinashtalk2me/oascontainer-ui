@@ -14,48 +14,67 @@ import {
   IonItemSliding,
   IonItemOption,
   IonItemOptions,
+  RefresherEventDetail,
+  IonRefresher,
+  IonRefresherContent,
 } from "@ionic/react";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, useHistory } from "react-router";
+import { Redirect, useHistory, useParams } from "react-router";
 import NoItemFound from "../../components/NoItemFound";
-import { getPackageByPalletId, deletePackageById } from "../../store/actions";
-import { eye as viewIcon, remove as removeIcon } from "ionicons/icons";
+import { getDropOffsByLocation, deleteDropOffById } from "../../store/actions";
+import { eye as viewIcon, remove as removeIcon, chevronDownCircleOutline } from "ionicons/icons";
 import { NavButton } from "../../components/NavButton";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
 
-const DeliveryDropOff: React.FC = () => {
+export interface DropOffProps {
+  isEditAllowed: boolean;
+}
+
+const DeliveryDropOff: React.FC<DropOffProps> = ({
+  isEditAllowed
+}) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
-
-  const { isloading, selectedPalletId, error, packages, isItemDeleted } =
-    useSelector((state: any) => state.package);
+  const { deliveryId, locationId }: any = useParams();
+  
+  const { isloading, selectedLocationId, error, dropOffs, isItemDeleted } =
+    useSelector((state: any) => state.dropOff);
 
   const handleAddPackage = () => {
-    history.push(`/delivery-container/delivery/dropoffpackages/add/${selectedPalletId}`);
+    history.push(`/delivery-container/dropoffpackages/add/${deliveryId}/${locationId}`);
   };
 
   const handleEditPackage = (packge: any) => {
     history.push(
-      `/delivery-container/delivery/dropoffpackages/edit/${selectedPalletId}/${packge.packageId}`
+      `/delivery-container/dropoffpackages/edit/${locationId}/${packge.packageId}/${packge.hwbNo}`
     );
   };
 
   useEffect(() => {
-    dispatch(getPackageByPalletId(selectedPalletId));
-  }, [dispatch, selectedPalletId]);
+    dispatch(getDropOffsByLocation(selectedLocationId));
+  }, [dispatch, selectedLocationId]);
 
   useEffect(() => {
     if (isItemDeleted) {
-      dispatch(getPackageByPalletId(selectedPalletId));
+      dispatch(getDropOffsByLocation(selectedLocationId));
     }
-  }, [dispatch, isItemDeleted, selectedPalletId]);
+  }, [dispatch, isItemDeleted, selectedLocationId]);
 
-  if (!selectedPalletId) {
-    // return <Redirect to="/sailing-container/sailing" />;
+  const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
+    setTimeout(() => {
+      dispatch(getDropOffsByLocation(selectedLocationId));
+      event.detail.complete();
+    }, 2000);
   }
+
+
+  if (!deliveryId && !locationId) {
+    return <Redirect to="/delivery-container/delivery" />;
+  }
+
 
   if (error && error.status === -100) {
     history.replace("/sessionexpired");
@@ -76,7 +95,7 @@ const DeliveryDropOff: React.FC = () => {
       });
 
       if (value) {
-        dispatch(deletePackageById(packageId));
+        dispatch(deleteDropOffById(packageId));
       }
       componentRef.current?.closeOpened();
     };
@@ -84,11 +103,11 @@ const DeliveryDropOff: React.FC = () => {
   };
 
   const PackageList: JSX.Element =
-    packages && packages?.data?.length === 0 ? (
+    dropOffs && dropOffs?.data?.length === 0 ? (
       <NoItemFound />
     ) : (
       <>
-        {(packages.data || []).map((packge: any, index: number) => (
+        {(dropOffs.data || []).map((packge: any, index: number) => (
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
               <IonItem className="ion-no-padding item-box">
@@ -141,6 +160,13 @@ const DeliveryDropOff: React.FC = () => {
         <IonButton expand="block" fill="outline" onClick={handleAddPackage}>
           Add DropOff
         </IonButton>
+        <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
+          <IonRefresherContent
+            pullingIcon={chevronDownCircleOutline}
+            refreshingSpinner="circles"
+            refreshingText="Refreshing...">
+          </IonRefresherContent>
+        </IonRefresher>
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
@@ -167,7 +193,7 @@ const DeliveryDropOff: React.FC = () => {
       {isItemDeleted && (
         <ToastMsg
           showToast={isItemDeleted}
-          message={"Package deleted successfully"}
+          message={"Dropoff Package deleted successfully"}
           type={"green"}
           duration={3000}
         />

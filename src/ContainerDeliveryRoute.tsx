@@ -1,7 +1,9 @@
 import { Redirect, Route } from "react-router-dom";
- 
+
 import Delivery from "./pages/Delivery/Delivery";
 import AddEditDelivery from "./pages/Delivery/AddEditDelivery";
+import Location from "./pages/Delivery/Location";
+import AddEditLocation from "./pages/Delivery/AddEditLocation";
 // import ReportDetail from "./pages/Sailing/ReportDetail";
 import DeliveryDropOff from "./pages/Delivery/DeliveryDropOff";
 import AddEditDeliveryDropOff from "./pages/Delivery/AddEditDeliveryDropOff";
@@ -24,31 +26,28 @@ const ContainerDeliveryRoute: React.FC = () => {
         <Delivery isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/delivery-container/delivery/add">
-        <AddEditDelivery isNew={true} />
+        <AddEditDelivery isNew={true} isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/delivery-container/delivery/edit/:deliveryId">
-        <AddEditDelivery isNew={false} />
+        <AddEditDelivery isNew={false} isEditAllowed={isEditAllowed} />
       </Route>
-      {/* <Route exact path="/container-sail/sailing/report/:sailId">
-        <ReportDetail />
+      <Route exact path="/delivery-container/location/:deliveryId" >
+        <Location isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/container-sail/pallet/:sailId">
-        <Pallet />
+      <Route exact path="/delivery-container/location/add/:deliveryId">
+        <AddEditLocation isNew={true} isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/container-sail/sail/sail/sail/pallet/add/:sailId">
-        <AddEditPallet isNew={true} />
+      <Route exact path="/delivery-container/location/edit/:deliveryId/:locationId">
+        <AddEditLocation isNew={false} isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/container-sail/pallet/edit/:sailId/:palletId">
-        <AddEditPallet isNew={false} />
-      </Route> */}
-      <Route exact path="/delivery-container/delivery/dropoffpackages/:deliveryId">
-        <DeliveryDropOff />
+      <Route exact path="/delivery-container/dropoffpackages/:deliveryId/:locationId">
+        <DeliveryDropOff isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/delivery-container/delivery/dropoffpackages/add/:palletId">
-        <AddEditDeliveryDropOff isNew={true} />
+      <Route exact path="/delivery-container/dropoffpackages/add/:deliveryId/:locationId">
+        <AddEditDeliveryDropOff isNew={true} isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/container-sail/delivery/dropoffpackages/edit/:palletId/:packageId">
-        <AddEditDeliveryDropOff isNew={false} />
+      <Route exact path="/delivery-container/dropoffpackages/edit/:locationId/:packageId/:hwbNo">
+        <AddEditDeliveryDropOff isNew={false} isEditAllowed={isEditAllowed} />
       </Route>
     </>
   );

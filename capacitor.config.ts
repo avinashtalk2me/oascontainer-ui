@@ -6,9 +6,6 @@ const config: CapacitorConfig = {
   appName: 'OAS Container Manifest',
   webDir: 'build',
   bundledWebRuntime: false,
-  server: {
-    url: "http://192.168.29.238:3000/"
-  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000,

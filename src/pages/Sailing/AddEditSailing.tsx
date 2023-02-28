@@ -195,6 +195,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
                 </IonLabel>
                 <IonTextarea
                   rows={3}
+                  maxlength={50}
                   disabled={!isEditAllowed}
                   aria-invalid={errors && errors["sailDesc"] ? "true" : "false"}
                   aria-describedby={`${"sailDesc"}Error`}

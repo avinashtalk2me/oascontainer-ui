@@ -22,7 +22,7 @@ const {
   DELETE_PALLET,
   GET_PACKAGES,
   ADD_PACKAGE,
-  GET_PACKAGE,
+  // GET_PACKAGE,
   UPDATE_PACKAGE,
   DELETE_PACKAGE,
   GET_CONTAINER_MANIFEST,
@@ -41,9 +41,10 @@ const {
   DELETE_LOCATION,
   GET_DROPOFFS,
   ADD_DROPOFF,
-  GET_DROPOFF,
+  // GET_DROPOFF,
   UPDATE_DROPOFF,
-  DELETE_DROPOFF
+  DELETE_DROPOFF,
+  GET_DROPOFF_HWBNO_INFO
 
 } = config;
 
@@ -183,15 +184,15 @@ export const insertPackageAPI = (selectedPalletId: string, data: any) => {
   return serviceRequest(url, "POST", data);
 };
 
-export const getSelectedPackageByAPI = (
-  selectedPalletId: string,
-  selectedPackageId: string
-) => {
-  let url: string = `${process.env.REACT_APP_API_URL}${GET_PACKAGE}`;
-  url = url.replace("{palletId}", selectedPalletId);
-  url = url.replace("{packageId}", selectedPackageId);
-  return serviceRequest(url, "GET", undefined);
-};
+// export const getSelectedPackageByIdAPI = (
+//   selectedPalletId: string,
+//   selectedPackageId: string
+// ) => {
+//   let url: string = `${process.env.REACT_APP_API_URL}${GET_PACKAGE}`;
+//   url = url.replace("{palletId}", selectedPalletId);
+//   url = url.replace("{packageId}", selectedPackageId);
+//   return serviceRequest(url, "GET", undefined);
+// };
 
 export const updatePackageAPI = (selectedPackageId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${UPDATE_PACKAGE}`;
@@ -264,25 +265,29 @@ export const deleteDeliveryByIdAPI = (selectedDeliveryId: string) => {
   return serviceRequest(url, "DELETE", undefined);
 };
 
-export const getLocationsAPI = (selectedDeliveryId: string) => {
+export const getLocationsByDeliveryIdAPI = (selectedDeliveryId: string) => {
   let url: string = `${process.env.REACT_APP_API_URL}${GET_LOCATIONS}`;
-  url = url.replace("{userId}", selectedDeliveryId);
+  url = url.replace("{deliveryId}", selectedDeliveryId);
   return serviceRequest(url, "GET", undefined);
 };
 
-export const insertLocationAPI = (selectedDeliveryId:string, data: any) => {
+export const insertLocationAPI = (selectedDeliveryId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${ADD_LOCATION}`;
   url = url.replace("{deliveryId}", selectedDeliveryId);
   return serviceRequest(url, "POST", data);
 };
 
-export const getSelectedLocationByIdAPI = (selectedLocationId: string) => {
+export const getSelectedLocationByAPI = (
+  selectedDeliveryId: string,
+  selectedLocationId: string
+) => {
   let url: string = `${process.env.REACT_APP_API_URL}${GET_LOCATION}`;
+  url = url.replace("{deliveryId}", selectedDeliveryId);
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "GET", undefined);
 };
 
-export const updateLocationByIdAPI = (selectedLocationId: string, data: any) => {
+export const updateLocationAPI = (selectedLocationId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${UPDATE_LOCATION}`;
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "PATCH", data);
@@ -294,32 +299,42 @@ export const deleteLocationByIdAPI = (selectedLocationId: string) => {
   return serviceRequest(url, "DELETE", undefined);
 };
 
-export const getDropOffssAPI = (selectedLocationId: string) => {
+
+export const getDropOffsByLocationAPI = (selectedLocationId: string) => {
   let url: string = `${process.env.REACT_APP_API_URL}${GET_DROPOFFS}`;
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "GET", undefined);
 };
 
-export const insertDropOffAPI = (selectedLocationId:string, data: any) => {
+export const insertDropOffAPI = (selectedLocationId:string, deliveryId:string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${ADD_DROPOFF}`;
   url = url.replace("{locationId}", selectedLocationId);
+  url = url.replace("{deliveryId}", deliveryId);
   return serviceRequest(url, "POST", data);
 };
 
-export const getSelectedDropOffByIdAPI = (selectedDropOffId: string) => {
-  let url: string = `${process.env.REACT_APP_API_URL}${GET_DROPOFF}`;
-  url = url.replace("{dropoffId}", selectedDropOffId);
-  return serviceRequest(url, "GET", undefined);
-};
+// export const getSelectedDropOffByIdAPI = (selectedDropOffId: string, selectedLocatioId: string) => {
+//   let url: string = `${process.env.REACT_APP_API_URL}${GET_DROPOFF}`;
+//   url = url.replace("{dropoffId}", selectedDropOffId);
+//   url = url.replace("{locationId}", selectedLocatioId);
+//   return serviceRequest(url, "GET", undefined);
+// };
 
-export const updateDropOffByIdAPI = (selectedDropOffId: string, data: any) => {
+export const updateDropOffByIdAPI = (selectedPackageId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${UPDATE_DROPOFF}`;
-  url = url.replace("{dropoffId}", selectedDropOffId);
+  url = url.replace("{packageId}", selectedPackageId);
   return serviceRequest(url, "PATCH", data);
 };
 
-export const deleteDropOffByIdAPI = (selectedDropOffId: string) => {
+export const deleteDropOffByIdAPI = (selectedPackageId: string) => {
   let url: string = `${process.env.REACT_APP_API_URL}${DELETE_DROPOFF}`;
-  url = url.replace("{dropoffId}", selectedDropOffId);
+  url = url.replace("{packageId}", selectedPackageId);
   return serviceRequest(url, "DELETE", undefined);
+};
+
+export const getSelectedHWBInfoForDropOffAPI = (selectedLocationId:string, hwbNo: string) => {
+  let url: string = `${process.env.REACT_APP_API_URL}${GET_DROPOFF_HWBNO_INFO}`;
+  url = url.replace("{hwbNo}", hwbNo);
+  url = url.replace("{locationId}", selectedLocationId);
+  return serviceRequest(url, "GET", undefined);
 };

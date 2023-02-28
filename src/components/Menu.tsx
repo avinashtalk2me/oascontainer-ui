@@ -22,6 +22,7 @@ export const Menu: React.FC = () => {
   const dispatch = useDispatch();
 
   const selectedSailId = state.pallet.selectedSailId;
+  const selectedDeliveryId = state.location.selectedDeliveryId;
   const authToken: any = JSON.parse(
     localStorage.getItem("_authResponse") || "{}"
   );
@@ -136,7 +137,7 @@ export const Menu: React.FC = () => {
         || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2)) ?
         (
           <>
-            {history.location.pathname.includes("delivery-container") && history.location.pathname.includes("pallet") && (
+            {history.location.pathname.includes("delivery-container") && history.location.pathname.includes("location") && (
               <>
                 <IonItem
                   className="ion-no-padding"
@@ -157,6 +158,14 @@ export const Menu: React.FC = () => {
                   routerDirection="none"
                 >
                   <IonLabel>Delivery</IonLabel>
+                </IonItem>                
+                <IonItem
+                  className="ion-no-padding"
+                  button
+                  routerLink={`/delivery-container/location/${selectedDeliveryId}`}
+                  routerDirection="none"
+                >
+                  <IonLabel>Location</IonLabel>
                 </IonItem>
               </>
             )}

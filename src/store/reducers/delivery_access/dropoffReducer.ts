@@ -1,38 +1,38 @@
 import {
-    GET_PACKAGES_REQUEST,
-    GET_PACKAGES_SUCCESS,
-    GET_PACKAGES_ERROR,
-    // GET_PACKAGE_REQUEST,
-    // GET_PACKAGE_SUCCESS,
-    // GET_PACKAGE_ERROR,
-    ADD_PACKAGE_REQUEST,
-    ADD_PACKAGE_SUCCESS,
-    ADD_PACKAGE_ERROR,
-    UPDATE_PACKAGE_REQUEST,
-    UPDATE_PACKAGE_SUCCESS,
-    UPDATE_PACKAGE_ERROR,
+    GET_DROPOFFS_REQUEST,
+    GET_DROPOFFS_SUCCESS,
+    GET_DROPOFFS_ERROR,
+    // GET_DROPOFF_REQUEST,
+    // GET_DROPOFF_SUCCESS,
+    // GET_DROPOFF_ERROR,
+    ADD_DROPOFF_REQUEST,
+    ADD_DROPOFF_SUCCESS,
+    ADD_DROPOFF_ERROR,
+    UPDATE_DROPOFF_REQUEST,
+    UPDATE_DROPOFF_SUCCESS,
+    UPDATE_DROPOFF_ERROR,
     SERVER_ERROR,
-    DELETE_PACKAGE_REQUEST,
-    DELETE_PACKAGE_SUCCESS,
-    DELETE_PACKAGE_ERROR,
-    GET_PACKAGE_PKG_NO_REQUEST,
-    GET_PACKAGE_PKG_NO_SUCCESS,
-    GET_PACKAGE_PKG_NO_ERROR,
-    GET_SELECTED_HWB_INFO_REQUEST,
-    GET_SELECTED_HWB_INFO_SUCCESS,
-    GET_SELECTED_HWB_INFO_ERROR
+    DELETE_DROPOFF_REQUEST,
+    DELETE_DROPOFF_SUCCESS,
+    DELETE_DROPOFF_ERROR,
+    // GET_PACKAGE_PKG_NO_REQUEST,
+    // GET_PACKAGE_PKG_NO_SUCCESS,
+    // GET_PACKAGE_PKG_NO_ERROR,
+    GET_SELECTED_HWB_INFO_FOR_DROPOFF_REQUEST,
+    GET_SELECTED_HWB_INFO_FOR_DROPOFF_SUCCESS,
+    GET_SELECTED_HWB_INFO_FOR_DROPOFF_ERROR
 } from '../../types'
 
-const initialPacakgeState = {
+const initialDropOffState = {
     isloading: false,
-    selectedPalletId: 0,
-    packages: [],
-    // packageData: {},
+    selectedLocationId: 0,
+    dropOffs: [],
+    dropOffData: {},
     error: undefined,
     isItemSaved: false,
     isItemDeleted: false,
     isValidPackagePkgNo: undefined,
-    selectedHwbInfo: undefined
+    selectedHwbInfoForDropoff: undefined
 }
 
 interface ActionType {
@@ -40,7 +40,7 @@ interface ActionType {
     payload: any
 }
 
-const packageReducer = (state = initialPacakgeState, action: ActionType) => {
+const dropOffReducer = (state = initialDropOffState, action: ActionType) => {
     const { type, payload } = action;
     switch (type) {
         case SERVER_ERROR:
@@ -48,10 +48,10 @@ const packageReducer = (state = initialPacakgeState, action: ActionType) => {
                 ...state,
                 error: payload
             }
-        case "SELECTED_PALLETID":
+        case "SELECTED_LOCATIONID":
             return {
                 ...state,
-                selectedPalletId: payload,
+                selectedLocationId: payload,
             }
         case "RESET_FORM":
             return {
@@ -59,29 +59,29 @@ const packageReducer = (state = initialPacakgeState, action: ActionType) => {
                 isItemSaved: false,
                 isItemDeleted: false,
                 error: undefined,
-                package: {},
+                dropOffs: {},
                 isValidPackagePkgNo: undefined,
-                selectedHwbInfo: undefined
+                selectedHwbInfoForDropoff: undefined
             }
         case "RESET_PKG_SCAN":
             return {
                 ...state,
                 isValidPackagePkgNo: undefined,
-                selectedHwbInfo: undefined
+                selectedHwbInfoForDropoff: undefined
             }
-        case GET_PACKAGES_REQUEST:
+        case GET_DROPOFFS_REQUEST:
             return {
                 ...state,
                 isloading: true,
                 error: undefined,
             }
-        case GET_PACKAGES_SUCCESS:
+        case GET_DROPOFFS_SUCCESS:
             return {
                 ...state,
                 isloading: false,
-                packages: payload
+                dropOffs: payload
             }
-        case GET_PACKAGES_ERROR:
+        case GET_DROPOFFS_ERROR:
             return {
                 ...state,
                 isloading: false,
@@ -106,71 +106,71 @@ const packageReducer = (state = initialPacakgeState, action: ActionType) => {
         //         isloading: false,
         //         error: payload
         //     }
-        case GET_PACKAGE_PKG_NO_REQUEST:
+        // case GET_PACKAGE_PKG_NO_REQUEST:
+        //     return {
+        //         ...state,
+        //         isloading: true,
+        //         error: undefined,
+        //         isValidPackagePkgNo: undefined
+        //     }
+        // case GET_PACKAGE_PKG_NO_SUCCESS:
+        //     return {
+        //         ...state,
+        //         isloading: false,
+        //         isValidPackagePkgNo: payload
+        //     }
+        // case GET_PACKAGE_PKG_NO_ERROR:
+        //     return {
+        //         ...state,
+        //         isloading: false,
+        //         isValidPackagePkgNo: undefined,
+        //         error: payload
+        //     }
+        case GET_SELECTED_HWB_INFO_FOR_DROPOFF_REQUEST:
             return {
                 ...state,
                 isloading: true,
                 error: undefined,
-                isValidPackagePkgNo: undefined
+                selectedHwbInfoForDropoff: undefined
             }
-        case GET_PACKAGE_PKG_NO_SUCCESS:
+        case GET_SELECTED_HWB_INFO_FOR_DROPOFF_SUCCESS:
             return {
                 ...state,
                 isloading: false,
-                isValidPackagePkgNo: payload
+                selectedHwbInfoForDropoff: payload
             }
-        case GET_PACKAGE_PKG_NO_ERROR:
+        case GET_SELECTED_HWB_INFO_FOR_DROPOFF_ERROR:
             return {
                 ...state,
                 isloading: false,
-                isValidPackagePkgNo: undefined,
+                selectedHwbInfoForDropoff: undefined,
                 error: payload
             }
-        case GET_SELECTED_HWB_INFO_REQUEST:
-            return {
-                ...state,
-                isloading: true,
-                error: undefined,
-                selectedHwbInfo: undefined
-            }
-        case GET_SELECTED_HWB_INFO_SUCCESS:
-            return {
-                ...state,
-                isloading: false,
-                selectedHwbInfo: payload
-            }
-        case GET_SELECTED_HWB_INFO_ERROR:
-            return {
-                ...state,
-                isloading: false,
-                selectedHwbInfo: undefined,
-                error: payload
-            }
-        case ADD_PACKAGE_REQUEST:
-        case UPDATE_PACKAGE_REQUEST:
-        case DELETE_PACKAGE_REQUEST:
+        case ADD_DROPOFF_REQUEST:
+        case UPDATE_DROPOFF_REQUEST:
+        case DELETE_DROPOFF_REQUEST:
             return {
                 ...state,
                 isloading: true,
                 isItemSaved: false,
                 isItemDeleted: false
             }
-        case ADD_PACKAGE_SUCCESS:
-        case UPDATE_PACKAGE_SUCCESS:
+        case ADD_DROPOFF_SUCCESS:
+        case UPDATE_DROPOFF_SUCCESS:
             return {
                 ...state,
                 isloading: false,
                 isItemSaved: true
             }
-        case DELETE_PACKAGE_SUCCESS:
+        case DELETE_DROPOFF_SUCCESS:
             return {
                 ...state,
                 isloading: false,
                 isItemDeleted: true
             }
-        case ADD_PACKAGE_ERROR:
-        case UPDATE_PACKAGE_ERROR:
-        case DELETE_PACKAGE_ERROR:
+        case ADD_DROPOFF_ERROR:
+        case UPDATE_DROPOFF_ERROR:
+        case DELETE_DROPOFF_ERROR:
             return {
                 ...state,
                 isloading: false,
@@ -181,4 +181,4 @@ const packageReducer = (state = initialPacakgeState, action: ActionType) => {
     }
 }
 
-export default packageReducer;
+export default dropOffReducer;

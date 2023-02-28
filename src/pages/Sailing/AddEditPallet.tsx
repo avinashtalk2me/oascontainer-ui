@@ -95,6 +95,9 @@ const AddEditPallet: React.FC<PalletProps> = ({
       setValue("palletDesc", pallet.data.palletDesc);
       setValue("palletWeight", pallet.data.palletWeight);
       setValue("palletWeightUnit", pallet.data.palletWeightUnit.trim());
+      if(pallet.data.palletType === "Loose") {
+        setShowHidePalletDesc(true);
+      }
     }
   }, [pallet, isNew]);
 
@@ -250,6 +253,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                   </IonLabel>
                   <IonTextarea
                     rows={3}
+                    maxlength={50}
                     disabled={!isEditAllowed}
                     aria-invalid={
                       errors && errors["palletDesc"] ? "true" : "false"

@@ -90,7 +90,6 @@ const Pallet: React.FC<PalletProps> = ({
     }
   };
 
-
   const noPackageAlertForPallet = () => {
     Dialog.alert({
       title: "Not Allowed",

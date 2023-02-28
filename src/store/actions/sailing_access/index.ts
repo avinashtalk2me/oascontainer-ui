@@ -19,7 +19,7 @@ export {
 export {
   getPackageByPalletId,
   insertPackage,
-  getSelectedPackageById,
+  // getSelectedPackageById,
   updatePackage,
   deletePackageById,
   getSelectedPackagePkgNo,

@@ -14,6 +14,9 @@ import {
   IonItemSliding,
   IonItemOption,
   IonItemOptions,
+  RefresherEventDetail,
+  IonRefresher,
+  IonRefresherContent,
 } from "@ionic/react";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +28,7 @@ import {
   eye as viewIcon,
   document as documentIcon,
   remove as removeIcon,
+  chevronDownCircleOutline,
 } from "ionicons/icons";
 import { useHistory } from "react-router";
 import { Dialog } from "@capacitor/dialog";
@@ -43,11 +47,18 @@ const Delivery: React.FC<DeliveryProps> = ({
 
   const { isloading, deliveries, error, isItemDeleted } = useSelector(
     (state: any) => {
-      return state.deliveries;
+      return state.delivery;
     }
   );
 
   const { userDeletedSuccess } = useSelector((state: any) => state.user);
+
+  const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
+    setTimeout(() => {
+      dispatch(getDeliveries());
+      event.detail.complete();
+    }, 2000);
+  }
 
   const handleAddDelivery = () => {
     history.push(`/delivery-container/delivery/add`);
@@ -67,9 +78,9 @@ const Delivery: React.FC<DeliveryProps> = ({
     }
   }, [dispatch, isItemDeleted]);
 
-  const handleNavigateDeliveryDropOffs = (deliveryId: string) => {
-    // dispatch({ type: "SELECTED_SAILID", payload: sailId });
-    history.push(`/delivery-container/delivery/dropoffpackages/${deliveryId}`);
+  const handleNavigateToLocation = (deliveryId: string) => {
+    dispatch({ type: "SELECTED_DELIVERYID", payload: deliveryId });
+    history.push(`/delivery-container/location/${deliveryId}`);
   };
 
   // const handleViewReports = (container: Container) => {
@@ -108,18 +119,18 @@ const Delivery: React.FC<DeliveryProps> = ({
     showConfirm();
   };
 
-  const DeliveryingList: JSX.Element =
-    deliveries && deliveries?.length === 0 ? (
+  const DeliveryList: JSX.Element =
+    deliveries && deliveries?.data?.length === 0 ? (
       <NoItemFound />
     ) : (
       <>
-        {(deliveries || []).map((delivery: any, index: number) => (
+        {(deliveries.data || []).map((delivery: any, index: number) => (
           <div key={index}>
             <IonItemSliding ref={componentRef}>
               <IonItem className="ion-no-padding item-box">
                 <IonLabel
                   color="medium"
-                  onClick={() => handleNavigateDeliveryDropOffs(delivery.deliveryId)}
+                  onClick={() => handleNavigateToLocation(delivery.deliveryId)}
                 >
                   <h3
                     className="text-wrap"
@@ -129,20 +140,26 @@ const Delivery: React.FC<DeliveryProps> = ({
                     {delivery.deliveryDesc}
                   </h3>
                   <span style={{ fontSize: "14px" }}>
-                    Delivery Date: <b>{delivery.deliveryDate}, </b>
+                    Delivery Date: <b>{delivery.deliveryDate} </b>
                   </span>
                   <br />
+                  {!isEditAllowed && <>
+                    <span style={{ fontSize: "14px" }}>
+                      Driver: <b>{delivery.driverName}</b>
+                    </span>
+                    <br />
+                  </>}
                   <span style={{ fontSize: "14px" }}>
-                    Total DropOffs: <b>{delivery.palletCount}</b>
+                    Total DropOffs: <b>{delivery.dropOffCount}</b>
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">
-                  <IonIcon
+                  {/* <IonIcon
                     icon={documentIcon}
                     color="medium"
-                    // onClick={() => handleViewReports(delivery)}
+                    onClick={() => handleViewReports(delivery)}
                     className=""
-                  />
+                  /> */}
                   <IonIcon
                     icon={viewIcon}
                     color="medium"
@@ -152,18 +169,18 @@ const Delivery: React.FC<DeliveryProps> = ({
                   <IonIcon
                     icon={forwardIcon}
                     color="green"
-                    onClick={() => handleNavigateDeliveryDropOffs(delivery.deliveryId)}
+                    onClick={() => handleNavigateToLocation(delivery.deliveryId)}
                   />
                 </IonButtons>
               </IonItem>
-              <IonItemOptions
+              {isEditAllowed && <IonItemOptions
                 side="end"
                 onIonSwipe={(e) => handleDeleteItem(e, delivery.deliveryId)}
               >
                 <IonItemOption color="danger">
                   <IonIcon slot="icon-only" icon={removeIcon} />
                 </IonItemOption>
-              </IonItemOptions>
+              </IonItemOptions>}
             </IonItemSliding>
           </div>
         ))}
@@ -186,6 +203,13 @@ const Delivery: React.FC<DeliveryProps> = ({
             Add Delivery
           </IonButton>
         }
+        <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
+          <IonRefresherContent
+            pullingIcon={chevronDownCircleOutline}
+            refreshingSpinner="circles"
+            refreshingText="Refreshing...">
+          </IonRefresherContent>
+        </IonRefresher>
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
@@ -206,7 +230,7 @@ const Delivery: React.FC<DeliveryProps> = ({
                 </IonLabel>
               </IonItem>
             ))
-            : DeliveryingList}
+            : DeliveryList}
         </IonList>
       </IonContent>
       {isItemDeleted && (

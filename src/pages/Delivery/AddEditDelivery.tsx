@@ -25,9 +25,9 @@ import Error from "../../components/Error";
 import { close as closeIcon, calendar as calendarIcon } from "ionicons/icons";
 
 import {
-  insertSailing,
-  getSelectedSailingById,
-  updateSailingById,
+  insertDelivery,
+  getSelectedDeliveryById,
+  updateDeliveryById,
 } from "../../store/actions";
 import ServerError from "../../components/ServerError";
 import { useEffect, useState } from "react";
@@ -35,53 +35,46 @@ import ToastMsg from "../../components/ToastMsg";
 import { useHistory, useParams } from "react-router";
 import { format, parseISO } from "date-fns";
 
-export interface SailingProps {
+export interface DeliveryProps {
   isNew: boolean;
+  isEditAllowed: boolean;
   // selectedSailId: string;
   // onDismiss: () => void;
   // setIsTransComplete: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AddEditDelivery: React.FC<SailingProps> = ({
+const AddEditDelivery: React.FC<DeliveryProps> = ({
   isNew,
+  isEditAllowed
   // onDismiss,
   // setIsTransComplete,
   // selectedSailId,
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { sailId }: any = useParams();
-  // const [initialUnitType, setInitialUnitType] = useState("");
-  // const [unitType, setUnitType] = useState("");
+  const { deliveryId }: any = useParams();
+  const todaysDate = new Date().toISOString();
 
-
-  const { isloading, isItemSaved, error, container } = useSelector(
-    (state: any) => state.sailing
+  const { isloading, isItemSaved, error, delivery } = useSelector(
+    (state: any) => state.delivery
   );
 
   useEffect(() => {
     if (!isNew) {
-      dispatch(getSelectedSailingById(sailId));
+      dispatch(getSelectedDeliveryById(deliveryId));
     }
-  }, [isNew, dispatch, sailId]);
-
-  // useEffect(() => {
-  //   if (isNew) {
-  //     setUnitType("LB")
-  //     setValue("sailUnit", "LB");
-  //   }
-  // }, [isNew]);
+  }, [isNew, dispatch, deliveryId]);
 
   useEffect(() => {
-    if (!isNew && container && container?.status === 0) {
-      // setValue("sailDesc", container.data.sailDesc);
-      // setValue("sailDate", container.data.sailDate); 
-      // setValue(
-      //   "displaySailDate",
-      //   container.data.sailDate.split("T")[0].split("-").reverse().join("/")
-      // );
+    if (!isNew && delivery && delivery?.status === 0) {
+      setValue("deliveryDesc", delivery.data.deliveryDesc);
+      setValue("deliveryDate", delivery.data.deliveryDate);
+      setValue(
+        "displayDeliveryDate",
+        delivery.data.deliveryDate.split("T")[0].split("-").reverse().join("/")
+      );
     }
-  }, [container, isNew]);
+  }, [delivery, isNew]);
 
   const {
     handleSubmit,
@@ -99,10 +92,9 @@ const AddEditDelivery: React.FC<SailingProps> = ({
 
 
   const resetForm = () => {
-    setValue("sailDesc", "");
-    setValue("sailDate", "");
-    // setValue("sailUnit", "");
-    setValue("displaySailDate", "");
+    setValue("deliveryDesc", "");
+    setValue("deliveryDate", "");
+    setValue("displayDeliveryDate", "");
     reset(
       {},
       {
@@ -131,14 +123,18 @@ const AddEditDelivery: React.FC<SailingProps> = ({
   };
 
   const onSubmit = (data: any) => {
+    if (!isEditAllowed) {
+      closePage();
+      return
+    }
     const formattedData: any = {
       ...data,
-      sailDate: data.sailDate.split("T")[0],
+      deliveryDate: data.deliveryDate.split("T")[0],
     };
     if (isNew) {
-      dispatch(insertSailing(formattedData));
+      dispatch(insertDelivery(formattedData));
     } else {
-      dispatch(updateSailingById(sailId, formattedData));
+      dispatch(updateDeliveryById(deliveryId, formattedData));
     }
   };
 
@@ -147,8 +143,8 @@ const AddEditDelivery: React.FC<SailingProps> = ({
   };
 
   const handleDateChange = (e: any) => {
-    setValue("sailDate", e.detail.value);
-    setValue("displaySailDate", formatDate(e.detail.value));
+    setValue("deliveryDate", e.detail.value);
+    setValue("displayDeliveryDate", formatDate(e.detail.value));
   };
 
 
@@ -156,9 +152,13 @@ const AddEditDelivery: React.FC<SailingProps> = ({
     <>
       <IonHeader>
         <IonToolbar>
-          <IonText className="modalheader-menu">
-            {isNew ? "Add Delivery" : "Edit Delivery"}
-          </IonText>
+          {isEditAllowed &&
+            <IonText className="modalheader-menu">
+              {isNew ? "Add Delivery" : "Edit Delivery"}
+            </IonText>}
+          {!isEditAllowed && <IonText className="modalheader-menu">
+            View Delivery
+          </IonText>}
           <IonButtons
             slot="end"
             onClick={() => closePage()}
@@ -181,16 +181,18 @@ const AddEditDelivery: React.FC<SailingProps> = ({
                   Delivery Description
                 </IonLabel>
                 <IonTextarea
+                  disabled={!isEditAllowed}
                   rows={3}
-                  aria-invalid={errors && errors["sailDesc"] ? "true" : "false"}
-                  aria-describedby={`${"sailDesc"}Error`}
-                  {...register("sailDesc", {
+                  maxlength={40}
+                  aria-invalid={errors && errors["deliveryDesc"] ? "true" : "false"}
+                  aria-describedby={`${"deliveryDesc"}Error`}
+                  {...register("deliveryDesc", {
                     required: "Description is required.",
                   })}
-                  onIonChange={(e: any) => setValue("sailDesc", e.detail.value)}
+                  onIonChange={(e: any) => setValue("deliveryDesc", e.detail.value)}
                 />
               </IonItem>
-              <Error errors={errors} name="sailDesc" />
+              <Error errors={errors} name="deliveryDesc" />
             </div>
             <div className="ion-padding-bottom">
               <IonItem className="ion-no-padding">
@@ -202,80 +204,42 @@ const AddEditDelivery: React.FC<SailingProps> = ({
                   Delivery Date
                 </IonLabel>
                 <IonInput
+                  disabled={!isEditAllowed}
                   id="date-input-2"
                   readonly
                   aria-invalid={
-                    errors && errors["displaySailDate"] ? "true" : "false"
+                    errors && errors["displayDeliveryDate"] ? "true" : "false"
                   }
-                  aria-describedby={`${"sailDate"}Error`}
-                  {...register("displaySailDate", {
+                  aria-describedby={`${"deliveryDate"}Error`}
+                  {...register("displayDeliveryDate", {
                     required: "Date is required.",
                   })}
                 />
-                <IonButton
-                  slot="end"
-                  fill="clear"
-                  className="calendar-btn"
-                  id="open-date-input-2"
-                >
-                  <IonIcon icon={calendarIcon} />
-                </IonButton>
-                <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                  <IonDatetime
-                    min={new Date().getUTCFullYear().toString()}
-                    max={"3500"}
-                    // displayFormat="DD/MM/YYYY"
-                    showDefaultButtons={true}
-                    presentation="date"
-                    {...register("sailDate")}
-                    onIonChange={handleDateChange}
-                  />
-                </IonPopover>
-                {/* <IonDatetime
-                  // displayFormat="DD/MM/YYYY"
-                  min={new Date().getUTCFullYear().toString()}
-                  max={"3500"}
-                  pres
-                  aria-invalid={errors && errors["sailDate"] ? "true" : "false"}
-                  aria-describedby={`${"sailDate"}Error`}
-                  {...register("sailDate", {
-                    required: "Date is required.",
-                  })}
-                  onIonChange={(e: any) =>
-                    setValue("sailDate", new Date(e.detail.value).toISOString())
-                  }
-                /> */}
+                {isEditAllowed && <>
+                  <IonButton
+                    slot="end"
+                    fill="clear"
+                    className="calendar-btn"
+                    id="open-date-input-2"
+                  >
+                    <IonIcon icon={calendarIcon} />
+                  </IonButton>
+                  <IonPopover trigger="open-date-input-2" showBackdrop={false}>
+                    <IonDatetime
+                      min={new Date().getUTCFullYear().toString()}
+                      max={todaysDate}
+                      // displayFormat="DD/MM/YYYY"
+                      showDefaultButtons={true}
+                      presentation="date"
+                      {...register("deliveryDate")}
+                      onIonChange={handleDateChange}
+                    />
+                  </IonPopover>
+                </>}
               </IonItem>
               <Error errors={errors} name="displaySailDate" />
             </div>
-            {/* {unitType && <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Sail Weight Unit
-                </IonLabel>
-                <IonSelect
-                  interface="popover"
-                  {...register("sailUnit")}
-                  onIonChange={(e: any) => setUnitType(e.target.value)}
-                >
-                  <IonSelectOption value="KG">KG</IonSelectOption>
-                  <IonSelectOption value="LB">LB</IonSelectOption>
-                </IonSelect>
-              </IonItem>
-              <Error errors={errors} name="sailUnit" />
-            </div>}
-            {!isNew
-              && container?.data?.palletCount > 0
-              && initialUnitType !== unitType &&
-              <IonText color="danger">Changing this field will change weight units for all pallets.
-                Weight fields will not be converted.
-              </IonText>
-            } */}
-            {/* {!isNew && container && (
+            {!isNew && delivery && (
               <div className="ion-padding-bottom">
                 <IonItem className="ion-no-padding" lines="none">
                   <IonLabel
@@ -283,26 +247,49 @@ const AddEditDelivery: React.FC<SailingProps> = ({
                     className="ion-no-margin"
                     position="stacked"
                   >
-                    <IonText> Number of Pallets </IonText>
+                    <IonText> Number of DropOffs </IonText>
                     <IonNote slot="start">
-                      {container?.data?.palletCount}
+                      {delivery?.data?.dropOffCount}
+                    </IonNote> 
+                  </IonLabel>
+                </IonItem>
+              </div>
+            )}
+            {!isNew && !isEditAllowed && delivery && (
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding" lines="none">
+                  <IonLabel
+                    color="medium"
+                    className="ion-no-margin"
+                    position="stacked"
+                  >
+                    <IonText> Driver Name</IonText>
+                    <IonNote slot="start">
+                      {delivery?.data?.driverName}
                     </IonNote>
                   </IonLabel>
                 </IonItem>
               </div>
-            )} */}
-
+            )}
             {error && error.status === -1 && (
               <ServerError errorMsg={error.message} />
             )}
-            <IonButton
+            {isEditAllowed && <IonButton
               type="submit"
               className="ion-margin-top"
               color="primary"
               expand="block"
             >
               {isNew ? "Save" : "Update"}
-            </IonButton>
+            </IonButton>}
+            {!isEditAllowed && <IonButton
+              type="submit"
+              className="ion-margin-top"
+              color="primary"
+              expand="block"
+            >
+              Return
+            </IonButton>}
           </IonList>
         </form>
       </IonContent>
