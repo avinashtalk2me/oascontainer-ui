@@ -19,7 +19,7 @@ ion-modal#example-modal h3 {
 ion-modal#example-modal ion-label {
   /* margin: 35px 0px;
   font-size: 30px !important; */
-  font-size: 2em !important;
+  font-size: 1.5em !important;
   margin: 1.5rem 0em;
 }
 

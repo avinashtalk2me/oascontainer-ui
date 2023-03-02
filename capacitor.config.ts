@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appId: 'com.oastrade.containermanifest',
   appName: 'OAS Container Manifest',
   webDir: 'build',
-  bundledWebRuntime: false,
+  bundledWebRuntime: false, 
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000,

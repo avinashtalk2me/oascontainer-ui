@@ -452,3 +452,10 @@ ion-refresher {
     box-shadow: 10014px 0 0 -5px;
   }
 }
+
+ion-checkbox {
+  padding: 0;
+  margin: 0;
+  margin-right: 0.5rem;
+  margin-bottom: 0.2rem;
+}

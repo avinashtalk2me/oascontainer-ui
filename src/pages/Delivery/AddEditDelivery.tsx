@@ -71,8 +71,16 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
       setValue("deliveryDate", delivery.data.deliveryDate);
       setValue(
         "displayDeliveryDate",
-        delivery.data.deliveryDate.split("T")[0].split("-").reverse().join("/")
+        formatDate(delivery.data.deliveryDate)
       );
+    } else {
+      if (isNew) {
+        setValue("deliveryDate", getDateinTZFormat());
+        setValue(
+          "displayDeliveryDate",
+          format(new Date(), "MM/dd/yyyy")
+        );
+      }
     }
   }, [delivery, isNew]);
 
@@ -90,6 +98,10 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
     // defaultValues
   });
 
+  const getDateinTZFormat = () => {
+    const date = new Date();
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${(date.getDate()).toString().padStart(2, "0")}T00:00:00.000Z`
+  }
 
   const resetForm = () => {
     setValue("deliveryDesc", "");
@@ -139,7 +151,7 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
   };
 
   const formatDate = (value: string) => {
-    return format(parseISO(value), "dd/MM/yyyy");
+    return format(parseISO(value), "MM/dd/yyyy");
   };
 
   const handleDateChange = (e: any) => {
@@ -250,7 +262,7 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
                     <IonText> Number of DropOffs </IonText>
                     <IonNote slot="start">
                       {delivery?.data?.dropOffCount}
-                    </IonNote> 
+                    </IonNote>
                   </IonLabel>
                 </IonItem>
               </div>

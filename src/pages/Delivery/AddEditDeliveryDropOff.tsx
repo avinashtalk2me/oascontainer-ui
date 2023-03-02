@@ -19,7 +19,8 @@ import {
   createAnimation,
   IonTitle,
   IonAccordion,
-  IonAccordionGroup
+  IonAccordionGroup,
+  IonCheckbox
 } from "@ionic/react";
 import {
   close as closeIcon,
@@ -61,6 +62,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   const [isHWBScanned, setIsHWBScanned] = useState<boolean>();
   const [isScanSuccess, setIsScanSuccess] = useState<boolean>(false);
   const [isModal, setIsModal] = useState<boolean>(false);
+  const [isCheckSelected, setIsCheckSelected] = useState<boolean>(false);
 
 
   const { isloading, isItemSaved, error,    //packageData, 
@@ -117,7 +119,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
 
 
   useEffect(() => {
-    if (!isHWBScanned && selectedHwbInfoForDropoff) {
+    if (selectedHwbInfoForDropoff) {
       if (selectedHwbInfoForDropoff?.isValidHwb === true) {
         setValue("totalPkgs", selectedHwbInfoForDropoff.hwbInfo.totalPackages);
         if (!isNew)
@@ -125,8 +127,15 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
             .sort((item: string, nextItem: string) => +item - +nextItem).join(","));
         setValue("shipperName", selectedHwbInfoForDropoff.hwbInfo.shipperName);
         setValue("shipperEmail", selectedHwbInfoForDropoff.hwbInfo.shipperEmail);
+        if(isHWBScanned) {
+          setIsScanSuccess(true)
+        }
       } else {
         // setValue("hwbNo", "");
+        if(isHWBScanned) {
+          setIsScanSuccess(true)
+          setValue("pkgNo", "");
+        }
         Dialog.alert({
           title: "Invalid HWB!!",
           message: `The HWB# ${watchHwbNo} is not available in our system. Please try another one.`,
@@ -219,29 +228,17 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   }, [watch]);
 
   useEffect(() => {
-    if (isValidPackagePkgNo === true && isHWBScanned) {
+    if (isHWBScanned && scanResult.length > 0) {
       setValue("hwbNo", scanResult[0]);
-      setValue("totalPkgs", scanResult[1]);
       setValue("pkgNo", scanResult[2]);
-      setValue("shipperName", scanResult[3]);
-      setValue("shipperEmail", scanResult[5]);
-      setValue("isQR", true);
-      setIsScanSuccess(true);
+      //     setValue("totalPkgs", scanResult[1]);
+      
+      //     setValue("shipperName", scanResult[3]);
+      //     setValue("shipperEmail", scanResult[5]);
+      //     setIsScanSuccess(true);
       stopScan();
-    } else if (isValidPackagePkgNo === false && isHWBScanned) {
-      Dialog.alert({
-        title: "Duplicate Package",
-        message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
-      });
-
-      if (navigator.vibrate) {
-        // vibration API supported
-        navigator.vibrate(1000);
-        stopScan();
-        // startScan();
-      }
     }
-  }, [setValue, isValidPackagePkgNo, scanResult, isHWBScanned])
+  }, [setValue, scanResult, isHWBScanned])
 
   const closePage = () => {
     dispatch({ type: "RESET_FORM" });
@@ -346,6 +343,10 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   const handleAddRemoveItem = (selectedItem: string) => {
     const pkgList = watchPkgNo;
     let pkgArr: string[] = [];
+
+    if(isCheckSelected) {
+      setIsCheckSelected(false)
+    }
     if (pkgList) {
       pkgArr = pkgList.split(",")
       const itemExists = pkgArr.some(item => item === selectedItem.trim());
@@ -386,7 +387,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   // }
 
   const itemIterator = () => {
-    let filterDropOffs = selectedHwbInfoForDropoff.hwbInfo.dropoffPkgs ? selectedHwbInfoForDropoff.hwbInfo.availablePkgs.split(",").filter((item: string) => { return selectedHwbInfoForDropoff.hwbInfo.dropoffPkgs.split(",").indexOf(item.trim()) === -1 }): selectedHwbInfoForDropoff.hwbInfo.availablePkgs.split(",");
+    let filterDropOffs = selectedHwbInfoForDropoff.hwbInfo.dropoffPkgs ? selectedHwbInfoForDropoff.hwbInfo.availablePkgs.split(",").filter((item: string) => { return selectedHwbInfoForDropoff.hwbInfo.dropoffPkgs.split(",").indexOf(item.trim()) === -1 }) : selectedHwbInfoForDropoff.hwbInfo.availablePkgs.split(",");
 
     if (selectedHwbInfoForDropoff.hwbInfo.currentDropPkgOffNos && !isNew) {
       filterDropOffs = selectedHwbInfoForDropoff.hwbInfo.dropoffPkgs.split(",").filter((item: string) => { return selectedHwbInfoForDropoff.hwbInfo.currentDropPkgOffNos.split(",").indexOf(item) === -1 })
@@ -396,12 +397,30 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     return filterDropOffs;
   }
 
+  const handlePackageSelected = (e: any) => {
+    let pkgArr: string[] = [];
+
+    if (e.target.checked) {
+      const pkgList = itemIterator();
+      pkgList.forEach((element: string) => {
+        pkgArr.push(element)
+      });
+    } else {
+      pkgArr = [];
+    }
+    setIsCheckSelected(e.target.checked)
+    setValue("pkgNo", pkgArr.sort((item: string, nextItem: string) => +item - +nextItem).join(","));
+  }
+
   const availablePackageList = (
     <>
       {/* <IonItem class="ion-no-padding"> */}
       <IonText class="packagelist-header">List of available Package No.(s)
       </IonText>
-      {/* </IonItem> */}
+      <IonItem lines="none" className="ion-no-padding">
+        <IonCheckbox slot="start"  checked={isCheckSelected} onClick={handlePackageSelected}></IonCheckbox>
+        <IonLabel>Select All Packages?</IonLabel>
+      </IonItem>
       <IonList lines="none" class="ion-no-padding packageitem-list" >
         {selectedHwbInfoForDropoff && selectedHwbInfoForDropoff.hwbInfo ?
           itemIterator()
