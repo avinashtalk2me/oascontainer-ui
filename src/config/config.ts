@@ -43,6 +43,7 @@ const envDetails: any = {
         DELETE_DROPOFF: "dropOff/{packageId}",
         GET_DROPOFF_PKG_NO: "package/getPkgNo/{palletId}",
         GET_DROPOFF_HWBNO_INFO: "dropOff/getSelectedHWBInfoForDropOff/{locationId}/{hwbNo}",
+        GET_ROPOFF_PACKAGE_PKG_NO: "dropOff/getSelectedPackagePkgNosForDropOff/{locationId}",
     }
 }
 

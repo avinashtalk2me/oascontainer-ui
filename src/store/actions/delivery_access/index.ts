@@ -19,6 +19,7 @@ export {
   deleteDropOffById,
   getDropOffsByLocation,
   getSelectedHWBInfoForDropoff,
+  getSelectedScanedHWBInfoForDropoff,
   // getSelectedPackageById,
   insertDropOff,
   updateDropOff

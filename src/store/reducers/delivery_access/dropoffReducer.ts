@@ -20,7 +20,10 @@ import {
     // GET_PACKAGE_PKG_NO_ERROR,
     GET_SELECTED_HWB_INFO_FOR_DROPOFF_REQUEST,
     GET_SELECTED_HWB_INFO_FOR_DROPOFF_SUCCESS,
-    GET_SELECTED_HWB_INFO_FOR_DROPOFF_ERROR
+    GET_SELECTED_HWB_INFO_FOR_DROPOFF_ERROR,
+    GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_REQUEST,
+    GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_SUCCESS,
+    GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_ERROR
 } from '../../types'
 
 const initialDropOffState = {
@@ -106,26 +109,26 @@ const dropOffReducer = (state = initialDropOffState, action: ActionType) => {
         //         isloading: false,
         //         error: payload
         //     }
-        // case GET_PACKAGE_PKG_NO_REQUEST:
-        //     return {
-        //         ...state,
-        //         isloading: true,
-        //         error: undefined,
-        //         isValidPackagePkgNo: undefined
-        //     }
-        // case GET_PACKAGE_PKG_NO_SUCCESS:
-        //     return {
-        //         ...state,
-        //         isloading: false,
-        //         isValidPackagePkgNo: payload
-        //     }
-        // case GET_PACKAGE_PKG_NO_ERROR:
-        //     return {
-        //         ...state,
-        //         isloading: false,
-        //         isValidPackagePkgNo: undefined,
-        //         error: payload
-        //     }
+        case GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_REQUEST:
+            return {
+                ...state,
+                isloading: true,
+                error: undefined,
+                isValidPackagePkgNo: undefined
+            }
+        case GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_SUCCESS:
+            return {
+                ...state,
+                isloading: false,
+                isValidPackagePkgNo: payload
+            }
+        case GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_ERROR:
+            return {
+                ...state,
+                isloading: false,
+                isValidPackagePkgNo: undefined,
+                error: payload
+            }
         case GET_SELECTED_HWB_INFO_FOR_DROPOFF_REQUEST:
             return {
                 ...state,

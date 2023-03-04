@@ -20,7 +20,10 @@ import {
   // GET_PACKAGE_PKG_NO_ERROR,
   GET_SELECTED_HWB_INFO_FOR_DROPOFF_REQUEST,
   GET_SELECTED_HWB_INFO_FOR_DROPOFF_SUCCESS,
-  GET_SELECTED_HWB_INFO_FOR_DROPOFF_ERROR
+  GET_SELECTED_HWB_INFO_FOR_DROPOFF_ERROR,
+  GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_REQUEST,
+  GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_SUCCESS,
+  GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_ERROR
 } from "../../../types";
 
 import {
@@ -30,7 +33,8 @@ import {
   updateDropOffByIdAPI,
   deleteDropOffByIdAPI,
   // getSelectedPackagePkgNoAPI,
-  getSelectedHWBInfoForDropOffAPI
+  getSelectedHWBInfoForDropOffAPI,
+  getSelectedScanedHWBInfoForDropoffAPI
 } from "../../../../api/fetch";
 
 export const getDropOffsByLocation =
@@ -61,7 +65,7 @@ export const insertDropOff =
         dispatch({ type: ADD_DROPOFF_ERROR, payload: error.response.data });
       }
     }
-  }; 
+  };
 
 // export const getSelectedPackageById =
 //   (selectedDropOffId: string, selectedLocatioId: string) =>
@@ -93,7 +97,7 @@ export const updateDropOff =
         dispatch({ type: SERVER_ERROR, payload: { status: 500 } });
       } else {
         dispatch({ type: UPDATE_DROPOFF_ERROR, payload: error.response.data });
-      } 
+      }
     }
   };
 
@@ -134,7 +138,7 @@ export const deleteDropOffById =
 //   };
 
 export const getSelectedHWBInfoForDropoff =
-  (selectedLocationId:string, hwbNo: string) => async (dispatch: any) => {
+  (selectedLocationId: string, hwbNo: string) => async (dispatch: any) => {
     dispatch({ type: GET_SELECTED_HWB_INFO_FOR_DROPOFF_REQUEST });
     try {
       const response = await getSelectedHWBInfoForDropOffAPI(selectedLocationId, hwbNo);
@@ -145,6 +149,25 @@ export const getSelectedHWBInfoForDropoff =
       } else {
         dispatch({
           type: GET_SELECTED_HWB_INFO_FOR_DROPOFF_ERROR,
+          payload: error.response.data,
+        });
+      }
+    }
+  };
+
+
+export const getSelectedScanedHWBInfoForDropoff =
+  (selectedLocationId: string, data: any) => async (dispatch: any) => {
+    dispatch({ type: GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_REQUEST });
+    try {
+      const response = await getSelectedScanedHWBInfoForDropoffAPI(selectedLocationId, data);
+      dispatch({ type: GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_SUCCESS, payload: { ...response.data.data } });
+    } catch (error: any) {
+      if (error.response === undefined) {
+        dispatch({ type: SERVER_ERROR, payload: { status: 500 } });
+      } else {
+        dispatch({
+          type: GET_SELECTED_SCANNED_HWB_INFO_FOR_DROPOFF_ERROR,
           payload: error.response.data,
         });
       }

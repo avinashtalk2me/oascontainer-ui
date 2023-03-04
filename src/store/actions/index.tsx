@@ -11,5 +11,6 @@ export {
 export {
   deleteDeliveryById, getDeliveries, getSelectedDeliveryById, insertDelivery, updateDeliveryById,
   deleteLocationById, getSelectedLocationById, insertLocation, getLocationsByDeliveryId, updateLocation,
-  deleteDropOffById, getDropOffsByLocation, getSelectedHWBInfoForDropoff,insertDropOff, updateDropOff
+  deleteDropOffById, getDropOffsByLocation, getSelectedHWBInfoForDropoff,insertDropOff, updateDropOff,
+  getSelectedScanedHWBInfoForDropoff
 } from "./delivery_access"

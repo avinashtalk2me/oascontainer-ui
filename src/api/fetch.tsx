@@ -44,7 +44,8 @@ const {
   // GET_DROPOFF,
   UPDATE_DROPOFF,
   DELETE_DROPOFF,
-  GET_DROPOFF_HWBNO_INFO
+  GET_DROPOFF_HWBNO_INFO,
+  GET_ROPOFF_PACKAGE_PKG_NO
 
 } = config;
 
@@ -337,4 +338,10 @@ export const getSelectedHWBInfoForDropOffAPI = (selectedLocationId:string, hwbNo
   url = url.replace("{hwbNo}", hwbNo);
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "GET", undefined);
+};
+
+export const getSelectedScanedHWBInfoForDropoffAPI = (selectedLocationId:string, data: any) => {
+  let url: string = `${process.env.REACT_APP_API_URL}${GET_ROPOFF_PACKAGE_PKG_NO}`;
+  url = url.replace("{locationId}", selectedLocationId);
+  return serviceRequest(url, "POST", data);
 };
