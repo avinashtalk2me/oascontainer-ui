@@ -14,6 +14,9 @@ import {
     DELETE_LOCATION_REQUEST,
     DELETE_LOCATION_SUCCESS,
     DELETE_LOCATION_ERROR,
+    SEND_EMAIL_LOCATION_REQUEST,
+    SEND_EMAIL_LOCATION_SUCCESS,
+    SEND_EMAIL_LOCATION_ERROR,
     SERVER_ERROR
 } from '../../types'
 
@@ -25,6 +28,7 @@ const initialLocationState = {
     error: undefined,
     isItemSaved: false,
     isItemDeleted: false,
+    isEmailSentSuccess: undefined
 }
 
 interface ActionType {
@@ -52,6 +56,7 @@ const locationReducer = (state = initialLocationState, action: ActionType) => {
                 isItemDeleted: false,
                 error: undefined,
                 location: {},
+                isEmailSentSuccess: undefined
             }
         case GET_LOCATIONS_REQUEST:
             return {
@@ -120,6 +125,24 @@ const locationReducer = (state = initialLocationState, action: ActionType) => {
                 ...state,
                 isloading: false,
                 error: payload
+            }
+        case SEND_EMAIL_LOCATION_REQUEST:
+            return {
+                ...state,
+                isloading: true,
+                isEmailSentSuccess: undefined
+            }
+        case SEND_EMAIL_LOCATION_SUCCESS:
+            return {
+                ...state,
+                isloading: false,
+                isEmailSentSuccess: payload
+            }
+        case SEND_EMAIL_LOCATION_ERROR:
+            return {
+                ...state,
+                isloading: false,
+                isEmailSentSuccess: false
             }
         default:
             return state

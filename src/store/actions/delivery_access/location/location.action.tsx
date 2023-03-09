@@ -14,6 +14,9 @@ import {
   DELETE_LOCATION_REQUEST,
   DELETE_LOCATION_SUCCESS,
   DELETE_LOCATION_ERROR,
+  SEND_EMAIL_LOCATION_REQUEST,
+  SEND_EMAIL_LOCATION_SUCCESS,
+  SEND_EMAIL_LOCATION_ERROR,
   SERVER_ERROR
 } from "../../../types";
 
@@ -22,7 +25,8 @@ import {
   insertLocationAPI,
   getSelectedLocationByAPI,
   updateLocationAPI,
-  deleteLocationByIdAPI
+  deleteLocationByIdAPI,
+  sendEmailLocationByIdAPI
 } from "../../../../api/fetch";
 
 export const getLocationsByDeliveryId = (selectedDeliveryId: string) => async (dispatch: any) => {
@@ -95,6 +99,26 @@ export const deleteLocationById = (selectedLocationId: string) => async (dispatc
     } else {
       dispatch({
         type: DELETE_LOCATION_ERROR,
+        payload: error.response.data,
+      });
+    }
+  }
+};
+
+
+export const sendEmailForLocationWithPackages = (selectedDeliveryId: string, selectedLocationId: string) => async (dispatch: any) => {
+  dispatch({ type: SEND_EMAIL_LOCATION_REQUEST });
+  try {
+    const response = await sendEmailLocationByIdAPI(selectedLocationId);
+    dispatch({ type: SEND_EMAIL_LOCATION_SUCCESS, payload: response.data });
+
+    dispatch(getLocationsByDeliveryId(selectedDeliveryId));
+  } catch (error: any) {
+    if (error.response === undefined) {
+      dispatch({ type: SERVER_ERROR, payload: { status: 500 } });
+    } else {
+      dispatch({
+        type: SEND_EMAIL_LOCATION_ERROR,
         payload: error.response.data,
       });
     }

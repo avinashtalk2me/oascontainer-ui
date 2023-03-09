@@ -11,7 +11,8 @@ export {
   getLocationsByDeliveryId,
   getSelectedLocationById,
   insertLocation,
-  updateLocation
+  updateLocation, 
+  sendEmailForLocationWithPackages
 } from "./location/location.action"
 
 

@@ -181,7 +181,7 @@ const Pallet: React.FC<PalletProps> = ({
                   side="end"
                   onIonSwipe={(e) => handleDeleteItem(e, pallet.palletId)}
                 >
-                  <IonItemOption color="danger">
+                  <IonItemOption color="danger"  onClick={(e) => handleDeleteItem(e, pallet.palletId)}>
                     <IonIcon slot="icon-only" icon={removeIcon} />
                   </IonItemOption>
                 </IonItemOptions>

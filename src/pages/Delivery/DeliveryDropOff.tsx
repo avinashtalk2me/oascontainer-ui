@@ -39,7 +39,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
   const { deliveryId, locationId }: any = useParams();
-  
+
   const { isloading, selectedLocationId, error, dropOffs, isItemDeleted } =
     useSelector((state: any) => state.dropOff);
 
@@ -47,9 +47,9 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
     history.push(`/delivery-container/dropoffpackages/add/${deliveryId}/${locationId}`);
   };
 
-  const handleEditPackage = (packge: any) => {
+  const handleEditPackage = (packageItem: any) => {
     history.push(
-      `/delivery-container/dropoffpackages/edit/${locationId}/${packge.packageId}/${packge.hwbNo}`
+      `/delivery-container/dropoffpackages/edit/${locationId}/${packageItem.packageId}/${packageItem.hwbNo}`
     );
   };
 
@@ -107,7 +107,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
       <NoItemFound />
     ) : (
       <>
-        {(dropOffs.data || []).map((packge: any, index: number) => (
+        {(dropOffs.data || []).map((packageItem: any, index: number) => (
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
               <IonItem className="ion-no-padding item-box">
@@ -117,26 +117,26 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
                     color="secondary"
                     style={{ fontSize: "20px", fontWeight: "normal" }}
                   >
-                    {packge.hwbNo}
+                    {packageItem.hwbNo}
                   </h3>
                   <span style={{ fontSize: "14px" }}>
-                    Package Count: <b>{packge.packageCount}</b>
+                    Package Count: <b>{packageItem.packageCount}</b>
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">
                   <IonIcon
                     icon={viewIcon}
                     color="medium"
-                    onClick={() => handleEditPackage(packge)}
+                    onClick={() => handleEditPackage(packageItem)}
                     className="ion-padding-horizontal"
                   />
                 </IonButtons>
               </IonItem>
               <IonItemOptions
                 side="end"
-                onIonSwipe={(e) => handleDeleteItem(e, packge.packageId)}
+                onIonSwipe={(e) => handleDeleteItem(e, packageItem.packageId)}
               >
-                <IonItemOption color="danger">
+                <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, packageItem.packageId)}>
                   <IonIcon slot="icon-only" icon={removeIcon} />
                 </IonItemOption>
               </IonItemOptions>

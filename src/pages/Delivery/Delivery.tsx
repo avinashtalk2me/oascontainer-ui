@@ -143,7 +143,7 @@ const Delivery: React.FC<DeliveryProps> = ({
                     Delivery Date: <b>{delivery.deliveryDate} </b>
                   </span>
                   <br />
-                  {!isEditAllowed && <>
+                  {delivery.driverName && <>
                     <span style={{ fontSize: "14px" }}>
                       Driver: <b>{delivery.driverName}</b>
                     </span>
@@ -177,7 +177,7 @@ const Delivery: React.FC<DeliveryProps> = ({
                 side="end"
                 onIonSwipe={(e) => handleDeleteItem(e, delivery.deliveryId)}
               >
-                <IonItemOption color="danger">
+                <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, delivery.deliveryId)}>
                   <IonIcon slot="icon-only" icon={removeIcon} />
                 </IonItemOption>
               </IonItemOptions>}

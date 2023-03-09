@@ -12,5 +12,5 @@ export {
   deleteDeliveryById, getDeliveries, getSelectedDeliveryById, insertDelivery, updateDeliveryById,
   deleteLocationById, getSelectedLocationById, insertLocation, getLocationsByDeliveryId, updateLocation,
   deleteDropOffById, getDropOffsByLocation, getSelectedHWBInfoForDropoff,insertDropOff, updateDropOff,
-  getSelectedScanedHWBInfoForDropoff
+  getSelectedScanedHWBInfoForDropoff, sendEmailForLocationWithPackages
 } from "./delivery_access"

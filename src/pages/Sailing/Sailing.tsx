@@ -176,7 +176,7 @@ const Sailing: React.FC<SailingProps> = ({
                 side="end"
                 onIonSwipe={(e) => handleDeleteItem(e, container.sailId)}
               >
-                <IonItemOption color="danger">
+                <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, container.sailId)}>
                   <IonIcon slot="icon-only" icon={removeIcon} />
                 </IonItemOption>
               </IonItemOptions>}

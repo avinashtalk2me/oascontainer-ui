@@ -38,12 +38,12 @@ import { format, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 export interface LocationProps {
   isNew: boolean;
-  isEditAllowed: boolean; 
+  isEditAllowed: boolean;
 }
 
 const AddEditLocation: React.FC<LocationProps> = ({
   isNew,
-  isEditAllowed 
+  isEditAllowed
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -56,7 +56,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const dateTime = (isNew: boolean, locationDate: string) => {
- 
+
     let date;
     // Create a date object from a UTC date string
     if (isNew)
@@ -68,7 +68,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
 
     // Create a formatted string from the zoned time
     return format(zonedTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: userTimeZone });
-  } 
+  }
   useEffect(() => {
     if (!isNew) {
       dispatch(getSelectedLocationById(deliveryId, locationId));
@@ -79,17 +79,17 @@ const AddEditLocation: React.FC<LocationProps> = ({
     if (isNew) {
       setValue("locationDesc", "");
       setValue("locationTime", dateTime(isNew, ""));
-      setValue("displayLocationTime", new Date(
-        dateTime(isNew, "")).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setValue("displayLocationTime", (new Date(
+        dateTime(isNew, "")).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })).toUpperCase());
     }
   }, [isNew]);
 
   useEffect(() => {
     if (!isNew && location && location?.status === 0) {
       setValue("locationDesc", location.data.locationDesc);
-      setValue("locationTime", dateTime(isNew,location.data.locationTime)
-      ); 
-      const value = new Date(location.data.locationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      setValue("locationTime", dateTime(isNew, location.data.locationTime)
+      );
+      const value = new Date(location.data.locationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()
       setValue("displayLocationTime", value);
     }
   }, [location, isNew]);
@@ -158,11 +158,14 @@ const AddEditLocation: React.FC<LocationProps> = ({
     } else {
       dispatch(updateLocation(locationId, data));
     }
-  }; 
-  
+  };
+
   const handleTimeChange = (e: any) => {
+    if (!e.detail.value)
+      return
+    const time = new Date(e.detail.value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
     setValue("locationTime", e.detail.value);
-    setValue("displayLocationTime", new Date(e.detail.value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })); 
+    setValue("displayLocationTime", time);
   };
 
   const getDropStatus = (dropStatus: number) => {

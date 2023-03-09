@@ -580,6 +580,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                       message: "Minimun 3 characters is required."
                     }
                   })}
+                  onIonInput={(e: any) => setValue("hwbNo", e.target.value.toUpperCase())}
                   onIonChange={debouncedChangeHandler}
                 />
                 {isEditAllowed && <>

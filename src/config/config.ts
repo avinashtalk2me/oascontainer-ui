@@ -36,6 +36,7 @@ const envDetails: any = {
         GET_LOCATION: "location/{deliveryId}/{locationId}",
         UPDATE_LOCATION: "location/{locationId}",
         DELETE_LOCATION: "location/{locationId}",
+        SEND_EMAIL_FOR_LOCATION: "email/location/{locationId}",
         GET_DROPOFFS: "dropOff/{locationId}",
         ADD_DROPOFF: "dropOff/{locationId}/{deliveryId}",
         // GET_DROPOFF: "dropoff/{locationId}/{dropoffId}",

@@ -46,9 +46,9 @@ const Package: React.FC<PackageProps> = ({
     history.push(`/sailing-container/sailing/package/add/${selectedPalletId}`);
   };
 
-  const handleEditPackage = (packge: any) => {
+  const handleEditPackage = (packageItem: any) => {
     history.push(
-      `/sailing-container/sailing/package/edit/${selectedPalletId}/${packge.packageId}/${packge.hwbNo}`
+      `/sailing-container/sailing/package/edit/${selectedPalletId}/${packageItem.packageId}/${packageItem.hwbNo}`
     );
   };
 
@@ -108,7 +108,7 @@ const Package: React.FC<PackageProps> = ({
       <NoItemFound />
     ) : (
       <>
-        {(packages.data || []).map((packge: any, index: number) => (
+        {(packages.data || []).map((packageItem: any, index: number) => (
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
               <IonItem className="ion-no-padding item-box">
@@ -118,17 +118,17 @@ const Package: React.FC<PackageProps> = ({
                     color="secondary"
                     style={{ fontSize: "20px", fontWeight: "normal" }}
                   >
-                    {packge.hwbNo}
+                    {packageItem.hwbNo}
                   </h3>
                   <span style={{ fontSize: "14px" }}>
-                    Package Count: <b>{packge.packageCount}</b>
+                    Package Count: <b>{packageItem.packageCount}</b>
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">
                   <IonIcon
                     icon={viewIcon}
                     color="medium"
-                    onClick={() => handleEditPackage(packge)}
+                    onClick={() => handleEditPackage(packageItem)}
                     className="ion-padding-horizontal"
                   />
                 </IonButtons>
@@ -136,9 +136,9 @@ const Package: React.FC<PackageProps> = ({
               {isEditAllowed &&
                 <IonItemOptions
                   side="end"
-                  onIonSwipe={(e) => handleDeleteItem(e, packge.packageId)}
+                  onIonSwipe={(e) => handleDeleteItem(e, packageItem.packageId)}
                 >
-                  <IonItemOption color="danger">
+                  <IonItemOption color="danger"  onClick={(e) => handleDeleteItem(e, packageItem.packageId)}>
                     <IonIcon slot="icon-only" icon={removeIcon} />
                   </IonItemOption>
                 </IonItemOptions>

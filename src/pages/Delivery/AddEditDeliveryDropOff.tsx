@@ -102,21 +102,12 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   useEffect(() => {
     if (!isNew) {
       setValue("hwbNo", hwbNo);
-      // setValue("packageCount", "0");
-      // dispatch(getSelectedPackageById(palletId, packageId));
     }
 
     if (isNew) {
       setIsHWBScanned(true)
     }
   }, [isNew]);
-
-  // useEffect(() => {
-  //   if (!isNew && packageData && packageData?.status === 0) {
-  //     setValue("hwbNo", packageData.data.hwbNo);
-  //     setValue("packageCount", packageData.data.packageCount);
-  //   }
-  // }, [packageData, isNew]);
 
 
   useEffect(() => {
@@ -226,9 +217,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
 
   const onSubmit = (data: any) => {
     let newDataObj = data;
-    // if (!isHWBScanned && selectedHwbInfo.isExistingHwb) {
-
-    // }
     if (!isEditAllowed) {
       closePage();
       return;
@@ -251,18 +239,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     return () => subscription.unsubscribe();
   }, [watch]);
 
-  // useEffect(() => {
-  //   if (isHWBScanned && scanResult.length > 0) {
-  //     setValue("hwbNo", scanResult[0]);
-  //     setValue("pkgNo", scanResult[2]);
-  //     //     setValue("totalPkgs", scanResult[1]);
-
-  //     //     setValue("shipperName", scanResult[3]);
-  //     //     setValue("shipperEmail", scanResult[5]);
-  //     //     setIsScanSuccess(true);
-  //     stopScan();
-  //   }
-  // }, [setValue, scanResult, isHWBScanned])
 
   const closePage = () => {
     dispatch({ type: "RESET_FORM" });
@@ -310,12 +286,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     checkPermission();
     return () => { };
   }, []);
-
-  // if (error && error.status === -100) {
-  //   // return (
-  //   //   <SessionExpired headerText={isNew ? "Add Package" : "Edit Package"} />
-  //   // );
-  // }
 
   const stopScan = () => {
     BarcodeScanner.showBackground();
@@ -397,22 +367,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     }
     return null
   }
-
-  // const handleAddPackageNoChange = (event: any) => {
-  //   setValue("newPackageNo", event.detail.value);
-  //   setPackageToastMsg("")
-  // }
-
-  // const handleRemovePackageNo = (itemToRemove: string) => {
-  //   const pkgList = watchPkgNo;
-  //   let pkgArr: string[] = pkgList.split(",");
-  //   if (pkgArr.length === 1) {
-  //     setValue("pkgNo", "");
-  //   } else {
-  //     pkgArr = pkgArr.filter(item => item !== itemToRemove);
-  //     setValue("pkgNo", pkgArr.join(","));
-  //   }
-  // }
 
   const itemIterator = () => {
     let filterDropOffs = selectedHwbInfoForDropoff.hwbInfo.dropoffPkgs ? selectedHwbInfoForDropoff.hwbInfo.availablePkgs.split(",").filter((item: string) => { return selectedHwbInfoForDropoff.hwbInfo.dropoffPkgs.split(",").indexOf(item.trim()) === -1 }) : selectedHwbInfoForDropoff.hwbInfo.availablePkgs.split(",");
@@ -589,6 +543,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                       message: "Minimun 3 characters is required."
                     }
                   })}
+                  onIonInput={(e: any) => setValue("hwbNo", e.target.value.toUpperCase())}
                   onIonChange={debouncedChangeHandler}
                 />
                 {isEditAllowed && <>
@@ -675,65 +630,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
               {hwbAccordion}
             </>}
 
-            {/* <div
-              className="ion-padding-bottom ion-text-center"
-              hidden={!!hideBg}
-            >
-              <IonText color="medium" className="ion-no-padding">
-                OR
-              </IonText>
-            </div>
-            <div className="ion-padding-bottom ion-text-center">
-              <IonButton
-                color="medium"
-                className="start-scan-button"
-                hidden={!!hideBg}
-                onClick={startScan}
-              >
-                Scan HWB #
-              </IonButton>
-              
-            </div> */}
-
-            {/* {!isNew && (
-              <div className="ion-padding-bottom" hidden={!!hideBg}>
-                <IonItem className="ion-no-padding" lines="none">
-                  <IonLabel
-                    color="medium"
-                    className="form-input"
-                    position="stacked"
-                  >
-                    <IonText> Number of Packages </IonText>
-                    <IonNote slot="start" {...register("packageCount")}>
-                      {watchPackageCount}
-                    </IonNote>
-                  </IonLabel>
-                  <IonButtons
-                    slot="end"
-                    color="primary"
-                    className="ion-no-padding ion-no-margin"
-                    style={{ marginTop: "20px" }}
-                  >
-                    <IonIcon
-                      icon={removeItem}
-                      onClick={handleDecrementCount}
-                      color="primary"
-                      slot="icon-only"
-                    />
-                    <span> &nbsp; &nbsp; </span>
-                    <IonIcon
-                      icon={addItem}
-                      onClick={handleIncrementCount}
-                      color="primary"
-                      slot="icon-only"
-                    />
-                  </IonButtons>
-                </IonItem>
-
-                <Error errors={errors} name="packageCount" />
-              </div>
-            )} */}
-
             {error && error.status === -1 && (
               <ServerError errorMsg={error.message} />
             )}
@@ -807,44 +703,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         </IonHeader>
         <IonContent className={`ion-padding`}>
           <div className="ion-padding-bottom">
-            {/* <IonItem className="ion-no-padding" lines="none">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Enter Package No.
-                </IonLabel>
-                <IonInput
-                  type="number"
-                  maxlength={4}
-                  aria-invalid={errors && errors["newPackageNo"] ? "true" : "false"}
-                  aria-describedby={`${"newPackageNo"}Error`}
-                  {...register("newPackageNo")}
-                  onIonChange={handleAddPackageNoChange}
-                />
-              </IonItem>
-              <IonButton
-                slot="end"
-                type="submit"
-                className="ion-margin-top modal-addBtn"
-                color="primary"
-                // expand="block"
-                disabled={!watchNewPackageNo}
-                onClick={handleAddNewPackageNo}
-              >
-                Add
-              </IonButton>
-            </IonItem> */}
-            {/* <IonText color="danger" className="ion-no-padding">
-              <small>
-                <span role="alert">
-                  {packageToastMsg}
-                </span>
-              </small>
-            </IonText> */}
-            {/* {!isHWBScanned && packageList} */}
             {availablePackageList}
           </div>
         </IonContent>

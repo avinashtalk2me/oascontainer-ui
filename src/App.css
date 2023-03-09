@@ -16,6 +16,7 @@ ion-text {
   border-radius: 50%;
   display: inline-block;
   margin-right: 0.75em;
+  margin-top: -1.75em;
 }
 
 .red {
@@ -458,4 +459,10 @@ ion-checkbox {
   margin: 0;
   margin-right: 0.5rem;
   margin-bottom: 0.2rem;
+}
+
+.ion-alert {
+  position: absolute;
+  bottom: 0.6rem;
+  font-size: 1.2rem;
 }

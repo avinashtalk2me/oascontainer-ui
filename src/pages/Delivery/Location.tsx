@@ -17,8 +17,10 @@ import {
   IonRefresher,
   IonRefresherContent,
   RefresherEventDetail,
+  IonLoading,
+  useIonAlert 
 } from "@ionic/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Redirect } from "react-router";
 import { NavButton } from "../../components/NavButton";
@@ -28,10 +30,13 @@ import {
   chevronForward as forwardIcon,
   eye as viewIcon,
   remove as removeIcon,
+  mail as mailIcon,
+  alertCircle as alertIcon
 } from "ionicons/icons";
-import { getLocationsByDeliveryId, deleteLocationById } from "../../store/actions";
+import { getLocationsByDeliveryId, deleteLocationById, sendEmailForLocationWithPackages } from "../../store/actions";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
+import { is } from "date-fns/locale";
 
 export interface LocationProps {
   isEditAllowed: boolean;
@@ -43,8 +48,10 @@ const Location: React.FC<LocationProps> = ({
   const history = useHistory();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
+  const [isEmailClicked, setIsEmailClicked] = useState<boolean>(false);
+  const [presentAlert] = useIonAlert();
 
-  const { isloading, selectedDeliveryId, error, locations, isItemDeleted } =
+  const { isloading, selectedDeliveryId, error, locations, isItemDeleted, isEmailSentSuccess } =
     useSelector((state: any) => state.location);
 
   const handleAddLocation = () => {
@@ -77,6 +84,11 @@ const Location: React.FC<LocationProps> = ({
   }, [dispatch, isItemDeleted, selectedDeliveryId]);
 
 
+  useEffect(() => {
+    if (isEmailSentSuccess && Object.keys(isEmailSentSuccess).length > 0) {
+      setIsEmailClicked(false);
+    }
+  }, [isEmailSentSuccess])
 
   const handleNavigatePackage = (locationId: string) => {
     dispatch({ type: "SELECTED_LOCATIONID", payload: locationId });
@@ -113,6 +125,33 @@ const Location: React.FC<LocationProps> = ({
     showConfirm();
   };
 
+  const openExceptionModal = (message:string) => {
+    presentAlert({
+      header: 'Email Exception',
+      message: message,
+      buttons: ['OK'],
+    })
+  }
+
+  const handleSendEmail = (event: any, locationId: string) => {
+    event.preventDefault();
+    setIsEmailClicked(true);
+    dispatch(sendEmailForLocationWithPackages(selectedDeliveryId, locationId));
+    // const showConfirm = async () => {
+    //   const { value } = await Dialog.confirm({
+    //     title: "Confirm",
+    //     message: `Are you sure you'd like to delete the item?`,
+    //   });
+
+    //   if (value) {
+    //     dispatch(sendEmailForLocationWithPackages(selectedDeliveryId, locationId));
+    //   }
+    //   componentRef.current?.closeOpened();
+    // };
+    // showConfirm();
+  };
+
+
   const LocationList: JSX.Element =
     locations && locations?.data?.length === 0 ? (
       <NoItemFound />
@@ -122,8 +161,16 @@ const Location: React.FC<LocationProps> = ({
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
               <IonItem className="ion-no-padding item-box">
-                <div className={`roundDiv ${location.dropStatus === 0 ? "red" :
-                  location.dropStatus === 1 ? "yellow" : "green"}`}>
+                <div style={{display: 'flex', flexDirection: 'column'}}>
+                  <div className={`roundDiv ${location.dropStatus === 0 ? "red" :
+                    location.dropStatus === 1 ? "yellow" : "green"}`}>
+                  </div>
+                  {location.dropDeliveryFailureReason &&  <IonIcon
+                    icon={alertIcon}
+                    color="danger"
+                    onClick={() => openExceptionModal(location.dropDeliveryFailureReason)}
+                    className="ion-alert"
+                  /> }
                 </div>
                 <IonLabel
                   color="medium"
@@ -153,6 +200,12 @@ const Location: React.FC<LocationProps> = ({
                   </span>
                 </IonLabel>
                 <IonButtons>
+                  {(location.dropStatus === 1 || location.dropStatus === 2) && <IonIcon
+                    icon={mailIcon}
+                    color="medium"
+                    onClick={(e) => handleSendEmail(e, location.locationId)}
+                    className="ion-padding-horizontal"
+                  />}
                   <IonIcon
                     icon={viewIcon}
                     color="medium"
@@ -171,7 +224,7 @@ const Location: React.FC<LocationProps> = ({
                   side="end"
                   onIonSwipe={(e) => handleDeleteItem(e, location.locationId)}
                 >
-                  <IonItemOption color="danger">
+                  <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, location.locationId)}>
                     <IonIcon slot="icon-only" icon={removeIcon} />
                   </IonItemOption>
                 </IonItemOptions>
@@ -205,7 +258,7 @@ const Location: React.FC<LocationProps> = ({
           </IonRefresherContent>
         </IonRefresher>
         <IonList lines="full">
-          {isloading
+          {isloading && !isEmailClicked
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
               <IonItem className="ion-no-padding item-box" key={index}>
                 <IonLabel color="medium" className="ion-no-margin">
@@ -227,11 +280,24 @@ const Location: React.FC<LocationProps> = ({
             : LocationList}
         </IonList>
       </IonContent>
+      <IonLoading
+        isOpen={isloading && isEmailClicked}
+        message="Please wait"
+        showBackdrop={false}
+      />
       {isItemDeleted && (
         <ToastMsg
           showToast={isItemDeleted}
           message={"Location deleted successfully"}
           type={"green"}
+          duration={3000}
+        />
+      )}
+      {isEmailSentSuccess && (Object.keys(isEmailSentSuccess).length > 0) && (
+        <ToastMsg
+          showToast={true}
+          message={isEmailSentSuccess.message}
+          type={isEmailSentSuccess.status === -1 ? "danger" : "green"}
           duration={3000}
         />
       )}

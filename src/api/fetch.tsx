@@ -45,7 +45,8 @@ const {
   UPDATE_DROPOFF,
   DELETE_DROPOFF,
   GET_DROPOFF_HWBNO_INFO,
-  GET_ROPOFF_PACKAGE_PKG_NO
+  GET_ROPOFF_PACKAGE_PKG_NO,
+  SEND_EMAIL_FOR_LOCATION
 
 } = config;
 
@@ -298,6 +299,12 @@ export const deleteLocationByIdAPI = (selectedLocationId: string) => {
   let url: string = `${process.env.REACT_APP_API_URL}${DELETE_LOCATION}`;
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "DELETE", undefined);
+};
+
+export const sendEmailLocationByIdAPI = (selectedLocationId: string) => {
+  let url: string = `${process.env.REACT_APP_API_URL}${SEND_EMAIL_FOR_LOCATION}`;
+  url = url.replace("{locationId}", selectedLocationId);
+  return serviceRequest(url, "GET", undefined);
 };
 
 
