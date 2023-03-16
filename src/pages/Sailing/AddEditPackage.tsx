@@ -200,10 +200,8 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   }, [dispatch])
 
   const onSubmit = (data: any) => {
-    let newDataObj = data;
-    // if (!isHWBScanned && selectedHwbInfo.isExistingHwb) {
-
-    // }
+    data['hwbNo'] = data['hwbNo'].toUpperCase()
+    let newDataObj = data; 
     if(!isEditAllowed) {
       closePage();
       return;
@@ -324,7 +322,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     // if (watchHwbNo !== selectedHwbInfo?.hwbInfo?.hwbNo && !isHWBScanned) {
     if (event.target.value.trim().length > 2 && !isHWBScanned) {
       dispatch({ type: "RESET_PKG_SCAN" })
-      dispatch(getSelectedHWBInfo(event.target.value, palletId))
+      dispatch(getSelectedHWBInfo(event.target.value.toUpperCase(), palletId))
     }
     // }
   }
@@ -568,6 +566,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                   HWB Number
                 </IonLabel>
                 <IonInput
+                  className="toUpperCase"
                   maxlength={50}
                   disabled={!isEditAllowed}
                   readonly={(isHWBScanned || !isNew) ? true : false}
@@ -580,7 +579,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                       message: "Minimun 3 characters is required."
                     }
                   })}
-                  onIonInput={(e: any) => setValue("hwbNo", e.target.value.toUpperCase())}
+                  onIonInput={(e: any) => setValue("hwbNo", e.target.value)}
                   onIonChange={debouncedChangeHandler}
                 />
                 {isEditAllowed && <>

@@ -1,7 +1,22 @@
-ion-toolbar {
+ion-toolbar, .ion-menu-header {
   text-align: center;
   /* font-weight: bold;
     font-size: 5vw; */
+    color: rgb(255, 255, 255) !important;
+  --background: linear-gradient(75deg, rgb(0, 0, 70), rgb(28, 181, 224)) !important;
+  font-size: 1.35rem !important;
+}  
+
+.odd{
+  --background:#E4E5E6;
+}
+.even{
+  /* --background: green; */
+  /* --background: #00416A; */
+}
+
+.toUpperCase {
+  text-transform: uppercase;
 }
 
 ion-label,
@@ -89,6 +104,7 @@ ion-button {
 
 .closeIcon {
   margin-right: 10px;
+  font-size: 1rem;
 }
 
 .my-class .modal-wrapper {

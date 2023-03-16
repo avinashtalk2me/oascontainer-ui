@@ -131,7 +131,7 @@ const Pallet: React.FC<PalletProps> = ({
         {(pallets.data || []).map((pallet: any, index: number) => (
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
-              <IonItem className="ion-no-padding item-box">
+            <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleNavigatePackage(pallet)}

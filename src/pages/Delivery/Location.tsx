@@ -18,7 +18,7 @@ import {
   IonRefresherContent,
   RefresherEventDetail,
   IonLoading,
-  useIonAlert 
+  useIonAlert
 } from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -125,7 +125,7 @@ const Location: React.FC<LocationProps> = ({
     showConfirm();
   };
 
-  const openExceptionModal = (message:string) => {
+  const openExceptionModal = (message: string) => {
     presentAlert({
       header: 'Email Exception',
       message: message,
@@ -160,17 +160,17 @@ const Location: React.FC<LocationProps> = ({
         {(locations.data || []).map((location: any, index: number) => (
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
-              <IonItem className="ion-no-padding item-box">
-                <div style={{display: 'flex', flexDirection: 'column'}}>
+              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div className={`roundDiv ${location.dropStatus === 0 ? "red" :
                     location.dropStatus === 1 ? "yellow" : "green"}`}>
                   </div>
-                  {location.dropDeliveryFailureReason &&  <IonIcon
+                  {location.dropDeliveryFailureReason && <IonIcon
                     icon={alertIcon}
                     color="danger"
                     onClick={() => openExceptionModal(location.dropDeliveryFailureReason)}
                     className="ion-alert"
-                  /> }
+                  />}
                 </div>
                 <IonLabel
                   color="medium"

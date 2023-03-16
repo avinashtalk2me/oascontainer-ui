@@ -127,7 +127,7 @@ const Delivery: React.FC<DeliveryProps> = ({
         {(deliveries.data || []).map((delivery: any, index: number) => (
           <div key={index}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className="ion-no-padding item-box">
+              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleNavigateToLocation(delivery.deliveryId)}

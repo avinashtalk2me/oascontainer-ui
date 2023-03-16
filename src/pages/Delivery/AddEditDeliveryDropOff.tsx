@@ -216,7 +216,8 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   }, [dispatch])
 
   const onSubmit = (data: any) => {
-    let newDataObj = data;
+    data['hwbNo'] = data['hwbNo'].toUpperCase()
+    let newDataObj = data; 
     if (!isEditAllowed) {
       closePage();
       return;
@@ -305,7 +306,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     // if (watchHwbNo !== selectedHwbInfo?.hwbInfo?.hwbNo && !isHWBScanned) {
     if (event.target.value.trim().length > 2 && !isHWBScanned) {
       dispatch({ type: "RESET_PKG_SCAN" })
-      dispatch(getSelectedHWBInfoForDropoff(locationId, event.target.value))
+      dispatch(getSelectedHWBInfoForDropoff(locationId, event.target.value.toUpperCase()))
     }
     // }
   }
@@ -532,6 +533,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                 </IonLabel>
                 <IonInput
                   maxlength={50}
+                  className="toUpperCase"
                   disabled={!isEditAllowed}
                   readonly={(isHWBScanned || !isNew) ? true : false}
                   aria-invalid={errors && errors["hwbNo"] ? "true" : "false"}
@@ -543,7 +545,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                       message: "Minimun 3 characters is required."
                     }
                   })}
-                  onIonInput={(e: any) => setValue("hwbNo", e.target.value.toUpperCase())}
+                  onIonInput={(e: any) => setValue("hwbNo", e.target.value)}
                   onIonChange={debouncedChangeHandler}
                 />
                 {isEditAllowed && <>

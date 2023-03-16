@@ -179,8 +179,8 @@ export const Menu: React.FC = () => {
 
   return (
     <IonMenu side="start" contentId="main" disabled={getUserSession()}>
-      <IonHeader>
-        <IonToolbar color="light">
+      <IonHeader >
+        <IonToolbar className="ion-menu-header">
           <IonTitle>MENU</IonTitle>
         </IonToolbar>
       </IonHeader>

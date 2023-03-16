@@ -132,7 +132,7 @@ const Sailing: React.FC<SailingProps> = ({
         {(containers.data || []).map((container: any, index: number) => (
           <div key={index}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className="ion-no-padding item-box">
+              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleNavigatePallet(container.sailId)}
@@ -147,7 +147,7 @@ const Sailing: React.FC<SailingProps> = ({
                   <span style={{ fontSize: "14px" }}>
                     Sail Date: <b>{container.sailDate}, </b>
                   </span>
-                  
+
                   <span style={{ fontSize: "14px" }}>
                     Pallets: <b>{container.palletCount}</b>
                   </span>

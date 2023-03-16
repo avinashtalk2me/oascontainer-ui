@@ -110,7 +110,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
         {(dropOffs.data || []).map((packageItem: any, index: number) => (
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
-              <IonItem className="ion-no-padding item-box">
+              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel color="medium">
                   <h3
                     className="text-wrap"
