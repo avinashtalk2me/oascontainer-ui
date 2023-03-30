@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import loginReducer from './loginReducer';
+import userReducer from './users/userReducer';
 import containerReducer from './sailing_access/containerReducer';
 import palletReducer from './sailing_access/palletReducer';
 import packageReducer from './sailing_access/packageReducer';
@@ -9,7 +9,7 @@ import locationReducer from './delivery_access/locationReducer';
 import dropOffReducer from './delivery_access/dropoffReducer';
 
 const rootReducers = combineReducers({
-    user: loginReducer,
+    user: userReducer,
     sailing: containerReducer,
     pallet: palletReducer,
     package: packageReducer,

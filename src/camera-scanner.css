@@ -18,20 +18,23 @@
   .stop-scan-button {
     margin: auto;
     position: absolute;
-    bottom: 100px;
-    width: 90vw;
-    height: 50px;
-    z-index: 11;    
+    bottom: 2rem;
+    /* width: 90vw; */
+    height: 3.5rem;
+    z-index: 11;
+    left: 0;
+    right: 0;
+    padding: 0 1.2rem; 
   }
   
-  .scan-box {
+  .scan-box {    
     border: 2px solid #fff;
     box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
     display: block;
     left: 50%;
-    height: 70vw;
+    height: 80%;
     position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 70vw;
+    top: 10%;
+    transform: translate(-50%, -5%);
+    width: 90vw;
   }

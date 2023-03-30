@@ -482,3 +482,7 @@ ion-checkbox {
   bottom: 0.6rem;
   font-size: 1.2rem;
 }
+
+.submenu {
+  padding: 0px 0.6rem;
+}

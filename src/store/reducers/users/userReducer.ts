@@ -16,13 +16,13 @@ import {
     DELETE_USER_REQUEST,
     DELETE_USER_SUCCESS,
     DELETE_USER_ERROR
-} from '../types'
+} from '../../types'
 
 const initialLoginState = {
     isloading: false,
     loggedIn: false,
     user: {},
-    registerDetail: {},
+    saveuserDetails: {},
     error: {},
     isEmailValidate: false,
     isPasswordUpdated: false,
@@ -35,7 +35,7 @@ interface ActionType {
     payload: any
 }
 
-const loginReducer = (state = initialLoginState, action: ActionType) => {
+const userReducer = (state = initialLoginState, action: ActionType) => {
     const { type, payload } = action;
 
     switch (type) {
@@ -43,7 +43,7 @@ const loginReducer = (state = initialLoginState, action: ActionType) => {
             return {
                 ...state,
                 error: undefined,
-                registerDetail: {},
+                saveuserDetails: {},
                 isEmailValidate: false,
                 isPasswordUpdated: false
             }
@@ -98,7 +98,7 @@ const loginReducer = (state = initialLoginState, action: ActionType) => {
         case REGISTER_SUCCESS:
             return {
                 isloading: false,
-                registerDetail: payload
+                saveuserDetails: payload
             }
         case REGISTER_ERROR:
             return {
@@ -142,4 +142,4 @@ const loginReducer = (state = initialLoginState, action: ActionType) => {
     }
 }
 
-export default loginReducer;
+export default userReducer;

@@ -64,7 +64,8 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   const [isScanSuccess, setIsScanSuccess] = useState<boolean>(false);
   const [isModal, setIsModal] = useState<boolean>(false);
   const [packageToastMsg, setPackageToastMsg] = useState<string>('');
-
+  const [scanLoadingMessage, setScanLoadingMessage] = useState<string>("");
+  const [initialScanLoadingMessage, setInitialScanLoadingMessage] = useState<string>("");
 
   const { isloading, isItemSaved, error,    //packageData, 
     isValidPackagePkgNo, selectedHwbInfo } = useSelector(
@@ -97,7 +98,6 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   const leaveAnimation = (baseEl: HTMLElement) => {
     return enterAnimation(baseEl).direction('reverse');
   };
-
 
   useEffect(() => {
     if (!isNew) {
@@ -144,7 +144,6 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
         setValue("shipperPhone", "");
       }
     }
-
   }, [selectedHwbInfo])
 
   const {
@@ -188,8 +187,13 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   useEffect(() => {
     if (isItemSaved) {
       let timer = setTimeout(() => {
-        dispatch({ type: "RESET_FORM" });
-        closePage();
+        if (!isHWBScanned) {         
+          closePage();
+        } else {
+          setScanLoadingMessage("")
+          setInitialScanLoadingMessage("Initialising for new scan....");
+          setTimeout(() => { startScan(); }, 3000)
+        }
       }, 1000);
       return () => clearTimeout(timer);
     }
@@ -201,8 +205,8 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
 
   const onSubmit = (data: any) => {
     data['hwbNo'] = data['hwbNo'].toUpperCase()
-    let newDataObj = data; 
-    if(!isEditAllowed) {
+    let newDataObj = data;
+    if (!isEditAllowed) {
       closePage();
       return;
     }
@@ -226,38 +230,51 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
 
   useEffect(() => {
     if (isValidPackagePkgNo === true && isHWBScanned) {
-      setValue("hwbNo", scanResult[0]);
-      setValue("totalPkgs", scanResult[1]);
-      setValue("pkgNo", scanResult[2]);
-      setValue("shipperName", scanResult[3]);
-      setValue("shipperContactName", scanResult[4]);
-      setValue("shipperEmail", scanResult[5]);
-      setValue("shipperPhone", scanResult[6]);
-      setValue("isQR", true);
+      // setValue("hwbNo", scanResult[0]);
+      // setValue("totalPkgs", scanResult[1]);
+      // setValue("pkgNo", scanResult[2]);
+      // setValue("shipperName", scanResult[3]);
+      // setValue("shipperContactName", scanResult[4]);
+      // setValue("shipperEmail", scanResult[5]);
+      // setValue("shipperPhone", scanResult[6]);
+      // setValue("isQR", true);
       setIsScanSuccess(true);
-      stopScan();
+      // stopScan();
+      setScanLoadingMessage("Saving the package...");
+      onSubmit({
+        "hwbNo": scanResult[0],
+        "pkgNo": scanResult[2],
+        "totalPkgs": scanResult[1],
+        "shipperName": scanResult[3],
+        "shipperContactName": scanResult[4],
+        "shipperEmail": scanResult[5],
+        "shipperPhone": scanResult[6]
+      });
+      stopScan()
     } else if (isValidPackagePkgNo === false && isHWBScanned) {
       Dialog.alert({
         title: "Duplicate Package",
         message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
       });
-
+      startScan()
       if (navigator.vibrate) {
         // vibration API supported
         navigator.vibrate(1000);
-        stopScan();
+        // stopScan();
         // startScan();
       }
     }
   }, [setValue, isValidPackagePkgNo, scanResult, isHWBScanned])
 
-   const closePage = () => {
-    dispatch({ type: "RESET_FORM" });
+  const closePage = () => {
+    dispatch({ type: "RESET_FORM" });    
     history.goBack();
   };
 
   const startScan = async () => {
+    setInitialScanLoadingMessage("")
     dispatch({ type: "RESET_PKG_SCAN" })
+    dispatch({ type: "RESET_FORM" });
     BarcodeScanner.hideBackground(); // make background of WebView transparent
     setHideBg("hideBg");
     const result = await BarcodeScanner.startScan(); // start scanning and wait for a result
@@ -275,7 +292,13 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
           title: "Invalid Package",
           message: `This is not a valid HWB. Please try another one.`,
         });
-        stopScan();
+        if (navigator.vibrate) {
+          // vibration API supported
+          navigator.vibrate(1000);
+          // stopScan();
+          startScan();
+        }
+        // stopScan();
       }
     };
   }
@@ -393,7 +416,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   const packageList = (
     <>
       {/* <IonItem class="ion-no-padding"> */}
-        <IonText class="packagelist-header">List of added Package No.(s)</IonText>
+      <IonText class="packagelist-header">List of added Package No.(s)</IonText>
       {/* </IonItem> */}
       <IonList lines="none" class="ion-no-padding packageitem-list" >
         {!isHWBScanned && watchPkgNo ? (watchPkgNo &&
@@ -589,7 +612,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
               </IonItem>
               <Error errors={errors} name="hwbNo" />
             </div>
-            {((isHWBScanned && isScanSuccess) || (!isHWBScanned)) && <>
+            {((!isHWBScanned)) && <>
               <div className="ion-padding-bottom">
                 <IonItem className="ion-no-padding">
                   <IonLabel
@@ -765,8 +788,20 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
         showBackdrop={false}
         translucent={true}
       />
+      {scanLoadingMessage && <IonLoading
+        isOpen={isloading}
+        message={scanLoadingMessage}
+        showBackdrop={false}
+        translucent={true}
+      />}
+       {initialScanLoadingMessage && <IonLoading
+        isOpen={isloading}
+        message={initialScanLoadingMessage}
+        showBackdrop={false}
+        translucent={true}
+      />}
       {
-        isItemSaved && (
+        isItemSaved && !isHWBScanned && (
           <ToastMsg
             showToast={isItemSaved}
             duration={5000}

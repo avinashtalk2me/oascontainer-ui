@@ -1,4 +1,6 @@
 import {
+  IonAccordion,
+  IonAccordionGroup,
   IonButton,
   IonContent,
   IonHeader,
@@ -7,6 +9,7 @@ import {
   IonList,
   IonMenu,
   IonMenuToggle,
+  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -27,6 +30,8 @@ export const Menu: React.FC = () => {
     localStorage.getItem("_authResponse") || "{}"
   );
   const userRoles = authToken && authToken.userRoles;
+
+  const isAdmin = userRoles && userRoles.admin_access && true;
 
   const handleLogout = () => {
     dispatch({ type: LOGOUT });
@@ -76,7 +81,7 @@ export const Menu: React.FC = () => {
     </div>
   )
 
-  const DeliveryAccess =  userRoles?.delivery_access !== 0 && (
+  const DeliveryAccess = userRoles?.delivery_access !== 0 && (
     <div className={`${history.location.pathname.includes("delivery-container") && 'multimenu-header'}`}>
       <IonItem
         button
@@ -88,7 +93,7 @@ export const Menu: React.FC = () => {
     </div>
   )
 
-  const loadSaling =
+  const MenuSailing =
     <>
       {SailingAccess}
       {((userRoles?.sailing_access === 1 && userRoles?.delivery_access === 0)
@@ -158,7 +163,7 @@ export const Menu: React.FC = () => {
                   routerDirection="none"
                 >
                   <IonLabel>Delivery</IonLabel>
-                </IonItem>                
+                </IonItem>
                 <IonItem
                   className="ion-no-padding"
                   button
@@ -173,7 +178,35 @@ export const Menu: React.FC = () => {
         )
         : (<></>)}
     </>
-  // 
+
+
+  const Configuration = <>
+    <IonAccordionGroup >
+      <IonAccordion className="ion-no-padding">
+        <IonItem slot="header" lines="inset" className="ion-no-padding">
+          <IonLabel>Configuration</IonLabel>
+        </IonItem>
+        <div className="ion-no-padding submenu" slot="content">
+          <IonItem
+            button
+            className="ion-no-padding"
+            onClick={handleLogout}
+            routerDirection="none"
+          >
+            <IonLabel>Users</IonLabel>
+          </IonItem>
+          <IonItem
+            button
+            className="ion-no-padding"
+            onClick={handleLogout}
+            routerDirection="none"
+          >
+            <IonLabel>Setting</IonLabel>
+          </IonItem>
+        </div>
+      </IonAccordion>
+    </IonAccordionGroup>
+  </>
 
 
 
@@ -181,14 +214,15 @@ export const Menu: React.FC = () => {
     <IonMenu side="start" contentId="main" disabled={getUserSession()}>
       <IonHeader >
         <IonToolbar className="ion-menu-header">
-          <IonTitle>MENU</IonTitle>
+          <IonTitle>MANIFEST</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonList className="ion-no-padding">
-          <IonMenuToggle auto-hide="false">
+          {/* <IonMenuToggle auto-hide="false"> */}
             <div className="menu-items">
-              {loadSaling}
+              {MenuSailing}
+              {isAdmin && Configuration}
               <IonItem
                 button
                 className="ion-no-padding"
@@ -206,7 +240,7 @@ export const Menu: React.FC = () => {
                 </IonLabel>
               </IonItem>
             </div>
-          </IonMenuToggle>
+          {/* </IonMenuToggle> */}
         </IonList>
       </IonContent>
     </IonMenu>

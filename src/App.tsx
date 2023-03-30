@@ -21,8 +21,8 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
-import RegisterSuccess from "./pages/SuccessRegister";
+import Register from "./pages/User/Register";
+import RegisterSuccess from "./pages/User/SuccessRegister";
 import ContainerSailingRoute from "./ContainerSailingRoute";
 import ContainerDeliveryRoute from './ContainerDeliveryRoute'
 import { Menu } from "./components/Menu";
