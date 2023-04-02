@@ -23,6 +23,14 @@ const PalletReportPDF = (
     }
   };
 
+  const getIsPalletOrLoose = (palletNo: number): string => {
+    if (palletManifest.data.find((item: IPallet) => item.palletNo === palletNo).palletType === "Pallet") {
+      return `<h2>Pallet# ${palletNo}</h2>`
+    } else {
+      return `<h2>Loose</h2>`
+    }
+  }
+
   const getPalletDetails = (palletNo: number) => {
     let filteredPallets: any[] = palletManifest.data.filter(
       (item: IPallet) => item.palletNo === palletNo
@@ -40,13 +48,13 @@ const PalletReportPDF = (
                      <div>Pieces </div>
                   </div>
                   ${filteredPallets
-                    .map((pallet: any) => {
-                      return `<div class="details-header-body">
+          .map((pallet: any) => {
+            return `<div class="details-header-body">
                                  <div>  ${pallet.hwbNo}</div>
                                  <div> ${pallet.packageCount}</div>
                               </div>`;
-                    })
-                    .join("")} </div>`;
+          })
+          .join("")} </div>`;
     } else {
       return `<p>No details available<p>`;
     }
@@ -138,17 +146,17 @@ const PalletReportPDF = (
                   </div>
                </div>
                ${uniquePallets
-                 .map((palletNo: number) => {
-                   return `
+      .map((palletNo: number) => {
+        return `
                <div class="report-details">
                   <div class="report-details-header">
-                     <h2>Pallet# ${palletNo}</h2>
+                     ${getIsPalletOrLoose(palletNo)} 
                      ${getPalletTotalDetails(palletNo)}                    
                   </div>
                      ${getPalletDetails(palletNo)}
                </div>`;
-                 })
-                 .join("")}
+      })
+      .join("")}
           </div>
        </body>
     </html>`;

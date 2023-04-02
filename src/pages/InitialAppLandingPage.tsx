@@ -33,41 +33,42 @@ const InitialAppLandingPage: React.FC = () => {
           const { data: { data } } = await getAppVersionAPI();
           const appBuildNo = data[`${platForm}_build`].toString();
           const appVersionNo = data[`${platForm}_version`].toString().trim();
+          loadInitialScreen();
           if (appBuildNo === appInfo.build && appVersionNo === appInfo.version) {
-            setIsLatestVersion(true);
-            loadInitialScreen();
+            // setIsLatestVersion(true);
+            // loadInitialScreen();
           } else {
-            setIsLatestVersion(false);
-            setIsLoading(false);
+            // setIsLatestVersion(false);
+            // setIsLoading(false);
 
-            if (platForm === "android") {
-              const { value } = await Dialog.confirm({
-                title: "Updates available",
-                message: `A newer version is available. You have to download and install before you can continue to use the app.`,
-                okButtonTitle: "Update",
-                cancelButtonTitle: 'No, Thanks'
-              });
-              if (value) {
-                window.open("https://play.google.com/store/apps/details?id=com.oastrade.containermanifest");
-                setIsUserAccepted('yes')
-              } else {
-                MobileApp.exitApp()
-              }
-            } else {
-              const { value } = await Dialog.confirm({
-                title: "Updates available",
-                message: `A newer version is available. You have to download and install before you can continue to use the app.`,
-                okButtonTitle: "Update",
-                cancelButtonTitle: "Not Now"
-              });
-              if (value) {
-                window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362");
-                setIsUserAccepted('yes')
-              } else {
-                // MobileApp.exitApp()
-                setIsUserAccepted('no');
-              }
-            }
+            // if (platForm === "android") {
+            //   const { value } = await Dialog.confirm({
+            //     title: "Updates available",
+            //     message: `A newer version is available. You have to download and install before you can continue to use the app.`,
+            //     okButtonTitle: "Update",
+            //     cancelButtonTitle: 'No, Thanks'
+            //   });
+            //   if (value) {
+            //     window.open("https://play.google.com/store/apps/details?id=com.oastrade.containermanifest");
+            //     setIsUserAccepted('yes')
+            //   } else {
+            //     MobileApp.exitApp()
+            //   }
+            // } else {
+            //   const { value } = await Dialog.confirm({
+            //     title: "Updates available",
+            //     message: `A newer version is available. You have to download and install before you can continue to use the app.`,
+            //     okButtonTitle: "Update",
+            //     cancelButtonTitle: "Not Now"
+            //   });
+            //   if (value) {
+            //     window.open("https://apps.apple.com/us/app/oas-container-manifest/id1638157362");
+            //     setIsUserAccepted('yes')
+            //   } else {
+            //     // MobileApp.exitApp()
+            //     setIsUserAccepted('no');
+            //   }
+            // }
           }
         } catch (ex) {
           await Dialog.alert({

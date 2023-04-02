@@ -82,18 +82,19 @@ const Pallet: React.FC<PalletProps> = ({
   }
 
   const handleNavigatePackage = (pallet: IPallet) => {
-    if (pallet.palletType !== 'Loose') {
-      dispatch({ type: "SELECTED_PALLETID", payload: pallet.palletId });
-      history.push(`/sailing-container/sailing/package/${pallet.palletId}`);
-    } else {
-      noPackageAlertForPallet();
-    }
+    // if (pallet.palletType !== 'Loose') {
+    dispatch({ type: "SELECTED_PALLETID", payload: pallet.palletId });
+    history.push(`/sailing-container/sailing/package/${pallet.palletId}`);
+
+    // } else {
+    //   noPackageAlertForPallet();
+    // }
   };
 
   const noPackageAlertForPallet = () => {
     Dialog.alert({
       title: "Not Allowed",
-      message: `Packages are not available for Loose Type Pallet`,
+      message: `Not available for loose pieces`,
     });
   }
 
@@ -131,7 +132,7 @@ const Pallet: React.FC<PalletProps> = ({
         {(pallets.data || []).map((pallet: any, index: number) => (
           <div key={index} className="">
             <IonItemSliding ref={componentRef}>
-            <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleNavigatePackage(pallet)}
@@ -141,14 +142,15 @@ const Pallet: React.FC<PalletProps> = ({
                     color="secondary"
                     style={{ fontSize: "20px", fontWeight: "normal" }}
                   >
-                    Pallet# {pallet.palletNo}
+                    {pallet.palletType === "Pallet" ?`${"Pallet#"} ${pallet.palletNo}` : `Loose`
+                    }
                   </h3>
                   <span style={{ fontSize: "14px" }}>
                     Type: <b>{pallet.palletType}</b>
                   </span>
-                  {pallet.palletType !== "Loose" && <span style={{ fontSize: "14px" }}>
+                  <span style={{ fontSize: "14px" }}>
                     , Packages: <b>{pallet.packageCount}</b>
-                  </span>}
+                  </span>
                   <span
                     style={{
                       display: "block",
@@ -181,7 +183,7 @@ const Pallet: React.FC<PalletProps> = ({
                   side="end"
                   onIonSwipe={(e) => handleDeleteItem(e, pallet.palletId)}
                 >
-                  <IonItemOption color="danger"  onClick={(e) => handleDeleteItem(e, pallet.palletId)}>
+                  <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, pallet.palletId)}>
                     <IonIcon slot="icon-only" icon={removeIcon} />
                   </IonItemOption>
                 </IonItemOptions>

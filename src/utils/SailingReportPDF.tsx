@@ -145,7 +145,7 @@ ${summary.looseTotal}
             return `
                   <div class="column-details">
                      <div class="column-text">
-                     ${pallet.palletNo}
+                     ${pallet.palletType === "Loose" ? "Loose" :pallet.palletNo}
                      </div>
                      <div class="column-text">
                      ${pallet.palletType}
@@ -155,7 +155,7 @@ ${summary.looseTotal}
                }
                      </div>
                      <div class="column-text">
-                       ${pallet.palletType === "Loose" ? "-" : pallet.packageCount }
+                       ${pallet.packageCount }
                      </div>
                      <div class="column-text">
                      ${pallet.palletWeights}

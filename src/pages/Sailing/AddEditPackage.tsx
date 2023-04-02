@@ -201,8 +201,8 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
 
   const onSubmit = (data: any) => {
     data['hwbNo'] = data['hwbNo'].toUpperCase()
-    let newDataObj = data; 
-    if(!isEditAllowed) {
+    let newDataObj = data;
+    if (!isEditAllowed) {
       closePage();
       return;
     }
@@ -251,7 +251,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     }
   }, [setValue, isValidPackagePkgNo, scanResult, isHWBScanned])
 
-   const closePage = () => {
+  const closePage = () => {
     dispatch({ type: "RESET_FORM" });
     history.goBack();
   };
@@ -264,7 +264,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     if (result.hasContent) {
       const arrResult: string[] = result.content?.split('_') || [];
       setScanResult(arrResult);
-      if (arrResult?.length === 7) {
+      if (arrResult?.filter(item => item !== "").length <= 7) {
         const data = {
           "hwbNo": arrResult[0],
           "pkgNo": arrResult[2]
@@ -393,7 +393,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   const packageList = (
     <>
       {/* <IonItem class="ion-no-padding"> */}
-        <IonText class="packagelist-header">List of added Package No.(s)</IonText>
+      <IonText class="packagelist-header">List of added Package No.(s)</IonText>
       {/* </IonItem> */}
       <IonList lines="none" class="ion-no-padding packageitem-list" >
         {!isHWBScanned && watchPkgNo ? (watchPkgNo &&

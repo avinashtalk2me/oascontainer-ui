@@ -56,6 +56,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
   const { sailId, palletId }: any = useParams();
   const [palletType, setPalletType] = useState("");
   const [palletWeightType, setPalletWeightType] = useState("");
+  const [isLooseExists, setIsLooseExists] = useState(false);
 
   const { isloading, isItemSaved, error, pallet, nextPalletNo } = useSelector(
     (state: any) => state.pallet
@@ -83,19 +84,22 @@ const AddEditPallet: React.FC<PalletProps> = ({
       setValue("palletType", "Pallet");
       setValue("palletWeight", "");
       setValue("palletWeightUnit", nextPalletNo?.data?.sailUnit);
+      setIsLooseExists(nextPalletNo?.data?.isLoosePalletxists === 0 ? false : true)
     }
   }, [isNew, nextPalletNo]);
 
   useEffect(() => {
     if (!isNew && pallet && pallet?.status === 0) {
       setPalletType(pallet.data.palletType);
-      setPalletWeightType(pallet.data.palletWeightUnit.trim());
+      setPalletWeightType(pallet.data.palletWeightUnit?.trim());
       setValue("palletNo", pallet.data.palletNo);
       setValue("palletType", pallet.data.palletType);
       setValue("palletDesc", pallet.data.palletDesc);
       setValue("palletWeight", pallet.data.palletWeight);
-      setValue("palletWeightUnit", pallet.data.palletWeightUnit.trim());
-      if(pallet.data.palletType === "Loose") {
+      setValue("palletWeightUnit", pallet.data.palletWeightUnit?.trim());
+
+      setIsLooseExists(pallet?.data?.isLoosePalletxists === 0 ? false : true)
+      if (pallet.data.palletType === "Loose") {
         setShowHidePalletDesc(true);
       }
     }
@@ -172,6 +176,9 @@ const AddEditPallet: React.FC<PalletProps> = ({
       closePage();
       return
     }
+
+    data.palletNo = data.palletType === "Pallet" ? data.palletNo : null;
+
     if (isNew) {
       dispatch(insertPallet(sailId, data));
     } else {
@@ -201,7 +208,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
       <IonContent className="ion-padding">
         <form onSubmit={handleSubmit(onSubmit)}>
           <IonList>
-            <div className="ion-padding-bottom">
+            {!isNew && !showHidePalletDesc && <div className="ion-padding-bottom">
               <IonItem className="ion-no-padding">
                 <IonLabel
                   color="medium"
@@ -219,7 +226,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                 />
               </IonItem>
               <Error errors={errors} name="palletNo" />
-            </div>
+            </div>}
             {palletType && <div className="ion-padding-bottom">
               <IonItem className="ion-no-padding">
                 <IonLabel
@@ -230,7 +237,8 @@ const AddEditPallet: React.FC<PalletProps> = ({
                   Type
                 </IonLabel>
                 <IonSelect
-                  disabled={!isEditAllowed}
+                  className="disabledSelect"
+                  disabled={!isEditAllowed || isLooseExists}
                   interface="popover"
                   {...register("palletType")}
                   onIonChange={handleShowHideDesc}

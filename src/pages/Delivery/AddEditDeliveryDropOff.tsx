@@ -254,7 +254,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     if (result.hasContent) {
       const arrResult: string[] = result.content?.split('_') || [];
       setScanResult(arrResult);
-      if (arrResult?.length === 7) {
+      if (arrResult?.filter(item => item !== "").length <= 7) {
         const data = {
           "hwbNo": arrResult[0],
           "pkgNo": arrResult[2]
