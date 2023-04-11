@@ -24,16 +24,14 @@ import ServerError from "../../components/ServerError";
 import { close as closeIcon } from "ionicons/icons";
 
 
-interface AddEditUserProps {
+interface UserDetailProps {
   isRegister: boolean;
   isNew?: boolean;
-  isEditAllowed?: boolean;
   onSubmitData?: (formData: any) => void;
 }
 
-const AddEditUser: React.FC<AddEditUserProps> = ({ isRegister,
+const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
   isNew = false,
-  isEditAllowed = false,
   onSubmitData,
   children }) => {
   const history = useHistory();
@@ -257,7 +255,7 @@ const AddEditUser: React.FC<AddEditUserProps> = ({ isRegister,
           color="primary"
           expand="block"
         >
-          Register
+          {!isRegister ? 'Save' : 'Register'}
         </IonButton>
       </IonList>
     </form>
@@ -298,4 +296,4 @@ const AddEditUser: React.FC<AddEditUserProps> = ({ isRegister,
   );
 };
 
-export default AddEditUser;
+export default UserDetail;

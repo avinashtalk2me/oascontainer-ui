@@ -20,7 +20,7 @@ import { useHistory } from "react-router";
 import Error from "../../components/Error";
 import ServerError from "../../components/ServerError";
 import { registerUser } from "../../store/actions";
-import AddEditUser from "./AddEditUser";
+import UserDetail from "./UserDetail";
 
 const Register: React.FC = () => {
   const history = useHistory();
@@ -78,8 +78,7 @@ const Register: React.FC = () => {
         <IonToolbar>Register</IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <AddEditUser isRegister={true} onSubmitData={onSubmit}>
-        </AddEditUser>
+        <UserDetail isRegister={true} onSubmitData={onSubmit} /> 
         <IonButton
           type="submit"
           expand="full"

@@ -245,6 +245,22 @@ ion-select-popover {
   font-size: 0.75em;
 }
 
+.changePwdinfotext {
+  font-size:1em;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    height: 3.5em;
+    align-items: center;
+    margin-bottom: 0.5rem; 
+    background-color: #ff2400;
+    border-color: #ff2400;
+    text-align: center;
+    color: #fff;
+    font-weight: normal;
+}
+
 .modal-addBtn {
   width: 25%;
   display: flex;
@@ -483,6 +499,15 @@ ion-checkbox {
   font-size: 1.2rem;
 }
 
-.submenu {
+.submenu ion-item {
+  margin: 0;
+}
+
+.submenu ion-label { 
+  margin: 10px 15px;
   padding: 0px 0.6rem;
+}
+
+ion-menu{
+  --width: 260px;
 }

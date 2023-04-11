@@ -49,7 +49,7 @@ const Pallet: React.FC<PalletProps> = ({
     useSelector((state: any) => state.pallet);
 
   const handleAddPallet = () => {
-    history.push(`/sailing-container/sailing/pallet/add/${selectedSailId}`);
+    history.push(`/sailing-container/pallet/add/${selectedSailId}`);
   };
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
@@ -60,7 +60,7 @@ const Pallet: React.FC<PalletProps> = ({
   }
 
   const handleEditPallet = (pallet: any) => {
-    history.push(`/sailing-container/sailing/pallet/edit/${selectedSailId}/${pallet.palletId}`);
+    history.push(`/sailing-container/pallet/edit/${selectedSailId}/${pallet.palletId}`);
   };
 
   useEffect(() => {
@@ -78,13 +78,13 @@ const Pallet: React.FC<PalletProps> = ({
   }, [dispatch, isItemDeleted, selectedSailId]);
 
   if (!selectedSailId) {
-    return <Redirect to="/sailing-container/sailing" />;
+    return <Redirect to="/sailing-container/sails" />;
   }
 
   const handleNavigatePackage = (pallet: IPallet) => {
     if (pallet.palletType !== 'Loose') {
       dispatch({ type: "SELECTED_PALLETID", payload: pallet.palletId });
-      history.push(`/sailing-container/sailing/package/${pallet.palletId}`);
+      history.push(`/sailing-container/package/${pallet.palletId}`);
     } else {
       noPackageAlertForPallet();
     }

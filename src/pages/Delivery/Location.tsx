@@ -96,7 +96,7 @@ const Location: React.FC<LocationProps> = ({
   };
 
   if (!selectedDeliveryId) {
-    return <Redirect to="/delivery-container/delivery" />;
+    return <Redirect to="/delivery-container/deliveries" />;
   }
 
   if (error && error.status === -100) {

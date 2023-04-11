@@ -72,7 +72,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
 
 
   if (!deliveryId && !locationId) {
-    return <Redirect to="/delivery-container/delivery" />;
+    return <Redirect to="/delivery-container/deliveries" />;
   }
 
 

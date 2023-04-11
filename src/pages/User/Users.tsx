@@ -3,14 +3,14 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonIcon,
   IonItem,
   IonLabel,
-  IonList,
   IonPage,
-  IonSkeletonText,
-  IonText,
   IonToolbar,
+  IonText,
+  IonIcon,
+  IonSkeletonText,
+  IonList,
   IonItemSliding,
   IonItemOption,
   IonItemOptions,
@@ -20,61 +20,77 @@ import {
 } from "@ionic/react";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, useHistory } from "react-router";
-import NoItemFound from "../../components/NoItemFound";
-import { getPackageByPalletId, deletePackageById } from "../../store/actions";
-import { chevronDownCircleOutline, eye as viewIcon, remove as removeIcon } from "ionicons/icons";
 import { NavButton } from "../../components/NavButton";
+import NoItemFound from "../../components/NoItemFound";
+import { getContainerSailing, deleteSailingById } from "../../store/actions";
+import {
+  chevronForward as forwardIcon,
+  eye as viewIcon,
+  document as documentIcon,
+  remove as removeIcon,
+  chevronDownCircleOutline,
+} from "ionicons/icons";
+import { useHistory } from "react-router";
+import { Container } from "../../model/container";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
 
-export interface PackageProps {
-  isEditAllowed: boolean;
-}
 
-const Package: React.FC<PackageProps> = ({
-  isEditAllowed
-}) => {
+const Users: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
-  const { isloading, selectedPalletId, error, packages, isItemDeleted } =
-    useSelector((state: any) => state.package);
-
-  const handleAddPackage = () => {
-    history.push(`/sailing-container/package/add/${selectedPalletId}`);
-  };
-
-  const handleEditPackage = (packageItem: any) => {
-    history.push(
-      `/sailing-container/package/edit/${selectedPalletId}/${packageItem.packageId}/${packageItem.hwbNo}`
-    );
-  };
-
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
     setTimeout(() => {
-      dispatch(getPackageByPalletId(selectedPalletId));
+      dispatch(getContainerSailing());
       event.detail.complete();
     }, 2000);
   }
 
-  useEffect(() => {
-    dispatch(getPackageByPalletId(selectedPalletId));
-  }, [dispatch, selectedPalletId]);
+  const { isloading, containers, error, isItemDeleted } = useSelector(
+    (state: any) => {
+      return state.sailing;
+    }
+  );
+
+  const { userDeletedSuccess } = useSelector((state: any) => state.user);
+
+  const handleAddSailing = () => {
+    history.push(`/sailing-container/sailing/add`);
+  };
+
+  const handleEditSailing = (container: any) => {
+    history.push(`/sailing-container/sailing/edit/${container.sailId}`);
+  };
 
   useEffect(() => {
-    if (isItemDeleted) {
-      dispatch(getPackageByPalletId(selectedPalletId));
-    }
-  }, [dispatch, isItemDeleted, selectedPalletId]);
+    dispatch(getContainerSailing());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch({ type: "RESET_FORM" });
   }, [dispatch])
 
-  if (!selectedPalletId) {
-    return <Redirect to="/sailing-container/sails" />;
+  useEffect(() => {
+    if (isItemDeleted) {
+      dispatch(getContainerSailing());
+    }
+  }, [dispatch, isItemDeleted]);
+
+  const handleNavigatePallet = (sailId: string) => {
+    dispatch({ type: "SELECTED_SAILID", payload: sailId });
+    history.push(`/sailing-container/sailing/pallet/${sailId}`);
+  };
+
+  const handleViewReports = (container: Container) => {
+    dispatch({ type: "SELECTED_SAILID", payload: container.sailId });
+    history.push(`/sailing-container/sailing/report/${container.sailId}`);
+  };
+
+  if (userDeletedSuccess) {
+    history.replace('/')
+    return null;
   }
 
   if (error && error.status === -100) {
@@ -87,7 +103,7 @@ const Package: React.FC<PackageProps> = ({
     return null;
   }
 
-  const handleDeleteItem = (event: any, packageId: string) => {
+  const handleDeleteItem = (event: any, sailId: string) => {
     event.preventDefault();
     const showConfirm = async () => {
       const { value } = await Dialog.confirm({
@@ -96,53 +112,69 @@ const Package: React.FC<PackageProps> = ({
       });
 
       if (value) {
-        dispatch(deletePackageById(packageId));
+        dispatch(deleteSailingById(sailId));
       }
       componentRef.current?.closeOpened();
     };
     showConfirm();
   };
 
-  const PackageList: JSX.Element =
-    packages && packages?.data?.length === 0 ? (
+  const SailingList: JSX.Element =
+    containers && containers?.data?.length === 0 ? (
       <NoItemFound />
     ) : (
       <>
-        {(packages.data || []).map((packageItem: any, index: number) => (
-          <div key={index} className="">
+        {(containers.data || []).map((container: any, index: number) => (
+          <div key={index}>
             <IonItemSliding ref={componentRef}>
               <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
-                <IonLabel color="medium">
+                <IonLabel
+                  color="medium"
+                  onClick={() => handleNavigatePallet(container.sailId)}
+                >
                   <h3
                     className="text-wrap"
                     color="secondary"
                     style={{ fontSize: "20px", fontWeight: "normal" }}
                   >
-                    {packageItem.hwbNo}
+                    {container.sailDesc}
                   </h3>
                   <span style={{ fontSize: "14px" }}>
-                    Package Count: <b>{packageItem.packageCount}</b>
+                    Sail Date: <b>{container.sailDate}, </b>
+                  </span>
+
+                  <span style={{ fontSize: "14px" }}>
+                    Pallets: <b>{container.palletCount}</b>
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">
                   <IonIcon
+                    icon={documentIcon}
+                    color="medium"
+                    onClick={() => handleViewReports(container)}
+                    className=""
+                  />
+                  <IonIcon
                     icon={viewIcon}
                     color="medium"
-                    onClick={() => handleEditPackage(packageItem)}
+                    onClick={() => handleEditSailing(container)}
                     className="ion-padding-horizontal"
+                  />
+                  <IonIcon
+                    icon={forwardIcon}
+                    color="green"
+                    onClick={() => handleNavigatePallet(container.sailId)}
                   />
                 </IonButtons>
               </IonItem>
-              {isEditAllowed &&
-                <IonItemOptions
-                  side="end"
-                  onIonSwipe={(e) => handleDeleteItem(e, packageItem.packageId)}
-                >
-                  <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, packageItem.packageId)}>
-                    <IonIcon slot="icon-only" icon={removeIcon} />
-                  </IonItemOption>
-                </IonItemOptions>
-              }
+              <IonItemOptions
+                side="end"
+                onIonSwipe={(e) => handleDeleteItem(e, container.sailId)}
+              >
+                <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, container.sailId)}>
+                  <IonIcon slot="icon-only" icon={removeIcon} />
+                </IonItemOption>
+              </IonItemOptions>
             </IonItemSliding>
           </div>
         ))}
@@ -156,13 +188,13 @@ const Package: React.FC<PackageProps> = ({
           <IonButtons slot="start">
             <NavButton />
           </IonButtons>
-          <IonText className="header-menu">Package</IonText>
+          <IonText className="header-menu">Users</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className={`ion-padding`}>
-        {isEditAllowed && <IonButton expand="block" fill="outline" onClick={handleAddPackage}>
-          Add Package
-        </IonButton>}
+      <IonContent className="ion-padding">
+        <IonButton expand="block" fill="outline" onClick={handleAddSailing}>
+          Add User
+        </IonButton>
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -174,7 +206,7 @@ const Package: React.FC<PackageProps> = ({
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
               <IonItem className="ion-no-padding" key={index}>
-                <IonLabel color="medium" className="ion-no-margin">
+                <IonLabel color="medium" className="ion-no-margin item-box">
                   <h3>
                     <IonSkeletonText
                       animated
@@ -190,13 +222,13 @@ const Package: React.FC<PackageProps> = ({
                 </IonLabel>
               </IonItem>
             ))
-            : PackageList}
+            : SailingList}
         </IonList>
       </IonContent>
       {isItemDeleted && (
         <ToastMsg
           showToast={isItemDeleted}
-          message={"Package deleted successfully"}
+          message={"Sailing deleted successfully"}
           type={"green"}
           duration={3000}
         />
@@ -205,4 +237,4 @@ const Package: React.FC<PackageProps> = ({
   );
 };
 
-export default Package;
+export default Users;

@@ -31,11 +31,13 @@ import Maintenance from "./components/Maintenance";
 import SessionExpired from "./components/SessionExpired";
 import { useEffect } from "react";
 import { setupIonicReact } from "@ionic/react";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "./pages/User/ForgotPassword";
 import PasswordSuccess from "./pages/SuccessPassword";
 import Unsubscribe from "./pages/Unsubscribe";
 import LoadAccessModule from './pages/LoadAccessModule';
 import InitialAppLandingPage from "./pages/InitialAppLandingPage";
+import ConfigurationRoute from "./ConfigurationRoute";
+import ChangePaswword from "./pages/User/ChangePassword";
 
 setupIonicReact({
   mode: "md",
@@ -85,6 +87,9 @@ const App: React.FC = () => {
           <Route exact path="/forgotpassword">
             <ForgotPassword />
           </Route>
+          <Route exact path="/changepassword">
+            <ChangePaswword />
+          </Route>
           <Route exact path="/registersuccess">
             <RegisterSuccess />
           </Route>
@@ -93,6 +98,9 @@ const App: React.FC = () => {
           </Route>
           <Route path="/sailing-container">
             <ContainerSailingRoute />
+          </Route>
+          <Route path="/configuration">
+            <ConfigurationRoute />
           </Route>
           <Route path="/delivery-container">
             <ContainerDeliveryRoute />
@@ -106,7 +114,7 @@ const App: React.FC = () => {
           <Route exact path="/unsubscribe">
             <Unsubscribe />
           </Route>
-          {/* <Redirect exact to="/container-sail/sailing" /> */}
+          {/* <Redirect exact to="/container-sail/sails" /> */}
           {/* <Redirect exact path="/login" to="/" /> */}
         </IonRouterOutlet>
       </IonReactRouter>

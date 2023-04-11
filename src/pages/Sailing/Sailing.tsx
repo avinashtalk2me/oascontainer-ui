@@ -85,12 +85,12 @@ const Sailing: React.FC<SailingProps> = ({
 
   const handleNavigatePallet = (sailId: string) => {
     dispatch({ type: "SELECTED_SAILID", payload: sailId });
-    history.push(`/sailing-container/sailing/pallet/${sailId}`);
+    history.push(`/sailing-container/pallet/${sailId}`);
   };
 
   const handleViewReports = (container: Container) => {
     dispatch({ type: "SELECTED_SAILID", payload: container.sailId });
-    history.push(`/sailing-container/sailing/report/${container.sailId}`);
+    history.push(`/sailing-container/report/${container.sailId}`);
   };
 
   if (userDeletedSuccess) {

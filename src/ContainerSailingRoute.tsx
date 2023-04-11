@@ -23,7 +23,7 @@ const ContainerSailingRoute: React.FC = () => {
 
   return (
     <>
-      <Route exact path="/sailing-container/sailing">
+      <Route exact path="/sailing-container/sails">
         <Sailing isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/sailing-container/sailing/add">
@@ -32,25 +32,25 @@ const ContainerSailingRoute: React.FC = () => {
       <Route exact path="/sailing-container/sailing/edit/:sailId">
         <AddEditSailing isNew={false} isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/sailing-container/sailing/report/:sailId">
+      <Route exact path="/sailing-container/report/:sailId">
         <ReportDetail />
       </Route>
-      <Route exact path="/sailing-container/sailing/pallet/:sailId">
+      <Route exact path="/sailing-container/pallet/:sailId">
         <Pallet isEditAllowed={isEditAllowed}  />
       </Route>
-      <Route exact path="/sailing-container/sailing/pallet/add/:sailId">
+      <Route exact path="/sailing-container/pallet/add/:sailId">
         <AddEditPallet isNew={true}  isEditAllowed={isEditAllowed}/>
       </Route>
-      <Route exact path="/sailing-container/sailing/pallet/edit/:sailId/:palletId">
+      <Route exact path="/sailing-container/pallet/edit/:sailId/:palletId">
         <AddEditPallet isNew={false} isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/sailing-container/sailing/package/:palletId">
+      <Route exact path="/sailing-container/package/:palletId">
         <Package isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/sailing-container/sailing/package/add/:palletId">
+      <Route exact path="/sailing-container/package/add/:palletId">
         <AddEditPackage isNew={true} isEditAllowed={isEditAllowed} />
       </Route>
-      <Route exact path="/sailing-container/sailing/package/edit/:palletId/:packageId/:hwbNo">
+      <Route exact path="/sailing-container/package/edit/:palletId/:packageId/:hwbNo">
         <AddEditPackage isNew={false}  isEditAllowed={isEditAllowed} />
       </Route>
     </>

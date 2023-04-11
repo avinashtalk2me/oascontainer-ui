@@ -22,7 +22,7 @@ const ContainerDeliveryRoute: React.FC = () => {
 
   return (
     <>
-      <Route exact path="/delivery-container/delivery">
+      <Route exact path="/delivery-container/deliveries">
         <Delivery isEditAllowed={isEditAllowed} />
       </Route>
       <Route exact path="/delivery-container/delivery/add">

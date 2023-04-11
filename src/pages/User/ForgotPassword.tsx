@@ -12,11 +12,11 @@ import {
   IonLoading,
 } from "@ionic/react";
 import { useForm } from "react-hook-form";
-import Error from "../components/Error";
+import Error from "../../components/Error";
 import { useDispatch, useSelector } from "react-redux";
-import { validateEmail, updatePassword } from "../store/actions";
+import { validateEmail, updatePassword } from "../../store/actions";
 import { useEffect, useState } from "react";
-import ServerError from "../components/ServerError";
+import ServerError from "../../components/ServerError";
 import { useHistory } from "react-router";
 
 

@@ -36,10 +36,10 @@ function LoadAccessModule() {
 
   function dismiss(option: string) {
     if (option === 'sailing') {
-      history.replace("/sailing-container/sailing");
+      history.replace("/sailing-container/sails");
     }
     if (option === 'delivery') {
-      history.replace("/delivery-container/delivery");
+      history.replace("/delivery-container/deliveries");
     }
     modal.current?.dismiss();
   }

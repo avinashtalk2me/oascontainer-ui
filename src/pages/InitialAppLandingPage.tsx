@@ -94,14 +94,14 @@ const InitialAppLandingPage: React.FC = () => {
     setTimeout(() => {
       if (idToken) {
         if ((authToken.userRoles.sailing_access === 1 || authToken.userRoles.sailing_access === 2) && authToken.userRoles.delivery_access === 0) {
-          return history.replace("/sailing-container/sailing");
+          return history.replace("/sailing-container/sails");
         }
         else if ((authToken.userRoles.sailing_access === 1 || authToken.userRoles.sailing_access === 2) && (authToken.userRoles.delivery_access === 1 || authToken.userRoles.sailing_access === 2)) {
           return history.replace("/loadAccessModule");
         }
         else if (authToken.userRoles.sailing_access === 0 && (authToken.userRoles.delivery_access === 1 ||
           authToken.userRoles.delivery_access === 2)) {
-          return history.replace("/delivery-container/delivery");
+          return history.replace("/delivery-container/deliveries");
         }
       }
       else {
