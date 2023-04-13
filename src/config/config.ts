@@ -5,7 +5,8 @@ const envDetails: any = {
         LOGIN: "login",
         VALIDATE_EMAIL: "validateEmail",
         UPDATE_PASSWORD: "updatePassword",
-        DELETE_USER: "deleteUser/{userId}",
+        CHANGE_NEW_LOGIN_PASSWORD: "changePasswordForNewLogin",
+        DEACTIVATE_USER : "deactivateUser",
         GET_SAILINGS: "sailing",
         ADD_SAILING: "sailing",
         GET_SAILING: "sailing/{sailId}",
@@ -45,6 +46,13 @@ const envDetails: any = {
         GET_DROPOFF_PKG_NO: "package/getPkgNo/{palletId}",
         GET_DROPOFF_HWBNO_INFO: "dropOff/getSelectedHWBInfoForDropOff/{locationId}/{hwbNo}",
         GET_ROPOFF_PACKAGE_PKG_NO: "dropOff/getSelectedPackagePkgNosForDropOff/{locationId}",
+        GET_USERS : "user/getUsers",
+        ADD_USER : "user/addUser",
+        GET_USER: "user/getUserByUserId/{userId}",
+        DELETE_USER: "user/deleteUserByUserId/{userId}",
+        UPDATE_USER: "user/updateUser/{userId}",
+        GET_COMPANY_DETAILS: "getCompanyDetails",
+        UPDATE_COMPANY_DETAILS: "updateCompanyDetails"
     }
 }
 

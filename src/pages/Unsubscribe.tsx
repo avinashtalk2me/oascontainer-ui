@@ -17,16 +17,16 @@ import { DELETE_LOGOUT } from "../store/types";
 
 const Unsubscribe: React.FC = () => {
     const dispatch = useDispatch();
-    const { userDeletedSuccess } = useSelector((state: any) => state.user);
+    const { isUserDeleted } = useSelector((state: any) => state.user);
 
     useEffect(() => {
-        if (userDeletedSuccess) {
+        if (isUserDeleted) {
             localStorage &&
                 localStorage.getItem("_authResponse") &&
                 localStorage.removeItem("_authResponse");
             dispatch({ type: DELETE_LOGOUT });
         }
-    }, [userDeletedSuccess])
+    }, [isUserDeleted])
     return (
         <IonPage className="page">
             <IonHeader>
@@ -35,13 +35,13 @@ const Unsubscribe: React.FC = () => {
             <IonContent className="ion-padding">
                 <IonGrid>
                     <IonRow>
-                        {userDeletedSuccess &&
+                        {isUserDeleted &&
                             <>
                                 <IonCol size="12">
                                     <IonImg src={'/assets/images/complete.png'} style={{ height: '180px' }} />
                                 </IonCol>
                                 <IonCol size="12" className="ion-text-center ion-margin-top">
-                                    <IonText className="ion-font-bold">{userDeletedSuccess}</IonText>
+                                    <IonText className="ion-font-bold">{isUserDeleted}</IonText>
                                 </IonCol>
 
                                 <IonCol size="12" className="ion-text-center ion-margin-top">

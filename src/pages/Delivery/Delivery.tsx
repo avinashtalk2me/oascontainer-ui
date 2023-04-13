@@ -51,7 +51,7 @@ const Delivery: React.FC<DeliveryProps> = ({
     }
   );
 
-  const { userDeletedSuccess } = useSelector((state: any) => state.user);
+  const { isUserDeleted } = useSelector((state: any) => state.user);
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
     setTimeout(() => {
@@ -88,7 +88,7 @@ const Delivery: React.FC<DeliveryProps> = ({
   //   history.push(`/sailing-container/report/${container.sailId}`);
   // };
 
-  if (userDeletedSuccess) {
+  if (isUserDeleted) {
     history.replace('/')
     return null;
   }

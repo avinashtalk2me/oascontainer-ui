@@ -3,6 +3,7 @@ import Users from "./pages/User/Users";
 import AddEditUser from "./pages/User/UserDetail";
 import MyProfile from "./pages/User/MyProfile";
 import ChangePaswword from "./pages/User/ChangePassword";
+import Settings from "./pages/User/Settings";
 
 const ConfigurationRoute: React.FC = () => {
   const authToken: any = JSON.parse(
@@ -16,8 +17,11 @@ const ConfigurationRoute: React.FC = () => {
 
   return (
     <>
-      <Route exact path="/configuration/my-profile">
+      {/* <Route exact path="/configuration/my-profile">
         <MyProfile />
+      </Route> */}
+      <Route exact path="/configuration/appsettings">
+        <Settings />
       </Route>
       <Route exact path="/configuration/user/change-password">
         <ChangePaswword />

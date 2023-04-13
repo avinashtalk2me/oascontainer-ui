@@ -13,9 +13,30 @@ import {
     CHANGE_PASSWORD_REQUEST,
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_ERROR,
+    GET_USERS_REQUEST,
+    GET_USERS_SUCCESS,
+    GET_USERS_ERROR,
+    ADD_USER_REQUEST,
+    ADD_USER_SUCCESS,
+    ADD_USER_ERROR,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
+    GET_USER_ERROR,
+    UPDATE_USER_REQUEST,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
     DELETE_USER_REQUEST,
     DELETE_USER_SUCCESS,
-    DELETE_USER_ERROR
+    DELETE_USER_ERROR,
+    CHANGE_NEW_PWD_REQUEST,
+    CHANGE_NEW_PWD_SUCCESS,
+    CHANGE_NEW_PWD_ERROR,
+    GET_SETTING_DETAILS_REQUEST,
+    GET_SETTING_DETAILS_SUCCESS,
+    GET_SETTING_DETAILS_ERROR,
+    UPDATE_SETTING_DETAILS_REQUEST,
+    UPDATE_SETTING_DETAILS_SUCCESS,
+    UPDATE_SETTING_DETAILS_ERROR
 } from '../../types'
 
 const initialLoginState = {
@@ -26,8 +47,13 @@ const initialLoginState = {
     error: {},
     isEmailValidate: false,
     isPasswordUpdated: false,
-    userDeletedSuccess: undefined,
+    isUserDeleted: undefined,
     userDeletedFailure: undefined,
+    users: {},
+    selectedUser: {},
+    isUserSaved: false,
+    companyDetails: {},
+    isCompanyDetailsUpdated: false
 }
 
 interface ActionType {
@@ -39,13 +65,17 @@ const userReducer = (state = initialLoginState, action: ActionType) => {
     const { type, payload } = action;
 
     switch (type) {
-        case "RESET_ERROR":
+        case "RESET_FORM":
             return {
                 ...state,
                 error: undefined,
                 saveuserDetails: {},
                 isEmailValidate: false,
-                isPasswordUpdated: false
+                isPasswordUpdated: false,
+                isUserSaved: false,
+                isUserDeleted: false,
+                companyDetails: {},
+                isCompanyDetailsUpdated: false
             }
         case LOGOUT:
             return {
@@ -73,23 +103,81 @@ const userReducer = (state = initialLoginState, action: ActionType) => {
                 isloading: false,
                 error: payload
             }
+        case GET_USERS_REQUEST:
+            return {
+                ...state,
+                isloading: true,
+                users: {}
+            }
+        case GET_USERS_SUCCESS:
+            return {
+                ...state,
+                isloading: false,
+                users: payload,
+            }
+        case GET_USERS_ERROR:
+            return {
+                ...state,
+                isloading: false,
+                users: {},
+                errors: payload
+            }
+        case ADD_USER_REQUEST:
+        case UPDATE_USER_REQUEST:
+            return {
+                ...state,
+                isloading: true,
+                isUserSaved: false
+            }
+        case ADD_USER_SUCCESS:
+        case UPDATE_USER_SUCCESS:
+            return {
+                ...state,
+                isloading: false,
+                isUserSaved: true
+            }
+        case ADD_USER_ERROR:
+        case UPDATE_USER_ERROR:
+            return {
+                ...state,
+                isloading: false,
+                error: payload
+            }
+        case GET_USER_REQUEST:
+            return {
+                ...state,
+                isloading: true,
+                selectedUser: {}
+            }
+        case GET_USER_SUCCESS:
+            return {
+                ...state,
+                isloading: false,
+                selectedUser: payload
+            }
+        case GET_USER_ERROR:
+            return {
+                ...state,
+                isloading: false,
+                error: payload
+            }
         case DELETE_USER_REQUEST:
             return {
                 ...state,
-                userDeletedSuccess: undefined,
-                userDeletedFailure: undefined
+                isloading: true,
+                isUserDeleted: false,
             }
         case DELETE_USER_SUCCESS:
             return {
                 ...state,
-                userDeletedSuccess: payload,
-                userDeletedFailure: undefined
+                isloading: false,
+                isUserDeleted: true,
             }
         case DELETE_USER_ERROR:
             return {
                 ...state,
-                userDeletedSuccess: undefined,
-                userDeletedFailure: payload
+                isloading: false,
+                error: payload,
             }
         case REGISTER_REQUEST:
             return {
@@ -122,21 +210,59 @@ const userReducer = (state = initialLoginState, action: ActionType) => {
                 error: payload
             }
         case CHANGE_PASSWORD_REQUEST:
+        case CHANGE_NEW_PWD_REQUEST:
             return {
                 isloading: true,
                 isPasswordUpdated: false,
             }
         case CHANGE_PASSWORD_SUCCESS:
+        case CHANGE_NEW_PWD_SUCCESS:
             return {
                 isloading: false,
                 isPasswordUpdated: true,
             }
         case CHANGE_PASSWORD_ERROR:
+        case CHANGE_NEW_PWD_ERROR:
             return {
                 isloading: false,
-                isPasswordUpdated: false,
                 error: payload
             }
+        case GET_SETTING_DETAILS_REQUEST:
+            return {
+                ...state,
+                isloading: true,
+                companyDetails: {}
+            }
+        case GET_SETTING_DETAILS_SUCCESS:
+            return {
+                ...state,
+                isloading: false,
+                companyDetails: payload
+            }
+        case GET_SETTING_DETAILS_ERROR:
+            return {
+                ...state,
+                isloading: false,
+                error: payload
+            }
+        case UPDATE_SETTING_DETAILS_REQUEST:
+            return {
+                ...state,
+                isloading: true,
+                isCompanyDetailsUpdated: false
+            }
+            case UPDATE_SETTING_DETAILS_SUCCESS:
+                return {
+                    ...state,
+                    isloading: false,
+                    isCompanyDetailsUpdated: true
+                }
+                case UPDATE_SETTING_DETAILS_ERROR:
+                return {
+                    ...state,
+                    isloading: false,
+                    isCompanyDetailsUpdated: true
+                }
         default:
             return state
     }

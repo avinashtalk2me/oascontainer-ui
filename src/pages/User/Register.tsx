@@ -35,18 +35,18 @@ const Register: React.FC = () => {
   useEffect(() => {
     if (saveuserDetails && saveuserDetails.status === 0) {
       // resetForm();
-      dispatch({ type: "RESET_ERROR" });
+      dispatch({ type: "RESET_FORM" });
       history.push("/registersuccess");
     }
   }, [saveuserDetails]);
 
   const resetGoToLogin = (e: any) => {
     e.preventDefault();
-    dispatch({ type: "RESET_ERROR" });
+    dispatch({ type: "RESET_FORM" });
     history.push('/login');
   };
   // const resetForm = () => {
-  //   dispatch({ type: "RESET_ERROR" });
+  //   dispatch({ type: "RESET_FORM" });
   //   setValue("firstName", "");
   //   setValue("lastName", "");
   //   setValue("email", "");

@@ -37,8 +37,6 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
   sailDesc,
 }) => {
   const [summary, setSummary] = useState<any>({});
-  // const [results, setResults] = useState("");
-  // const [shareType, setShareType] = useState("");
   const { containerManifest } = useSelector((state: any) => state.sailing);
 
   useEffect(() => {
@@ -81,29 +79,8 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
     }
   }, [containerManifest]);
 
-  // const downloadFile = async () => {
-  //   let options = {
-  //     documentSize: "LETTER",
-  //     type: "base64",
-  //     fileName: "SailingSummary.pdf",
-  //   };
-
-  //   const base64Content = await PDFGenerator.fromData(
-  //     SailingReportPDF(sailDesc, sailDate, containerManifest, summary),
-  //     options
-  //   );
-
-  //   const fileOutput = await Filesystem.writeFile({
-  //     path: options.fileName,
-  //     data: base64Content,
-  //     directory: Directory.Documents,
-  //   });
-  //   setResults(fileOutput.uri);
-  // };
 
   const shareFile = async (shareType: string) => {
-    // setShareType(shareType);
-    // downloadFile();
     let options = {
       documentSize: "LETTER",
       type: "base64",
@@ -121,13 +98,9 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
       directory: Directory.Documents,
     });
 
-
-    // setResults(fileOutput.uri);
-
     if (shareType === "whatsapp") {
       await SocialSharing.shareViaWhatsApp(
         `Sailing Summary report (${sailDesc}) (${sailDate})`,
-        // results
         fileOutput.uri
       );
     } else {
@@ -144,28 +117,6 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
       });
     }
   };
-
-  // useEffect(() => {
-  //   async function shareFile() {
-  //     if (shareType === "whatsapp") {
-  //       await SocialSharing.shareViaWhatsApp(
-  //         `Sailing Summary report (${sailDesc}) (${sailDate})`,
-  //         results
-  //       );
-  //     } else {
-  //       await SocialSharing.shareViaEmail(
-  //         `Sailing Summary (${sailDesc}) (${sailDate})`,
-  //         `Sailing Summary Report`,
-  //         [],
-  //         undefined,
-  //         undefined,
-  //         results
-  //       );
-  //     }
-  //   }
-  //   shareFile();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [results]);
 
   const SailingReport: JSX.Element = (
     <IonGrid className="ion-no-padding">
@@ -190,13 +141,15 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
             className={`${pallet.palletType === "Pallet" ? "borderDiv" : ""}`}
           >
             <IonCol sizeMd="3">
-              <IonText color="medium">{pallet.palletNo}</IonText>
+              <IonText color="medium">
+                {pallet.palletType !== 'Loose' ? pallet.palletNo : 'Loose'}
+              </IonText>
             </IonCol>
             <IonCol sizeMd="3">
               <IonText color="medium">{pallet.palletType}</IonText>
             </IonCol>
             <IonCol sizeMd="2">
-              <IonText color="medium">{pallet.palletType !== 'Loose' ? pallet.packageCount : '-'}</IonText>
+              <IonText color="medium">{pallet.packageCount}</IonText>
             </IonCol>
             <IonCol sizeMd="4">
               <IonText color="medium">{pallet.palletWeights}</IonText>
@@ -266,7 +219,7 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
                     </IonCol>
                     <IonCol sizeMd="3">
                       <IonText>
-                        <b>-</b>
+                         <b>{summary.loosePieces}</b>
                       </IonText>
                     </IonCol>
                     <IonCol sizeMd="3">

@@ -1,5 +1,9 @@
-export { registerUser, validateUser, validateEmail, updatePassword, deleteUser }
- from "./users/users.action";
+export {
+  registerUser, validateUser, validateEmail, updatePassword, getUsers, getUserById,
+  deleteUserById, addUser, updateUser, deactivateAccount, changePasswordForNewLogin,
+  getCompanyDetails, updateCompanyDetails
+}
+  from "./users/users.action";
 export {
   deletePackageById, deletePalletById, deleteSailingById, getContainerManifest,
   getContainerSailing, getNextPalletNo, getPackageByPalletId, getPalletManifest, getPalletsBySailId,
@@ -11,6 +15,6 @@ export {
 export {
   deleteDeliveryById, getDeliveries, getSelectedDeliveryById, insertDelivery, updateDeliveryById,
   deleteLocationById, getSelectedLocationById, insertLocation, getLocationsByDeliveryId, updateLocation,
-  deleteDropOffById, getDropOffsByLocation, getSelectedHWBInfoForDropoff,insertDropOff, updateDropOff,
+  deleteDropOffById, getDropOffsByLocation, getSelectedHWBInfoForDropoff, insertDropOff, updateDropOff,
   getSelectedScanedHWBInfoForDropoff, sendEmailForLocationWithPackages
 } from "./delivery_access"

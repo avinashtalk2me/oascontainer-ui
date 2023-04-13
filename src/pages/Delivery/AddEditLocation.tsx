@@ -23,7 +23,7 @@ import {
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Error from "../../components/Error";
-import { close as closeIcon, timer, timerOutline } from "ionicons/icons";
+import { close as closeIcon, timer, camera, } from "ionicons/icons";
 
 import {
   insertLocation,
@@ -34,7 +34,10 @@ import ServerError from "../../components/ServerError";
 import { useEffect, useState } from "react";
 import ToastMsg from "../../components/ToastMsg";
 import { useHistory, useParams } from "react-router";
-import { format, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import { format, zonedTimeToUtc } from "date-fns-tz";
+import { BarcodeScanner } from "@capacitor-community/barcode-scanner";
+import { Dialog } from "@capacitor/dialog";
+
 
 export interface LocationProps {
   isNew: boolean;
@@ -51,7 +54,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
   const { isloading, isItemSaved, error, location } = useSelector(
     (state: any) => state.location
   );
-
+  const [hideBg, setHideBg] = useState("");
 
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -124,6 +127,24 @@ const AddEditLocation: React.FC<LocationProps> = ({
   };
 
   useEffect(() => {
+    const checkPermission = async () => {
+      try {
+        const status = await BarcodeScanner.checkPermission({ force: true });
+        if (status.granted) {
+          return true;
+        }
+        return false;
+      } catch (error) {
+        // setErr(error.message)
+        // console.log(error.message)
+      }
+    };
+
+    checkPermission();
+    return () => { };
+  }, []);
+
+  useEffect(() => {
     if (isItemSaved) {
       let timer = setTimeout(() => {
         dispatch({ type: "RESET_FORM" });
@@ -171,17 +192,50 @@ const AddEditLocation: React.FC<LocationProps> = ({
   const getDropStatus = (dropStatus: number) => {
     return dropStatus === 0 ? "Open" : dropStatus === 1 ? "Package Scanned" : "Notification Sent"
   }
+
+  const stopScan = () => {
+    BarcodeScanner.showBackground();
+    BarcodeScanner.stopScan();
+    setHideBg("");
+  };
+
+  const startScan = async () => {
+
+    BarcodeScanner.hideBackground(); // make background of WebView transparent
+    setHideBg("hideBg");
+    const result = await BarcodeScanner.startScan(); // start scanning and wait for a result
+    if (result.hasContent) {
+      const arrResult: string[] = result.content?.split('_') || [];
+      if(arrResult.length === 1) {
+        setValue("locationDesc", arrResult[0]);
+        stopScan();
+      } else {
+        Dialog.alert({
+          title: "Invalid Location",
+          message: `This is not a valid location. Please try another one.`,
+        });
+        if (navigator.vibrate) {
+          // vibration API supported
+          navigator.vibrate(1000);
+          // stopScan();
+          startScan();
+        }
+      }
+    }
+
+  }
   return (
     <>
       <IonHeader translucent>
         <IonToolbar>
-          {isEditAllowed && <IonText className="modalheader-menu">
+          {isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
             {isNew ? "Add Location" : "Edit Location"}
           </IonText>}
-          {!isEditAllowed && <IonText className="modalheader-menu">
+          {!isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
             View Location
           </IonText>}
           <IonButtons
+            hidden={!!hideBg}
             slot="end"
             onClick={() => closePage()}
             className="closeIcon"
@@ -190,9 +244,9 @@ const AddEditLocation: React.FC<LocationProps> = ({
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className={`ion-padding ${hideBg}`}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList>
+          <IonList hidden={!!hideBg}>
             <div className="ion-padding-bottom">
               <IonItem className="ion-no-padding">
                 <IonLabel
@@ -211,6 +265,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
                   {...register("locationDesc")}
                   onIonChange={(e: any) => setValue("locationDesc", e.detail.value)}
                 />
+                <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />
               </IonItem>
               <Error errors={errors} name="locationDesc" />
             </div>
@@ -292,6 +347,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
               <ServerError errorMsg={error.message} />
             )}
             {isEditAllowed && <IonButton
+             hidden={!!hideBg}
               type="submit"
               className="ion-margin-top"
               color="primary"
@@ -310,6 +366,16 @@ const AddEditLocation: React.FC<LocationProps> = ({
             </IonButton>}
           </IonList>
         </form>
+        <IonButton
+          color="danger"
+          className="stop-scan-button location"
+          hidden={!hideBg}
+          onClick={stopScan}
+        >
+          {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
+          Stop Scan
+        </IonButton>
+        <div hidden={!hideBg} className="scan-box location" />
       </IonContent>
       <IonLoading
         isOpen={isloading}

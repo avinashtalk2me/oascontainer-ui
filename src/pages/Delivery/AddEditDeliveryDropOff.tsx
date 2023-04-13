@@ -61,9 +61,10 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   const [hideBg, setHideBg] = useState("");
   const [scanResult, setScanResult] = useState<string[]>([]);
   const [isHWBScanned, setIsHWBScanned] = useState<boolean>();
-  const [isScanSuccess, setIsScanSuccess] = useState<boolean>(false);
+  // const [isScanSuccess, setIsScanSuccess] = useState<boolean>(false);
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isCheckSelected, setIsCheckSelected] = useState<boolean>(false);
+  const [scanLoadingMessage, setScanLoadingMessage] = useState<string>("");
 
 
   const { isloading, isItemSaved, error,    //packageData, 
@@ -119,27 +120,47 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
             .sort((item: string, nextItem: string) => +item - +nextItem).join(","));
         setValue("shipperName", selectedHwbInfoForDropoff.hwbInfo.shipperName);
         setValue("shipperEmail", selectedHwbInfoForDropoff.hwbInfo.shipperEmail);
+        // if (isHWBScanned) {
+        //   setIsScanSuccess(true)
+        // }
         if (isHWBScanned) {
-          setIsScanSuccess(true)
+          onSubmit({
+            "hwbNo": scanResult[0],
+            "pkgNo": scanResult[2],
+            "totalPkgs": selectedHwbInfoForDropoff.hwbInfo.totalPackages,
+            "shipperName": selectedHwbInfoForDropoff.hwbInfo.shipperName,
+            "shipperEmail": selectedHwbInfoForDropoff.hwbInfo.shipperName,
+          });
+          stopScan();
         }
+
       } else {
         // setValue("hwbNo", "");
-        if (isHWBScanned) {
-          setIsScanSuccess(true)
-          setValue("pkgNo", "");
-        }
+        // if (isHWBScanned) {
+        //   setIsScanSuccess(true)
+        //   setValue("pkgNo", "");
+        // }
         Dialog.alert({
           title: "Invalid HWB!!",
           message: `The HWB# ${watchHwbNo} is not available in our system. Please try another one.`,
         });
-        setValue("totalPkgs", "");
-        setValue("pkgNo", "");
-        setValue("hwbNo", "");
-        setValue("shipperName", "");
-        setValue("shipperEmail", "");
+        if (isHWBScanned) {
+          startScan()
+          if (navigator.vibrate) {
+            // vibration API supported
+            navigator.vibrate(1000);
+            // stopScan();
+            // startScan();
+          }
+        }
+
+        // setValue("totalPkgs", "");
+        // setValue("pkgNo", "");
+        // setValue("hwbNo", "");
+        // setValue("shipperName", "");
+        // setValue("shipperEmail", "");
       }
     }
-
   }, [isNew, selectedHwbInfoForDropoff, isHWBScanned])
 
   useEffect(() => {
@@ -153,14 +174,28 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
           title: "Duplicate Package",
           message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
         });
+        startScan()
+        if (navigator.vibrate) {
+          // vibration API supported
+          navigator.vibrate(1000);
+          // stopScan();
+          // startScan();
+        }
       } else if (isValidPackagePkgNo.isValidPackage === "INVALID") {
         Dialog.alert({
           title: "Invalid HWB!!",
           message: `The HWB# ${scanResult[0]} is not available in our system. Please try another one.`,
         });
+        startScan()
+        if (navigator.vibrate) {
+          // vibration API supported
+          navigator.vibrate(1000);
+          // stopScan();
+          // startScan();
+        }
       }
 
-      stopScan();
+      // stopScan();
 
     }
   }, [isValidPackagePkgNo, isHWBScanned, scanResult])
@@ -201,15 +236,30 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     );
   };
 
+  // useEffect(() => {
+  //   if (isItemSaved) {
+  //     let timer = setTimeout(() => {
+  //       dispatch({ type: "RESET_FORM" });
+  //       closePage();
+  //     }, 1000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isItemSaved]);
+
   useEffect(() => {
     if (isItemSaved) {
-      let timer = setTimeout(() => {
-        dispatch({ type: "RESET_FORM" });
-        closePage();
-      }, 1000);
-      return () => clearTimeout(timer);
+      resetForm();
+      if (!isHWBScanned) {
+        let timer = setTimeout(() => { dispatch({ type: "RESET_FORM" }); closePage() })
+        return () => clearTimeout(timer);
+      } else {
+        setScanLoadingMessage("Saving the package and initialising new scan...");
+        let timer = setTimeout(() => { startScan(); }, 500)
+        return () => clearTimeout(timer);
+      }
     }
   }, [isItemSaved]);
+
 
   useEffect(() => {
     dispatch({ type: "RESET_PKG_SCAN" })
@@ -217,7 +267,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
 
   const onSubmit = (data: any) => {
     data['hwbNo'] = data['hwbNo'].toUpperCase()
-    let newDataObj = data; 
+    let newDataObj = data;
     if (!isEditAllowed) {
       closePage();
       return;
@@ -247,14 +297,17 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   };
 
   const startScan = async () => {
+    setScanLoadingMessage("")
     dispatch({ type: "RESET_PKG_SCAN" })
+    dispatch({ type: "RESET_FORM" });
     BarcodeScanner.hideBackground(); // make background of WebView transparent
     setHideBg("hideBg");
     const result = await BarcodeScanner.startScan(); // start scanning and wait for a result
     if (result.hasContent) {
       const arrResult: string[] = result.content?.split('_') || [];
       setScanResult(arrResult);
-      if (arrResult?.length === 7) {
+      if (arrResult.length > 3 && arrResult[0] !== "" && (arrResult[1] !== "" && arrResult[1].match(/^[0-9a-z]+$/)) &&
+        (arrResult[2] !== "" && arrResult[2].match(/^[0-9a-z]+$/))) {
         const data = {
           "hwbNo": arrResult[0],
           "pkgNo": arrResult[2]
@@ -265,7 +318,12 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
           title: "Invalid Package",
           message: `This is not a valid HWB. Please try another one.`,
         });
-        stopScan();
+        if (navigator.vibrate) {
+          // vibration API supported
+          navigator.vibrate(1000);
+          // stopScan();
+          startScan();
+        }
       }
     };
   }
@@ -296,7 +354,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
 
   const handleToggleChange = (event: any) => {
     resetForm();
-    setIsScanSuccess(false)
+    // setIsScanSuccess(false)
     dispatch({ type: "RESET_PKG_SCAN" })
     setIsHWBScanned(!isHWBScanned);
   }
@@ -555,7 +613,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
               </IonItem>
               <Error errors={errors} name="hwbNo" />
             </div>
-            {((isHWBScanned && isScanSuccess) || (!isHWBScanned)) && <>
+            {!isHWBScanned && <>
               <div className="ion-padding-bottom">
                 <IonItem className="ion-no-padding">
                   <IonLabel
@@ -672,8 +730,14 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         showBackdrop={false}
         translucent={true}
       />
+      <IonLoading
+        isOpen={scanLoadingMessage !== ""}
+        message={scanLoadingMessage}
+        showBackdrop={false}
+        translucent={true}
+      />
       {
-        isItemSaved && (
+        isItemSaved && !isHWBScanned && (
           <ToastMsg
             showToast={isItemSaved}
             duration={5000}

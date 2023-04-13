@@ -153,7 +153,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
           <IonButtons slot="start">
             <NavButton />
           </IonButtons>
-          <IonText className="header-menu">Delivery DropOff Package</IonText>
+          <IonText className="header-menu">Delivery DropOff</IonText>
         </IonToolbar>
       </IonHeader>
       <IonContent className={`ion-padding`}>

@@ -38,8 +38,6 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
   sailDesc,
 }) => {
   const [uniquePallets, setUniquePallets] = useState([]);
-  const [results, setResults] = useState("");
-  const [shareType, setShareType] = useState("");
   const { palletManifest } = useSelector((state: any) => state.sailing);
 
   useEffect(() => {
@@ -52,29 +50,8 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
     }
   }, [palletManifest]);
 
-  // const downloadFile = async () => {
-  //   let options = {
-  //     documentSize: "LETTER",
-  //     type: "base64",
-  //     fileName: "PalletDetails.pdf",
-  //   };
-
-  //   const base64Content = await PDFGenerator.fromData(
-  //     PalletReportPDF(sailDesc, sailDate, uniquePallets, palletManifest),
-  //     options
-  //   );
-
-  //   const fileOutput = await Filesystem.writeFile({
-  //     path: options.fileName,
-  //     data: base64Content,
-  //     directory: Directory.Documents,
-  //   });
-  //   setResults(fileOutput.uri);
-  // };
 
   const shareFile = async (shareType: string) => {
-    setShareType(shareType);
-    // downloadFile();
     let options = {
       documentSize: "LETTER",
       type: "base64",
@@ -89,13 +66,11 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
     const fileOutput = await Filesystem.writeFile({
       path: options.fileName,
       data: base64Content,
-      directory: Directory.Documents,      
+      directory: Directory.Documents,
     });
-    setResults(fileOutput.uri);
     if (shareType === "whatsapp") {
       await SocialSharing.shareViaWhatsApp(
         `Pallet Details report (${sailDesc}) (${sailDate})`,
-        // results
         fileOutput.uri
       );
     } else {
@@ -106,7 +81,6 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
           [],
           undefined,
           undefined,
-          // results
           fileOutput.uri
         );
       }).catch(() => {
@@ -115,30 +89,12 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
           message: `Email is not configured. Please configure email.`,
         });
       });
-    } 
+    }
   };
 
-  // useEffect(() => {
-  //   async function shareFile() {
-  //     if (shareType === "whatsapp") {
-  //       await SocialSharing.shareViaWhatsApp(
-  //         `Pallet Details report (${sailDesc}) (${sailDate})`,
-  //         results
-  //       );
-  //     } else {
-  //       await SocialSharing.shareViaEmail(
-  //         `Pallet Details (${sailDesc}) (${sailDate})`,
-  //         `Pallet Details Report`,
-  //         [],
-  //         undefined,
-  //         undefined,
-  //         results
-  //       );
-  //     }
-  //   }
-  //   shareFile();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [results]);
+  const getIsPalletOrLoose = (palletNo: number): string => {
+    return palletManifest.data.find((item: IPallet) => item.palletNo === palletNo).palletType
+  }
 
   const getPalletDetails = (palletNo: number) => {
     const palletsByPalletNo = palletManifest.data.filter(
@@ -253,7 +209,8 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
           {(uniquePallets || []).map((palletNo: number) => (
             <div key={palletNo}>
               <IonListHeader className="ion-no-padding" key={palletNo}>
-                <h3 color="medium">Pallet# {palletNo}</h3>
+                {getIsPalletOrLoose(palletNo) === "Pallet" ? <h3 color="medium">Pallet# {palletNo}</h3> :
+                  <h3 color="medium">Loose</h3>}
               </IonListHeader>
               {getPalletDetails(palletNo)}
             </div>

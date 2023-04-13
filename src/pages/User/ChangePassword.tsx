@@ -16,25 +16,23 @@ import {
 import { useForm } from "react-hook-form";
 import Error from "../../components/Error";
 import { useDispatch, useSelector } from "react-redux";
-import { validateEmail, updatePassword } from "../../store/actions";
-import { useEffect, useState } from "react";
+import { changePasswordForNewLogin } from "../../store/actions";
+import { useEffect } from "react";
 import ServerError from "../../components/ServerError";
 import { useHistory } from "react-router";
 import { LOGOUT } from "../../store/types";
-import { NavButton } from "../../components/NavButton";
 
 
 const ChangePaswword: React.FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const userDetails = useSelector((state: any) => state.user);
-  const { isloading, isEmailValidate, error, isPasswordUpdated } = userDetails;
+  const { isloading, error, isPasswordUpdated } = userDetails;
 
   const authToken: any = JSON.parse(
     localStorage.getItem("_authResponse") || "{}"
   );
   const isCreatedBy = authToken && authToken.isCreatedBy;
-
 
   const defaultValues = {
     password: "",
@@ -59,7 +57,7 @@ const ChangePaswword: React.FC = () => {
     setValue("password", "");
     setValue("newPassword", "");
     setValue("confirmNewPassword", "");
-    dispatch({ type: 'RESET_ERROR' })
+    dispatch({ type: 'RESET_FORM' })
     reset(
       {},
       {
@@ -106,12 +104,7 @@ const ChangePaswword: React.FC = () => {
 
 
   const onSubmit = (data: any) => {
-    if (!isEmailValidate) {
-      dispatch(validateEmail(data));
-    }
-    else {
-      dispatch(updatePassword(data));
-    }
+    dispatch(changePasswordForNewLogin(data));
   };
 
 
@@ -158,6 +151,11 @@ const ChangePaswword: React.FC = () => {
                   type="password"
                   {...register("newPassword", {
                     required: "New Password is required.",
+                    validate: (value: string) => {
+                      if (watch('password') === value) {
+                        return "New Password can't be same as current password."
+                      }
+                    }
                   })}
                   onIonChange={(e: any) => setValue("newPassword", e.detail.value)}
                 />

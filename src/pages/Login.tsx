@@ -54,15 +54,19 @@ const Login: React.FC = () => {
   useEffect(() => {
     if (user && user.userId) {
       if (!user.createdBy) {
-        dispatch({ type: "RESET_ERROR" });
-        if ((user.userRoles.sailing_access === 1 || user.userRoles.sailing_access === 2) && user.userRoles.delivery_access === 0) {
-          history.replace("/sailing-container/sails");
-        }
-        if ((user.userRoles.sailing_access === 1 || user.userRoles.sailing_access === 2) && (user.userRoles.delivery_access === 1 || user.userRoles.sailing_access === 2)) {
+        dispatch({ type: "RESET_FORM" });
+        if ((user.userRoles.admin_access === 1)) {
           history.replace("/loadAccessModule");
-        }
-        if (user.userRoles.sailing_access === 0 && (user.userRoles.delivery_access === 1 || user.userRoles.delivery_access === 1)) {
-          history.replace("/delivery-container/deliveries");
+        } else {
+          if ((user.userRoles.sailing_access === 1 || user.userRoles.sailing_access === 2) && user.userRoles.delivery_access === 0) {
+            history.replace("/sailing-container/sails");
+          }
+          if (((user.userRoles.sailing_access === 1 || user.userRoles.sailing_access === 2) && (user.userRoles.delivery_access === 1 || user.userRoles.sailing_access === 2))) {
+            history.replace("/loadAccessModule");
+          }
+          if (user.userRoles.sailing_access === 0 && (user.userRoles.delivery_access === 1 || user.userRoles.delivery_access === 1)) {
+            history.replace("/delivery-container/deliveries");
+          }
         }
       } else {
         history.replace("/changepassword");
@@ -90,7 +94,7 @@ const Login: React.FC = () => {
   const resetForm = () => {
     setValue("email", "");
     setValue("password", "");
-    dispatch({ type: 'RESET_ERROR' })
+    dispatch({ type: 'RESET_FORM' })
     reset(
       {},
       {

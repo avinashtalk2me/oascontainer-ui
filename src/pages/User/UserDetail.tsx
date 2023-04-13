@@ -16,13 +16,15 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { generate } from 'generate-password'
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import Error from "../../components/Error";
 import ServerError from "../../components/ServerError";
 import { close as closeIcon } from "ionicons/icons";
-
+import { addUser, getUserById, updateUser } from "../../store/actions";
+import ToastMsg from "../../components/ToastMsg";
 
 interface UserDetailProps {
   isRegister: boolean;
@@ -30,14 +32,21 @@ interface UserDetailProps {
   onSubmitData?: (formData: any) => void;
 }
 
+export type AccessRole = {
+  label: string;
+  value: string;
+};
+
 const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
   isNew = false,
   onSubmitData,
-  children }) => {
+}) => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { userId }: any = useParams();
+
   const user = useSelector((state: any) => state.user);
-  const { isloading, saveuserDetails, error } = user;
+  const { isloading, saveuserDetails, isUserSaved, error, selectedUser } = user;
 
   const defaultValues = {
     firstName: "",
@@ -45,7 +54,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
     email: "",
     password: "",
     companyName: "",
-    userRoles: ""
+    userRoles: [""]
   };
 
   useEffect(() => {
@@ -74,14 +83,44 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
     }
   }, [saveuserDetails]);
 
+  const getUserRoles = (userRoles: any) => {
+    let roles = []
+    if (Object.keys(userRoles).length !== 0) {
+      for (const key in userRoles) {
+        if (userRoles[key] !== 0) {
+          roles.push(key.replace("_access", ''))
+        }
+      }
+    }
+    return roles
+  }
+
+  useEffect(() => {
+    if (!isNew && selectedUser && selectedUser?.status === 0) {
+      setValue("firstName", selectedUser.data.FirstName);
+      setValue("lastName", selectedUser.data.LastName);
+      setValue("email", selectedUser.data.Email);
+      setValue("userRoles", getUserRoles(JSON.parse(selectedUser.data.UserRole)));
+    }
+  }, [selectedUser, isNew]);
+
+
+
+  useEffect(() => {
+    if (!isNew) {
+      dispatch(getUserById(userId));
+    }
+  }, [isNew, dispatch, userId]);
+
+
   const resetForm = () => {
-    dispatch({ type: "RESET_ERROR" });
+    dispatch({ type: "RESET_FORM" });
     setValue("firstName", "");
     setValue("lastName", "");
     setValue("email", "");
     setValue("password", "");
     setValue("companyName", "");
-    setValue("userRoles", "");
+    setValue("userRoles", []);
     reset(
       {},
       {
@@ -99,9 +138,21 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
     const formData = { ...data };
     formData.sailingAccess = data.userRoles.some((item: string) => item === "sailing") ? 1 : 0;
     formData.deliveryAccess = data.userRoles.some((item: string) => item === "delivery") ? 1 : 0;
+    if (!isRegister) {
+      formData.adminAccess = data.userRoles.some((item: string) => item === "admin") ? 1 : 0;
+    }
     delete formData.userRoles;
+    if (!isRegister && isNew) {
+      formData.password = generate({ length: 10 })
+    }
+    if (!isRegister && !isNew) {
+      formData.isEmailChanged = selectedUser.data.Email !== data.email
+    }
     if (isRegister) {
       onSubmitData && onSubmitData(formData)
+    } else {
+      isNew && dispatch(addUser(formData));
+      !isNew && dispatch(updateUser(userId, formData))
     }
   };
 
@@ -114,10 +165,19 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
     return () => subscription.unsubscribe();
   }, [watch]);
 
+  useEffect(() => {
+    if (isUserSaved) {
+      let timer = setTimeout(() => {
+        dispatch({ type: "RESET_FORM" });
+        closePage();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isUserSaved]);
+
   const closePage = () => {
     history.goBack();
   };
-
 
   const UserForm = () => (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -186,45 +246,49 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
           </IonItem>
           <Error errors={errors} name="email" />
         </div>
-        <div className="ion-padding-bottom">
-          <IonItem className="ion-no-padding">
-            <IonLabel
-              color="medium"
-              className="form-input"
-              position="stacked"
-            >
-              Company
-            </IonLabel>
-            <IonInput
-              {...register("companyName", {
-                required: "Company is required.",
-              })}
-              onIonChange={(e: any) =>
-                setValue("companyName", e.detail.value)
-              }
-            />
-          </IonItem>
-          <Error errors={errors} name="companyName" />
-        </div>
-        <div className="ion-padding-bottom">
-          <IonItem className="ion-no-padding">
-            <IonLabel
-              className="form-input"
-              color="medium"
-              position="stacked"
-            >
-              Password
-            </IonLabel>
-            <IonInput
-              type="password"
-              {...register("password", {
-                required: "Password is required.",
-              })}
-              onIonChange={(e: any) => setValue("password", e.detail.value)}
-            />
-          </IonItem>
-          <Error errors={errors} name="password" />
-        </div>
+        {isRegister &&
+          <>
+            <div className="ion-padding-bottom">
+              <IonItem className="ion-no-padding">
+                <IonLabel
+                  color="medium"
+                  className="form-input"
+                  position="stacked"
+                >
+                  Company
+                </IonLabel>
+                <IonInput
+                  {...register("companyName", {
+                    required: "Company is required.",
+                  })}
+                  onIonChange={(e: any) =>
+                    setValue("companyName", e.detail.value.toUpperCase())
+                  }
+                />
+              </IonItem>
+              <Error errors={errors} name="companyName" />
+            </div>
+            <div className="ion-padding-bottom">
+              <IonItem className="ion-no-padding">
+                <IonLabel
+                  className="form-input"
+                  color="medium"
+                  position="stacked"
+                >
+                  Password
+                </IonLabel>
+                <IonInput
+                  type="password"
+                  {...register("password", {
+                    required: "Password is required.",
+                  })}
+                  onIonChange={(e: any) => setValue("password", e.detail.value)}
+                />
+              </IonItem>
+              <Error errors={errors} name="password" />
+            </div>
+          </>
+        }
         <div className="ion-padding-bottom">
           <IonItem className="ion-no-padding">
             <IonLabel
@@ -239,6 +303,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
               {...register("userRoles", {
                 required: "Access Role is required.",
               })}>
+              {!isRegister && <IonSelectOption value="admin">Admin</IonSelectOption>}
               <IonSelectOption value="delivery">Delivery</IonSelectOption>
               <IonSelectOption value="sailing">Sailing </IonSelectOption>
             </IonSelect>
@@ -248,7 +313,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
         {error && error.status === -1 && (
           <ServerError errorMsg={error.message} />
         )}
-        {children}
+        {/* {children} */}
         <IonButton
           type="submit"
           className="ion-margin-top"
@@ -258,7 +323,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
           {!isRegister ? 'Save' : 'Register'}
         </IonButton>
       </IonList>
-    </form>
+    </form >
   )
 
   const UserPage = () => (
@@ -286,6 +351,18 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
         showBackdrop={false}
         translucent={true}
       />
+      {isUserSaved && (
+        <ToastMsg
+          showToast={isUserSaved}
+          duration={5000}
+          message={
+            isNew
+              ? "User added successfully"
+              : "User updated successfully"
+          }
+          type={"green"}
+        />
+      )}
     </IonPage>
   )
 

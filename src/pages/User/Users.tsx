@@ -22,16 +22,13 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavButton } from "../../components/NavButton";
 import NoItemFound from "../../components/NoItemFound";
-import { getContainerSailing, deleteSailingById } from "../../store/actions";
+import { getUsers, deleteUserById } from "../../store/actions";
 import {
-  chevronForward as forwardIcon,
   eye as viewIcon,
-  document as documentIcon,
   remove as removeIcon,
   chevronDownCircleOutline,
 } from "ionicons/icons";
 import { useHistory } from "react-router";
-import { Container } from "../../model/container";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
 
@@ -43,29 +40,28 @@ const Users: React.FC = () => {
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
     setTimeout(() => {
-      dispatch(getContainerSailing());
+      dispatch(getUsers());
       event.detail.complete();
     }, 2000);
   }
 
-  const { isloading, containers, error, isItemDeleted } = useSelector(
+  const { isloading, users, error, isUserDeleted } = useSelector(
     (state: any) => {
-      return state.sailing;
+      return state.user;
     }
   );
 
-  const { userDeletedSuccess } = useSelector((state: any) => state.user);
 
-  const handleAddSailing = () => {
-    history.push(`/sailing-container/sailing/add`);
+  const handleAddUser = () => {
+    history.push(`/configuration/users/add`);
   };
 
-  const handleEditSailing = (container: any) => {
-    history.push(`/sailing-container/sailing/edit/${container.sailId}`);
+  const handleEditUser = (user: any) => {
+    history.push(`/configuration/users/edit/${user.UserID}`);
   };
 
   useEffect(() => {
-    dispatch(getContainerSailing());
+    dispatch(getUsers());
   }, [dispatch]);
 
   useEffect(() => {
@@ -73,25 +69,11 @@ const Users: React.FC = () => {
   }, [dispatch])
 
   useEffect(() => {
-    if (isItemDeleted) {
-      dispatch(getContainerSailing());
+    if (isUserDeleted) {
+      dispatch(getUsers());
     }
-  }, [dispatch, isItemDeleted]);
+  }, [dispatch, isUserDeleted]);
 
-  const handleNavigatePallet = (sailId: string) => {
-    dispatch({ type: "SELECTED_SAILID", payload: sailId });
-    history.push(`/sailing-container/sailing/pallet/${sailId}`);
-  };
-
-  const handleViewReports = (container: Container) => {
-    dispatch({ type: "SELECTED_SAILID", payload: container.sailId });
-    history.push(`/sailing-container/sailing/report/${container.sailId}`);
-  };
-
-  if (userDeletedSuccess) {
-    history.replace('/')
-    return null;
-  }
 
   if (error && error.status === -100) {
     history.replace("/sessionexpired");
@@ -103,7 +85,20 @@ const Users: React.FC = () => {
     return null;
   }
 
-  const handleDeleteItem = (event: any, sailId: string) => {
+  const getRoles = (userRoles: any) => {
+    let roles = Object.keys(userRoles).length === 0 ? "NA" : "";
+    if (Object.keys(userRoles).length !== 0) {
+      for (const key in userRoles) {
+        if (userRoles[key] !== 0) {
+          roles += key.replace("_access", '') + ", "
+        }
+      }
+      roles = roles.slice(0, roles.length - 2)
+    }
+    return roles
+  }
+
+  const handleDeleteItem = (event: any, userId: string) => {
     event.preventDefault();
     const showConfirm = async () => {
       const { value } = await Dialog.confirm({
@@ -112,66 +107,59 @@ const Users: React.FC = () => {
       });
 
       if (value) {
-        dispatch(deleteSailingById(sailId));
+        dispatch(deleteUserById(userId));
       }
       componentRef.current?.closeOpened();
     };
     showConfirm();
   };
 
-  const SailingList: JSX.Element =
-    containers && containers?.data?.length === 0 ? (
+  const UserList: JSX.Element =
+    users && users?.data?.length === 0 ? (
       <NoItemFound />
     ) : (
       <>
-        {(containers.data || []).map((container: any, index: number) => (
+        {(users?.data || []).map((user: any, index: number) => (
           <div key={index}>
             <IonItemSliding ref={componentRef}>
               <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
-                  onClick={() => handleNavigatePallet(container.sailId)}
+                  onClick={() => handleEditUser(user)}
                 >
                   <h3
                     className="text-wrap"
                     color="secondary"
-                    style={{ fontSize: "20px", fontWeight: "normal" }}
+                    style={{ fontSize: "20px", fontWeight: "normal", textTransform : "capitalize" }}
                   >
-                    {container.sailDesc}
+                    {user.FirstName + ' ' + user.LastName}
                   </h3>
                   <span style={{ fontSize: "14px" }}>
-                    Sail Date: <b>{container.sailDate}, </b>
+                    Email :  <span style={{ fontSize: "14px" }}><b>{user.Email}</b></span>
                   </span>
-
+                  <br />
                   <span style={{ fontSize: "14px" }}>
-                    Pallets: <b>{container.palletCount}</b>
+                    Company :  <span style={{ fontSize: "14px" }}><b>{user.CompanyName}</b></span>
+                  </span>
+                  <br />
+                  <span style={{ fontSize: "14px" }}>
+                    Access Role: <span style={{ fontSize: "14px", textTransform:'capitalize' }}><b>{getRoles(JSON.parse(user.UserRole))}</b></span>
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">
                   <IonIcon
-                    icon={documentIcon}
-                    color="medium"
-                    onClick={() => handleViewReports(container)}
-                    className=""
-                  />
-                  <IonIcon
                     icon={viewIcon}
                     color="medium"
-                    onClick={() => handleEditSailing(container)}
+                    onClick={() => handleEditUser(user)}
                     className="ion-padding-horizontal"
-                  />
-                  <IonIcon
-                    icon={forwardIcon}
-                    color="green"
-                    onClick={() => handleNavigatePallet(container.sailId)}
                   />
                 </IonButtons>
               </IonItem>
               <IonItemOptions
                 side="end"
-                onIonSwipe={(e) => handleDeleteItem(e, container.sailId)}
+                onIonSwipe={(e) => handleDeleteItem(e, user.UserID)}
               >
-                <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, container.sailId)}>
+                <IonItemOption color="danger" onClick={(e) => handleDeleteItem(e, user.UserID)}>
                   <IonIcon slot="icon-only" icon={removeIcon} />
                 </IonItemOption>
               </IonItemOptions>
@@ -192,7 +180,7 @@ const Users: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonButton expand="block" fill="outline" onClick={handleAddSailing}>
+        <IonButton expand="block" fill="outline" onClick={handleAddUser}>
           Add User
         </IonButton>
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
@@ -222,13 +210,13 @@ const Users: React.FC = () => {
                 </IonLabel>
               </IonItem>
             ))
-            : SailingList}
+            : UserList}
         </IonList>
       </IonContent>
-      {isItemDeleted && (
+      {isUserDeleted && (
         <ToastMsg
-          showToast={isItemDeleted}
-          message={"Sailing deleted successfully"}
+          showToast={isUserDeleted}
+          message={"User deleted successfully"}
           type={"green"}
           duration={3000}
         />

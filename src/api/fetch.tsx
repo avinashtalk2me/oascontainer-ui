@@ -8,7 +8,7 @@ const {
   LOGIN,
   VALIDATE_EMAIL,
   UPDATE_PASSWORD,
-  DELETE_USER,
+  CHANGE_NEW_LOGIN_PASSWORD,
   GET_SAILINGS,
   ADD_SAILING,
   GET_SAILING,
@@ -46,8 +46,15 @@ const {
   DELETE_DROPOFF,
   GET_DROPOFF_HWBNO_INFO,
   GET_ROPOFF_PACKAGE_PKG_NO,
-  SEND_EMAIL_FOR_LOCATION
-
+  SEND_EMAIL_FOR_LOCATION,
+  GET_USERS,
+  ADD_USER,
+  GET_USER,
+  DELETE_USER,
+  DEACTIVATE_USER,
+  UPDATE_USER,
+  GET_COMPANY_DETAILS,
+  UPDATE_COMPANY_DETAILS
 } = config;
 
 export const getAppVersionAPI = () => {
@@ -103,6 +110,54 @@ export const updateUserPasswordAPI = (data: any) => {
     },
     data,
   });
+};
+
+export const getCompanyDetailsAPI = () => {
+  const url: string = `${process.env.REACT_APP_API_URL}${GET_COMPANY_DETAILS}`;
+  return serviceRequest(url, "GET");
+};
+
+export const updateCompanyDetailsAPI = (data:any) => {
+  const url: string = `${process.env.REACT_APP_API_URL}${UPDATE_COMPANY_DETAILS}`;
+  return serviceRequest(url, "PATCH", data);
+};
+
+export const changePasswordForNewLoginAPI = (data: any) => {
+  const url: string = `${process.env.REACT_APP_API_URL}${CHANGE_NEW_LOGIN_PASSWORD}`;
+  return serviceRequest(url, "PATCH", data);
+};
+
+export const getUsersAPI = () => {
+  let url: string = `${process.env.REACT_APP_API_URL}${GET_USERS}`;
+  return serviceRequest(url, "GET");
+};
+
+export const addUserAPI = (data: any) => {
+  const url: string = `${process.env.REACT_APP_API_URL}${ADD_USER}`;
+  return serviceRequest(url, "POST", data);
+};
+
+export const getUserByIdAPI = (userId: string) => {
+  let url: string = `${process.env.REACT_APP_API_URL}${GET_USER}`;
+  url = url.replace("{userId}", userId);
+  return serviceRequest(url, "GET", undefined);
+};
+
+export const deactiveUserAPI = () => {
+  let url: string = `${process.env.REACT_APP_API_URL}${DEACTIVATE_USER}`;
+  return serviceRequest(url, "DELETE", undefined);
+};
+
+export const updateUserByIdAPI = (selectedUserId: string, data: any) => {
+  let url: string = `${process.env.REACT_APP_API_URL}${UPDATE_USER}`;
+  url = url.replace("{userId}", selectedUserId);
+  return serviceRequest(url, "PATCH", data);
+};
+
+export const deleteUserByIdAPI = (userId: string) => {
+  let url: string = `${process.env.REACT_APP_API_URL}${DELETE_USER}`;
+  url = url.replace("{userId}", userId);
+  return serviceRequest(url, "DELETE", undefined);
 };
 
 
@@ -220,12 +275,6 @@ export const getPalletManifestAPI = (selectedSailingId: string) => {
   return serviceRequest(url, "GET", undefined);
 };
 
-export const deleteUserAPI = (userId: string) => {
-  let url: string = `${process.env.REACT_APP_API_URL}${DELETE_USER}`;
-  url = url.replace("{userId}", userId);
-  return serviceRequest(url, "DELETE", undefined);
-};
-
 export const getSelectedPackagePkgNoAPI = (palletId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${GET_PACKAGE_PKG_NO}`;
   url = url.replace("{palletId}", palletId);
@@ -314,7 +363,7 @@ export const getDropOffsByLocationAPI = (selectedLocationId: string) => {
   return serviceRequest(url, "GET", undefined);
 };
 
-export const insertDropOffAPI = (selectedLocationId:string, deliveryId:string, data: any) => {
+export const insertDropOffAPI = (selectedLocationId: string, deliveryId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${ADD_DROPOFF}`;
   url = url.replace("{locationId}", selectedLocationId);
   url = url.replace("{deliveryId}", deliveryId);
@@ -340,14 +389,14 @@ export const deleteDropOffByIdAPI = (selectedPackageId: string) => {
   return serviceRequest(url, "DELETE", undefined);
 };
 
-export const getSelectedHWBInfoForDropOffAPI = (selectedLocationId:string, hwbNo: string) => {
+export const getSelectedHWBInfoForDropOffAPI = (selectedLocationId: string, hwbNo: string) => {
   let url: string = `${process.env.REACT_APP_API_URL}${GET_DROPOFF_HWBNO_INFO}`;
   url = url.replace("{hwbNo}", hwbNo);
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "GET", undefined);
 };
 
-export const getSelectedScanedHWBInfoForDropoffAPI = (selectedLocationId:string, data: any) => {
+export const getSelectedScanedHWBInfoForDropoffAPI = (selectedLocationId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${GET_ROPOFF_PACKAGE_PKG_NO}`;
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "POST", data);

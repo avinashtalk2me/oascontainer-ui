@@ -51,7 +51,7 @@ const ForgotPassword: React.FC = () => {
       setValue("password", "");
       setValue("confirmPassword", "");
     }
-    dispatch({ type: 'RESET_ERROR' })
+    dispatch({ type: 'RESET_FORM' })
     reset(
       {},
       {

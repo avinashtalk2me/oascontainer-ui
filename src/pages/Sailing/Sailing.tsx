@@ -59,7 +59,7 @@ const Sailing: React.FC<SailingProps> = ({
     }
   );
 
-  const { userDeletedSuccess } = useSelector((state: any) => state.user);
+  const { isUserDeleted } = useSelector((state: any) => state.user);
 
   const handleAddSailing = () => {
     history.push(`/sailing-container/sailing/add`);
@@ -93,7 +93,7 @@ const Sailing: React.FC<SailingProps> = ({
     history.push(`/sailing-container/report/${container.sailId}`);
   };
 
-  if (userDeletedSuccess) {
+  if (isUserDeleted) {
     history.replace('/')
     return null;
   }

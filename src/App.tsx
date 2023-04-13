@@ -57,7 +57,8 @@ const App: React.FC = () => {
           window.location.pathname === "/maintenance" ||
           window.location.pathname === "/registersuccess" ||
           window.location.pathname === "/unsubscribe" ||
-          window.location.pathname === "/passwordsuccess"
+          window.location.pathname === "/passwordsuccess" ||
+          window.location.pathname === "/changepassword"
         ) {
           MobileApp.exitApp();
         }

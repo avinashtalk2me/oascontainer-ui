@@ -17,8 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { LOGOUT } from "../store/types";
 import { Dialog } from "@capacitor/dialog";
-import { deleteUser } from '../store/actions';
-import { JSXElementConstructor, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { deactivateAccount } from '../store/actions';
+import { useRef } from 'react'
 
 export const Menu: React.FC = () => {
   const menuRef = useRef<HTMLIonMenuElement>(null);
@@ -95,8 +95,8 @@ export const Menu: React.FC = () => {
           }
           if (!accordionSailingGroup.current) {
             return;
-          } 
-            accordionSailingGroup.current.value = undefined; 
+          }
+          accordionSailingGroup.current.value = undefined;
         }
       }
     }
@@ -117,11 +117,9 @@ export const Menu: React.FC = () => {
       const { value } = await Dialog.confirm({
         title: "Confirm",
         message: `Are you sure you'd like to delete your account?`,
-      });
-      const auth: any = localStorage &&
-        localStorage.getItem("_authResponse")
+      }); 
       if (value) {
-        dispatch(deleteUser(JSON.parse(auth).userId));
+        dispatch(deactivateAccount());
         history.push("/unsubscribe");
       }
     };
@@ -351,8 +349,8 @@ export const Menu: React.FC = () => {
             </IonItem>
             <IonItem
               button
-              className="ion-no-padding"
-              routerLink={`/configuration/settings`}
+              className={`${history.location.pathname.includes("appsettings") && 'multimenu-label'} ion-no-padding`}
+              routerLink={`/configuration/appsettings`}
               onClick={handleMenuToggle}
               routerDirection="none"
             >
