@@ -125,7 +125,7 @@ const Delivery: React.FC<DeliveryProps> = ({
     ) : (
       <>
         {(deliveries.data || []).map((delivery: any, index: number) => (
-          <div key={index}>
+          <div key={delivery.deliveryId}>
             <IonItemSliding ref={componentRef}>
               <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
@@ -150,7 +150,7 @@ const Delivery: React.FC<DeliveryProps> = ({
                     <br />
                   </>}
                   <span style={{ fontSize: "14px" }}>
-                    Total DropOffs: <b>{delivery.dropOffCount}</b>
+                    Total Packages: <b>{delivery.dropOffCount}</b>
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">

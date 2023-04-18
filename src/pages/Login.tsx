@@ -61,10 +61,10 @@ const Login: React.FC = () => {
           if ((user.userRoles.sailing_access === 1 || user.userRoles.sailing_access === 2) && user.userRoles.delivery_access === 0) {
             history.replace("/sailing-container/sails");
           }
-          if (((user.userRoles.sailing_access === 1 || user.userRoles.sailing_access === 2) && (user.userRoles.delivery_access === 1 || user.userRoles.sailing_access === 2))) {
+          if (((user.userRoles.sailing_access === 1 || user.userRoles.sailing_access === 2) && (user.userRoles.delivery_access === 1 || user.userRoles.delivery_access === 2))) {
             history.replace("/loadAccessModule");
           }
-          if (user.userRoles.sailing_access === 0 && (user.userRoles.delivery_access === 1 || user.userRoles.delivery_access === 1)) {
+          if (user.userRoles.sailing_access === 0 && (user.userRoles.delivery_access === 1 || user.userRoles.delivery_access === 2)) {
             history.replace("/delivery-container/deliveries");
           }
         }

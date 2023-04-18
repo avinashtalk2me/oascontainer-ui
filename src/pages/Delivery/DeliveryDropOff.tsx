@@ -108,7 +108,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
     ) : (
       <>
         {(dropOffs.data || []).map((packageItem: any, index: number) => (
-          <div key={index} className="">
+          <div key={packageItem.hwbNo}>
             <IonItemSliding ref={componentRef}>
               <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel color="medium">
@@ -153,12 +153,12 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
           <IonButtons slot="start">
             <NavButton />
           </IonButtons>
-          <IonText className="header-menu">Delivery DropOff</IonText>
+          <IonText className="header-menu">Package</IonText>
         </IonToolbar>
       </IonHeader>
       <IonContent className={`ion-padding`}>
         <IonButton expand="block" fill="outline" onClick={handleAddPackage}>
-          Add DropOff
+          Add Package
         </IonButton>
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent

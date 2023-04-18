@@ -61,10 +61,8 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   const [hideBg, setHideBg] = useState("");
   const [scanResult, setScanResult] = useState<string[]>([]);
   const [isHWBScanned, setIsHWBScanned] = useState<boolean>();
-  // const [isScanSuccess, setIsScanSuccess] = useState<boolean>(false);
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isCheckSelected, setIsCheckSelected] = useState<boolean>(false);
-  const [scanLoadingMessage, setScanLoadingMessage] = useState<string>("");
 
 
   const { isloading, isItemSaved, error,    //packageData, 
@@ -142,7 +140,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         // }
         Dialog.alert({
           title: "Invalid HWB!!",
-          message: `The HWB# ${watchHwbNo} is not available in our system. Please try another one.`,
+          message: `The Pkg# ${scanResult[2]} of HWB# ${watchHwbNo} is not available in our system. Please try another one.`,
         });
         if (isHWBScanned) {
           startScan()
@@ -184,7 +182,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
       } else if (isValidPackagePkgNo.isValidPackage === "INVALID") {
         Dialog.alert({
           title: "Invalid HWB!!",
-          message: `The HWB# ${scanResult[0]} is not available in our system. Please try another one.`,
+          message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} is not available in our system. Please try another one.`,
         });
         startScan()
         if (navigator.vibrate) {
@@ -253,9 +251,21 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         let timer = setTimeout(() => { dispatch({ type: "RESET_FORM" }); closePage() })
         return () => clearTimeout(timer);
       } else {
-        setScanLoadingMessage("Saving the package and initialising new scan...");
-        let timer = setTimeout(() => { startScan(); }, 500)
-        return () => clearTimeout(timer);
+        // setScanLoadingMessage("Saving the package and initialising new scan...");
+        const showConfirm = async () => {
+          const { value } = await Dialog.confirm({
+            title: "Confirm",
+            message: `Package # ${scanResult[1]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
+            okButtonTitle:"YES",
+            cancelButtonTitle: "NO"
+          }); 
+          if (value) {
+            startScan()
+          } else {
+            closePage()
+          }
+        };
+        showConfirm();
       }
     }
   }, [isItemSaved]);
@@ -297,7 +307,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   };
 
   const startScan = async () => {
-    setScanLoadingMessage("")
+    // setScanLoadingMessage("")
     dispatch({ type: "RESET_PKG_SCAN" })
     dispatch({ type: "RESET_FORM" });
     BarcodeScanner.hideBackground(); // make background of WebView transparent
@@ -550,7 +560,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
       <IonHeader>
         <IonToolbar>
           {isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
-            {isNew ? "Add Dropoff Package" : "Edit Dropoff Package"}
+            {isNew ? "Add Package" : "Edit Package"}
           </IonText>}
           {!isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
             View Dropoff Package
@@ -717,7 +727,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
           color="danger"
           className="stop-scan-button"
           hidden={!hideBg}
-          onClick={stopScan}
+          onClick={()=>closePage()}
         >
           {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
           Stop Scan
@@ -730,12 +740,12 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         showBackdrop={false}
         translucent={true}
       />
-      <IonLoading
+      {/* <IonLoading
         isOpen={scanLoadingMessage !== ""}
         message={scanLoadingMessage}
         showBackdrop={false}
         translucent={true}
-      />
+      /> */}
       {
         isItemSaved && !isHWBScanned && (
           <ToastMsg
@@ -756,7 +766,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         <IonHeader>
           <IonToolbar>
             <IonText className="modalheader-menu">
-              Package for Dropoff
+              Select Package
             </IonText>
             <IonButtons
               slot="end"

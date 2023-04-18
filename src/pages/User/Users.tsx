@@ -120,7 +120,7 @@ const Users: React.FC = () => {
     ) : (
       <>
         {(users?.data || []).map((user: any, index: number) => (
-          <div key={index}>
+          <div key={user.UserID}>
             <IonItemSliding ref={componentRef}>
               <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel

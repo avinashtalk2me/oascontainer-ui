@@ -158,7 +158,7 @@ const Location: React.FC<LocationProps> = ({
     ) : (
       <>
         {(locations.data || []).map((location: any, index: number) => (
-          <div key={index} className="">
+          <div key={location.locationId}>
             <IonItemSliding ref={componentRef}>
               <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>

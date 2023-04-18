@@ -109,7 +109,7 @@ const Package: React.FC<PackageProps> = ({
     ) : (
       <>
         {(packages.data || []).map((packageItem: any, index: number) => (
-          <div key={index} className="">
+          <div key={packageItem.hwbNo}>
             <IonItemSliding ref={componentRef}>
               <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel color="medium">

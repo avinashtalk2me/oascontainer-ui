@@ -299,7 +299,7 @@ export const Menu: React.FC = () => {
       routerDirection="none"
       onClick={handleMenuToggle}
     >
-      <IonLabel>Delivery DropOff Package</IonLabel>
+      <IonLabel>Package</IonLabel>
     </IonItem>
   )
 
@@ -308,7 +308,9 @@ export const Menu: React.FC = () => {
 
       {(((userRoles?.sailing_access === 1 && userRoles?.delivery_access === 0)
         || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)
-        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2) || userRoles?.admin_access === 1)) ?
+        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 0)
+        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2) 
+        || userRoles?.admin_access === 1)) ?
         (
           <>
             {!history.location.pathname.includes("sailing-container") && SailingAccess}
@@ -319,7 +321,9 @@ export const Menu: React.FC = () => {
 
       {(((userRoles?.sailing_access === 0 && userRoles?.delivery_access === 1)
         || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)
-        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2) || userRoles?.admin_access === 1)) ?
+        || (userRoles?.sailing_access === 0 && userRoles?.delivery_access === 2)
+        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2) 
+        || userRoles?.admin_access === 1)) ?
         (
           <>
             {!history.location.pathname.includes("delivery-container") && DeliveryAccess}

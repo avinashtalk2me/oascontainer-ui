@@ -103,7 +103,8 @@ const locationReducer = (state = initialLocationState, action: ActionType) => {
                 ...state,
                 isloading: true,
                 isItemSaved: false,
-                isItemDeleted: false
+                isItemDeleted: false,
+                error: undefined
             }
         case ADD_LOCATION_SUCCESS:
         case UPDATE_LOCATION_SUCCESS:

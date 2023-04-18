@@ -15,7 +15,8 @@ const ContainerSailingRoute: React.FC = () => {
   );
   const idToken = authToken && authToken.access_token;
   const userRoles = authToken && authToken.userRoles;
-  const isEditAllowed = userRoles && (userRoles.delivery_access === 2 || userRoles.sailing_access === 2) ? false : true
+  const isEditAllowed = true;
+  // userRoles && (userRoles.delivery_access === 2 || userRoles.sailing_access === 2) ? false : true
 
   if (!idToken) {
     return <Redirect to="/login" />;

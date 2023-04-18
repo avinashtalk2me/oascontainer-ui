@@ -66,7 +66,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   const [isModal, setIsModal] = useState<boolean>(false);
   const [packageToastMsg, setPackageToastMsg] = useState<string>('');
 
-  const [scanLoadingMessage, setScanLoadingMessage] = useState<string>("");
+  // const [scanLoadingMessage, setScanLoadingMessage] = useState<string>("");
 
   const { isloading, isItemSaved, error,    //packageData, 
     isValidPackagePkgNo, selectedHwbInfo } = useSelector(
@@ -192,9 +192,21 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
         let timer = setTimeout(() => { dispatch({ type: "RESET_FORM" }); closePage() })
         return () => clearTimeout(timer);
       } else {
-        setScanLoadingMessage("Saving the package and initialising new scan...");
-        let timer = setTimeout(() => { startScan(); }, 500)
-        return () => clearTimeout(timer);
+        // setScanLoadingMessage("Saving the package and initialising new scan...");
+        const showConfirm = async () => {
+          const { value } = await Dialog.confirm({
+            title: "Confirm",
+            message: `Package # ${scanResult[1]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
+            okButtonTitle:"YES",
+            cancelButtonTitle: "NO"
+          }); 
+          if (value) {
+            startScan()
+          } else {
+            closePage()
+          }
+        };
+        showConfirm();
       }
     }
   }, [isItemSaved]);
@@ -271,7 +283,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   };
 
   const startScan = async () => {
-    setScanLoadingMessage("")
+    // setScanLoadingMessage("")
     dispatch({ type: "RESET_PKG_SCAN" })
     dispatch({ type: "RESET_FORM" });
     BarcodeScanner.hideBackground(); // make background of WebView transparent
@@ -775,7 +787,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
           color="danger"
           className="stop-scan-button"
           hidden={!hideBg}
-          onClick={stopScan}
+          onClick={()=>closePage()}
         >
           {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
           Stop Scan
@@ -788,12 +800,12 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
         showBackdrop={false}
         translucent={true}
       />
-      <IonLoading
+      {/* <IonLoading
         isOpen={scanLoadingMessage !== ""}
         message={scanLoadingMessage}
         showBackdrop={false}
         translucent={true}
-      />
+      /> */}
       {
         isItemSaved && !isHWBScanned && (
           <ToastMsg

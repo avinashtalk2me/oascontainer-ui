@@ -259,7 +259,7 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
                     className="ion-no-margin"
                     position="stacked"
                   >
-                    <IonText> Number of DropOffs </IonText>
+                    <IonText> Number of Packages </IonText>
                     <IonNote slot="start">
                       {delivery?.data?.dropOffCount}
                     </IonNote>
