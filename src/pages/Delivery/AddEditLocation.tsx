@@ -84,6 +84,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
       setValue("locationTime", dateTime(isNew, ""));
       setValue("displayLocationTime", (new Date(
         dateTime(isNew, "")).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })).toUpperCase());
+      setValue("destinationCountry", "")
     }
   }, [isNew]);
 
@@ -94,6 +95,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
       );
       const value = new Date(location.data.locationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()
       setValue("displayLocationTime", value);
+      setValue("destinationCountry", location.data.destinationCountry)
     }
   }, [location, isNew]);
 
@@ -113,6 +115,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
     setValue("locationDesc", "");
     setValue("locationTime", "");
     setValue("displayLocationTime", "");
+    setValue("destinationCountry", "");
     reset(
       {},
       {
@@ -200,14 +203,14 @@ const AddEditLocation: React.FC<LocationProps> = ({
   };
 
   const startScan = async () => {
-
     BarcodeScanner.hideBackground(); // make background of WebView transparent
     setHideBg("hideBg");
     const result = await BarcodeScanner.startScan(); // start scanning and wait for a result
     if (result.hasContent) {
       const arrResult: string[] = result.content?.split('_') || [];
-      if(arrResult.length === 1) {
+      if (arrResult.length === 2) {
         setValue("locationDesc", arrResult[0]);
+        setValue("destinationCountry", arrResult[1]);
         stopScan();
       } else {
         Dialog.alert({
@@ -316,6 +319,29 @@ const AddEditLocation: React.FC<LocationProps> = ({
               </IonItem>
               <Error errors={errors} name="displayLocationTime" />
             </div>
+            <div className="ion-padding-bottom">
+              <IonItem className="ion-no-padding">
+                <IonLabel
+                  color="medium"
+                  className="form-input"
+                  position="stacked"
+                >
+                  Destination Country
+                </IonLabel>
+                <IonInput
+                  disabled={!isEditAllowed}
+                  aria-invalid={
+                    errors && errors["destinationCountry"] ? "true" : "false"
+                  }
+                  aria-describedby={`${"destinationCountry"}Error`}
+                  {...register("destinationCountry", {
+                    required: "Destination Country is required.",
+                  })}
+                  onIonChange={(e: any) => setValue("destinationCountry", e.detail.value)}
+                />
+              </IonItem>
+              <Error errors={errors} name="destinationCountry" />
+            </div>
             {!isNew && location && (
               <>
                 <div className="ion-padding-bottom">
@@ -347,7 +373,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
               <ServerError errorMsg={error.message} />
             )}
             {isEditAllowed && <IonButton
-             hidden={!!hideBg}
+              hidden={!!hideBg}
               type="submit"
               className="ion-margin-top"
               color="primary"
