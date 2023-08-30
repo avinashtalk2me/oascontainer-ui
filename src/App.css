@@ -513,3 +513,7 @@ ion-checkbox {
 ion-menu{
   --width: 300px;
 }
+
+ion-popover [popover]:not(:popover-open):not(dialog[open]) {
+  display: contents;
+}
