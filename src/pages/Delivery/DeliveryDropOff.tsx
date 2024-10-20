@@ -36,7 +36,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
   const { deliveryId, locationId }: any = useParams();
 

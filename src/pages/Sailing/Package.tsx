@@ -36,7 +36,7 @@ const Package: React.FC<PackageProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
   const { isloading, selectedPalletId, error, packages, isItemDeleted } =

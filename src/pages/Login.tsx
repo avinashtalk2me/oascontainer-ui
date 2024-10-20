@@ -20,7 +20,7 @@ import ServerError from "../components/ServerError";
 import { useHistory } from "react-router";
 
 const Login: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const history = useHistory();
   const userDetails = useSelector((state: any) => state.user);
   const { isloading, user, error } = userDetails;

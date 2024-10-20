@@ -27,6 +27,7 @@ import { Filesystem, Directory } from "@capacitor/filesystem";
 import { SocialSharing } from "@awesome-cordova-plugins/social-sharing";
 import { Dialog } from "@capacitor/dialog";
 
+
 interface SailSummaryReportProps {
   sailDesc: string;
   sailDate: string;
@@ -92,10 +93,13 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
       options
     );
 
+
+    // await Filesystem.mkdir({ directory: Directory.Data, path: 'oasdocs' });
+
     const fileOutput = await Filesystem.writeFile({
-      path: options.fileName,
+      path: `${options.fileName}`,
       data: base64Content,
-      directory: Directory.Documents,
+      directory: Directory.Data,
     });
 
     if (shareType === "whatsapp") {
@@ -103,12 +107,14 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
         `Sailing Summary report (${sailDesc}) (${sailDate})`,
         fileOutput.uri
       );
+      // await Filesystem.rmdir({ directory: Directory.Data, path: 'oasdocs' });
     } else {
       SocialSharing.canShareViaEmail().then(async () => {
         await SocialSharing.shareViaEmail(`Sailing Summary (${sailDesc}) (${sailDate})`,
           `Sailing Summary Report`, [], undefined, undefined, // results
           fileOutput.uri
         );
+        // await Filesystem.rmdir({ directory: Directory.Data, path: 'oasdocs' });
       }).catch(() => {
         Dialog.alert({
           title: "Alert",
@@ -219,7 +225,7 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
                     </IonCol>
                     <IonCol sizeMd="3">
                       <IonText>
-                         <b>{summary.loosePieces}</b>
+                        <b>{summary.loosePieces}</b>
                       </IonText>
                     </IonCol>
                     <IonCol sizeMd="3">

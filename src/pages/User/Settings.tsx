@@ -16,7 +16,7 @@ import ToastMsg from "../../components/ToastMsg";
 
 const Settings: React.FC = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const user = useSelector((state: any) => state.user);
   const { isloading, error, companyDetails, isCompanyDetailsUpdated } = user;
 

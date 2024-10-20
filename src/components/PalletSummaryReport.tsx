@@ -66,7 +66,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
     const fileOutput = await Filesystem.writeFile({
       path: options.fileName,
       data: base64Content,
-      directory: Directory.Documents,
+      directory: Directory.Data,
     });
     if (shareType === "whatsapp") {
       await SocialSharing.shareViaWhatsApp(

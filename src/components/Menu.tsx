@@ -27,7 +27,7 @@ export const Menu: React.FC = () => {
   const accordionConfigurationGroup = useRef<null | HTMLIonAccordionGroupElement>(null);
   const history = useHistory();
   const state = useSelector((state: any) => state);
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
 
   const selectedSailId = state.pallet.selectedSailId;
   const selectedPalletId = state.package.selectedSailId;
@@ -117,7 +117,7 @@ export const Menu: React.FC = () => {
       const { value } = await Dialog.confirm({
         title: "Confirm",
         message: `Are you sure you'd like to delete your account?`,
-      }); 
+      });
       if (value) {
         dispatch(deactivateAccount());
         history.push("/unsubscribe");
@@ -309,7 +309,7 @@ export const Menu: React.FC = () => {
       {(((userRoles?.sailing_access === 1 && userRoles?.delivery_access === 0)
         || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)
         || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 0)
-        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2) 
+        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2)
         || userRoles?.admin_access === 1)) ?
         (
           <>
@@ -322,7 +322,7 @@ export const Menu: React.FC = () => {
       {(((userRoles?.sailing_access === 0 && userRoles?.delivery_access === 1)
         || (userRoles?.sailing_access === 1 && userRoles?.delivery_access === 1)
         || (userRoles?.sailing_access === 0 && userRoles?.delivery_access === 2)
-        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2) 
+        || (userRoles?.sailing_access === 2 && userRoles?.delivery_access === 2)
         || userRoles?.admin_access === 1)) ?
         (
           <>

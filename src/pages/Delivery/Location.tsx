@@ -46,13 +46,14 @@ const Location: React.FC<LocationProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any  = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
   const [isEmailClicked, setIsEmailClicked] = useState<boolean>(false);
   const [presentAlert] = useIonAlert();
 
   const { isloading, selectedDeliveryId, error, locations, isItemDeleted, isEmailSentSuccess } =
     useSelector((state: any) => state.location);
+
 
   const handleAddLocation = () => {
     history.push(`/delivery-container/location/add/${selectedDeliveryId}`);
@@ -81,7 +82,7 @@ const Location: React.FC<LocationProps> = ({
     if (isItemDeleted) {
       dispatch(getLocationsByDeliveryId(selectedDeliveryId));
     }
-  }, [dispatch, isItemDeleted, selectedDeliveryId]);
+  }, [isItemDeleted]);
 
 
   useEffect(() => {

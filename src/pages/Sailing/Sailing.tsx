@@ -43,7 +43,7 @@ const Sailing: React.FC<SailingProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {

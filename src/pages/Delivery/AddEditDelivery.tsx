@@ -19,7 +19,7 @@ import {
   IonTextarea,
   IonToolbar,
 } from "@ionic/react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Error from "../../components/Error";
 import { close as closeIcon, calendar as calendarIcon } from "ionicons/icons";
@@ -50,7 +50,7 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
   // setIsTransComplete,
   // selectedSailId,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const { deliveryId }: any = useParams();
   const todaysDate = new Date().toISOString();
@@ -85,6 +85,7 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
   }, [delivery, isNew]);
 
   const {
+    control,
     handleSubmit,
     register,
     setValue,
@@ -237,7 +238,7 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
                     <IonIcon icon={calendarIcon} />
                   </IonButton>
                   <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                    <IonDatetime
+                    {/* <IonDatetime
                       min={new Date().getUTCFullYear().toString()}
                       max={todaysDate}
                       // displayFormat="DD/MM/YYYY"
@@ -245,6 +246,21 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
                       presentation="date"
                       {...register("deliveryDate")}
                       onIonChange={handleDateChange}
+                    /> */}
+                    <Controller
+                      name="deliveryDate"
+                      control={control}
+                      render={({ field }) => (
+                        <IonDatetime {...field}
+                          min={new Date().getUTCFullYear().toString()}
+                          max={todaysDate}
+                          // displayFormat="DD/MM/YYYY"
+                          showDefaultButtons={true}
+                          presentation="date"
+                          // {...register("deliveryDate")}
+                          onIonChange={handleDateChange}
+                        />
+                      )}
                     />
                   </IonPopover>
                 </>}
@@ -260,9 +276,9 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
                     position="stacked"
                   >
                     <IonText> Number of Packages </IonText>
-                    <IonNote slot="start">
-                      {delivery?.data?.dropOffCount}
-                    </IonNote>
+                    {/* <IonNote slot="end"> */}
+                      <span className="noCount">{delivery?.data?.dropOffCount}</span>
+                    {/* </IonNote> */}
                   </IonLabel>
                 </IonItem>
               </div>

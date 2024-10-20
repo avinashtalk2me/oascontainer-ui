@@ -20,7 +20,7 @@ import {
   IonTextarea,
   IonToolbar,
 } from "@ionic/react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Error from "../../components/Error";
 import { close as closeIcon, timer, camera, } from "ionicons/icons";
@@ -34,7 +34,7 @@ import ServerError from "../../components/ServerError";
 import { useEffect, useState } from "react";
 import ToastMsg from "../../components/ToastMsg";
 import { useHistory, useParams } from "react-router";
-import { format, zonedTimeToUtc } from "date-fns-tz";
+import { format, toZonedTime as zonedTimeToUtc } from "date-fns-tz";
 import { BarcodeScanner } from "@capacitor-community/barcode-scanner";
 import { Dialog } from "@capacitor/dialog";
 
@@ -48,12 +48,15 @@ const AddEditLocation: React.FC<LocationProps> = ({
   isNew,
   isEditAllowed
 }) => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const { deliveryId, locationId }: any = useParams();
   const { isloading, isItemSaved, error, location } = useSelector(
     (state: any) => state.location
   );
+
+  const [isLoading, setLoading] = useState(false);
+
   const [hideBg, setHideBg] = useState("");
 
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -74,9 +77,10 @@ const AddEditLocation: React.FC<LocationProps> = ({
   }
   useEffect(() => {
     if (!isNew) {
+      setLoading(true)
       dispatch(getSelectedLocationById(deliveryId, locationId));
     }
-  }, [isNew, dispatch]);
+  }, [isNew]);
 
   useEffect(() => {
     if (isNew) {
@@ -90,6 +94,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
 
   useEffect(() => {
     if (!isNew && location && location?.status === 0) {
+      setLoading(false)
       setValue("locationDesc", location.data.locationDesc);
       setValue("locationTime", dateTime(isNew, location.data.locationTime)
       );
@@ -100,6 +105,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
   }, [location, isNew]);
 
   const {
+    control,
     handleSubmit,
     register,
     setValue,
@@ -213,15 +219,21 @@ const AddEditLocation: React.FC<LocationProps> = ({
         setValue("destinationCountry", arrResult[1]);
         stopScan();
       } else {
-        Dialog.alert({
+        const { value } = await Dialog.confirm({
           title: "Invalid Location",
-          message: `This is not a valid location. Please try another one.`,
+          message: `This is not a valid location. Do you want to continue to scan.`,
+          okButtonTitle: 'Continue',
+          cancelButtonTitle: 'Stop Scan'
         });
         if (navigator.vibrate) {
           // vibration API supported
           navigator.vibrate(1000);
           // stopScan();
-          startScan();
+          if (value) {
+            startScan();
+          } else {
+            stopScan();
+          }
         }
       }
     }
@@ -231,25 +243,25 @@ const AddEditLocation: React.FC<LocationProps> = ({
     <>
       <IonHeader translucent>
         <IonToolbar>
-          {isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+          {isEditAllowed && <IonText className={`modalheader-menu  ${hideBg && 'text-indent'}`}>
             {isNew ? "Add Location" : "Edit Location"}
           </IonText>}
-          {!isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+          {!isEditAllowed && <IonText className={`modalheader-menu  ${hideBg && 'text-indent'}`}>
             View Location
           </IonText>}
-          <IonButtons
+          {!hideBg && <IonButtons
             hidden={!!hideBg}
             slot="end"
             onClick={() => closePage()}
             className="closeIcon"
           >
             <IonIcon icon={closeIcon} slot="icon-only" />
-          </IonButtons>
+          </IonButtons>}
         </IonToolbar>
       </IonHeader>
       <IonContent className={`ion-padding ${hideBg}`}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList hidden={!!hideBg}>
+          {!hideBg && <IonList hidden={!!hideBg}>
             <div className="ion-padding-bottom">
               <IonItem className="ion-no-padding">
                 <IonLabel
@@ -302,12 +314,18 @@ const AddEditLocation: React.FC<LocationProps> = ({
                     <IonIcon icon={timer} />
                   </IonButton>
                   <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                    <IonDatetime
-                      presentation="time"
-                      hourCycle="h12"
-                      showDefaultButtons={true}
-                      {...register("locationTime")}
-                      onIonChange={handleTimeChange}
+                    <Controller
+                      name="locationTime"
+                      control={control}
+                      render={({ field }) => (
+                        <IonDatetime {...field}
+                          presentation="time"
+                          hourCycle="h12"
+                          showDefaultButtons={true}
+                          // {...register("locationTime")}
+                          onIonChange={handleTimeChange}
+                        />
+                      )}
                     />
                   </IonPopover>
                   {/* <IonDatetimeButton datetime="datetime"></IonDatetimeButton> */}
@@ -352,7 +370,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
                       position="stacked"
                     >
                       <IonText> Drop Status: </IonText>
-                      <IonNote slot="start">{getDropStatus(location?.data?.dropStatus)}</IonNote>
+                      <span className="noCount">{getDropStatus(location?.data?.dropStatus)}</span>
                     </IonLabel>
                   </IonItem>
                   <IonItem className="ion-no-padding" lines="none">
@@ -362,7 +380,7 @@ const AddEditLocation: React.FC<LocationProps> = ({
                       position="stacked"
                     >
                       <IonText>Total Package Scanned: </IonText>
-                      <IonNote slot="start">{location?.data?.packageCount}</IonNote>
+                      <span className="noCount">{location?.data?.packageCount}</span>
                     </IonLabel>
                   </IonItem>
                 </div>
@@ -390,25 +408,27 @@ const AddEditLocation: React.FC<LocationProps> = ({
             >
               RETURN
             </IonButton>}
-          </IonList>
+          </IonList>}
         </form>
-        <IonButton
-          color="danger"
-          className="stop-scan-button location"
-          hidden={!hideBg}
-          onClick={stopScan}
-        >
-          {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
-          Stop Scan
-        </IonButton>
-        <div hidden={!hideBg} className="scan-box location" />
+        {hideBg &&
+          <><IonButton
+            color="danger"
+            className="stop-scan-button location"
+            hidden={!hideBg}
+            onClick={stopScan}
+          >
+            {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
+            Stop Scan
+          </IonButton>
+            <div hidden={!hideBg} className="scan-box location" />
+          </>}
       </IonContent>
       <IonLoading
-        isOpen={isloading}
+        isOpen={isLoading}
         message="Please wait"
         showBackdrop={false}
-        translucent={true}
       />
+
       {isItemSaved && (
         <ToastMsg
           showToast={isItemSaved}

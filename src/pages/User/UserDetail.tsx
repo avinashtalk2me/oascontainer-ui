@@ -16,7 +16,7 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
-import { generate } from 'generate-password'
+import { faker } from '@faker-js/faker';
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
@@ -42,7 +42,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
   onSubmitData,
 }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const { userId }: any = useParams();
 
   const user = useSelector((state: any) => state.user);
@@ -143,7 +143,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
     }
     delete formData.userRoles;
     if (!isRegister && isNew) {
-      formData.password = generate({ length: 10 })
+      formData.password = faker.internet.password();
     }
     if (!isRegister && !isNew) {
       formData.isEmailChanged = selectedUser.data.Email !== data.email

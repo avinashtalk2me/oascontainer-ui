@@ -51,7 +51,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
   // selectedSailId,
   // selectedPalletId,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const history = useHistory();
   const { sailId, palletId }: any = useParams();
   const [palletType, setPalletType] = useState("");

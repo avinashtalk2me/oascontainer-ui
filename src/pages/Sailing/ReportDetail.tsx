@@ -27,7 +27,7 @@ import { getContainerManifest, getPalletManifest } from "../../store/actions";
 
 
 const ReportDetail: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const history = useHistory();
   const { sailId }: any = useParams();
   const [reportName, setReportName] = useState("sailingsummary");
