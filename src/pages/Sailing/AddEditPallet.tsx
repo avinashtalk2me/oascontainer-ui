@@ -325,7 +325,8 @@ const AddEditPallet: React.FC<PalletProps> = ({
                     position="stacked"
                   >
                     <IonText> Number of Packages </IonText>
-                    <IonNote slot="start">{pallet?.data?.packageCount}</IonNote>
+                    <span className="noCount">{pallet?.data?.packageCount}</span>
+                    {/* <IonNote slot="start">{pallet?.data?.packageCount}</IonNote> */}
                   </IonLabel>
                 </IonItem>
               </div>

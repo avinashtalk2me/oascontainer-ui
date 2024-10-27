@@ -107,12 +107,14 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
       setValue("hwbNo", hwbNo);
       // setValue("packageCount", "0");
       // dispatch(getSelectedPackageById(palletId, packageId));
+      dispatch(getSelectedHWBInfo(hwbNo.toUpperCase(), palletId))
     }
 
     if (isNew) {
       setIsHWBScanned(true)
     }
   }, [isNew]);
+
 
   // useEffect(() => {
   //   if (!isNew && packageData && packageData?.status === 0) {
@@ -198,7 +200,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
         const showConfirm = async () => {
           const { value } = await Dialog.confirm({
             title: "Confirm",
-            message: `Package # ${scanResult[1]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
+            message: `Package # ${scanResult[2]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
             okButtonTitle: "YES",
             cancelButtonTitle: "NO"
           });
@@ -265,17 +267,38 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
       });
       stopScan()
     } else if (isValidPackagePkgNo === false && isHWBScanned) {
-      Dialog.alert({
-        title: "Duplicate Package",
-        message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
-      });
-      startScan()
-      if (navigator.vibrate) {
-        // vibration API supported
-        navigator.vibrate(1000);
-        // stopScan();
-        // startScan();
+      // Dialog.alert({
+      //   title: "Duplicate Package",
+      //   message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
+      // });
+      // startScan()
+      // if (navigator.vibrate) {
+      //   // vibration API supported
+      //   navigator.vibrate(1000);
+      //   // stopScan();
+      //   // startScan();
+      // }
+      const showPrompt = async () => {
+        const { value } = await Dialog.confirm({
+          title: "Duplicate Package",
+          message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
+          okButtonTitle: 'Continue',
+          cancelButtonTitle: 'Stop Scan'
+        });
+        if (navigator.vibrate) {
+          // vibration API supported
+          navigator.vibrate(1000);
+          // stopScan();
+          if (value) {
+            startScan();
+          } else {
+            stopScan();
+          }
+        }
+
       }
+      showPrompt();
+
     }
   }, [setValue, isValidPackagePkgNo, scanResult, isHWBScanned])
 

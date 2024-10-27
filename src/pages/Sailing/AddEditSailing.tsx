@@ -248,7 +248,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
                           max="3500"
                           onIonChange={handleDateChange}
                           showDefaultButtons={true}
-                          presentation="date" 
+                          presentation="date"
                         />
                       )}
                     />
@@ -321,9 +321,10 @@ const AddEditSailing: React.FC<SailingProps> = ({
                     position="stacked"
                   >
                     <IonText> Number of Pallets </IonText>
-                    <IonNote slot="start">
-                      {container?.data?.palletCount}
-                    </IonNote>
+                    {/* <IonNote slot="start"> */}
+                    <span className="noCount">{container?.data?.palletCount}</span>
+
+                    {/* </IonNote> */}
                   </IonLabel>
                 </IonItem>
               </div>

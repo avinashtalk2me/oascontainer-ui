@@ -81,7 +81,7 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
   }, [containerManifest]);
 
 
-  const shareFile = async (shareType: string) => {
+  const shareFile = async () => {
     let options = {
       documentSize: "LETTER",
       type: "base64",
@@ -96,32 +96,55 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
 
     // await Filesystem.mkdir({ directory: Directory.Data, path: 'oasdocs' });
 
-    const fileOutput = await Filesystem.writeFile({
-      path: `${options.fileName}`,
-      data: base64Content,
-      directory: Directory.Data,
+    // const fileOutput = await Filesystem.writeFile({
+    //   path: `${options.fileName}`,
+    //   data: base64Content,
+    //   directory: Directory.Data,
+    // });
+
+
+    
+    const savePdf = async () => {
+      const result = await Filesystem.writeFile({
+        path: `${options.fileName}`,
+        data: base64Content,
+        directory: Directory.Cache
+        // encoding: Encoding.UTF8,
+      });
+    
+      return result.uri;
+    
+    }
+
+    const pdfUri = await savePdf();
+    await Share.share({
+      title: 'Sailing Summary Report',
+      text: `Sailing Summary (${sailDesc}) (${sailDate})`,
+      url: pdfUri,
+      dialogTitle: 'Share PDF',
     });
 
-    if (shareType === "whatsapp") {
-      await SocialSharing.shareViaWhatsApp(
-        `Sailing Summary report (${sailDesc}) (${sailDate})`,
-        fileOutput.uri
-      );
-      // await Filesystem.rmdir({ directory: Directory.Data, path: 'oasdocs' });
-    } else {
-      SocialSharing.canShareViaEmail().then(async () => {
-        await SocialSharing.shareViaEmail(`Sailing Summary (${sailDesc}) (${sailDate})`,
-          `Sailing Summary Report`, [], undefined, undefined, // results
-          fileOutput.uri
-        );
-        // await Filesystem.rmdir({ directory: Directory.Data, path: 'oasdocs' });
-      }).catch(() => {
-        Dialog.alert({
-          title: "Alert",
-          message: `Email is not configured. Please configure email.`,
-        });
-      });
-    }
+
+    // if (shareType === "whatsapp") {
+    //   await SocialSharing.shareViaWhatsApp(
+    //     `Sailing Summary report (${sailDesc}) (${sailDate})`,
+    //     fileOutput.uri
+    //   );
+    //   // await Filesystem.rmdir({ directory: Directory.Data, path: 'oasdocs' });
+    // } else {
+    //   SocialSharing.canShareViaEmail().then(async () => {
+    //     await SocialSharing.shareViaEmail(`Sailing Summary (${sailDesc}) (${sailDate})`,
+    //       `Sailing Summary Report`, [], undefined, undefined, // results
+    //       fileOutput.uri
+    //     );
+    //     // await Filesystem.rmdir({ directory: Directory.Data, path: 'oasdocs' });
+    //   }).catch(() => {
+    //     Dialog.alert({
+    //       title: "Alert",
+    //       message: `Email is not configured. Please configure email.`,
+    //     });
+    //   });
+    // }
   };
 
   const SailingReport: JSX.Element = (
@@ -257,16 +280,16 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
         edge={true}
       >
         <IonFabButton color="medium">
-          <IonIcon icon={shareIcon}></IonIcon>
+          <IonIcon icon={shareIcon} onClick={() => shareFile()}></IonIcon>
         </IonFabButton>
-        <IonFabList side="bottom">
+        {/* <IonFabList side="bottom">
           <IonFabButton color="green" onClick={() => shareFile("whatsapp")}>
             <IonIcon icon={whatsappIcon}></IonIcon>
           </IonFabButton>
           <IonFabButton color="tertiary" onClick={() => shareFile("email")}>
             <IonIcon icon={mailIcon}></IonIcon>
           </IonFabButton>
-        </IonFabList>
+        </IonFabList> */}
       </IonFab>
       <div className="report-section">{SailingReport}</div>
     </div>

@@ -51,7 +51,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
   }, [palletManifest]);
 
 
-  const shareFile = async (shareType: string) => {
+  const shareFile = async () => {
     let options = {
       documentSize: "LETTER",
       type: "base64",
@@ -63,33 +63,66 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
       options
     );
 
-    const fileOutput = await Filesystem.writeFile({
-      path: options.fileName,
-      data: base64Content,
-      directory: Directory.Data,
-    });
-    if (shareType === "whatsapp") {
-      await SocialSharing.shareViaWhatsApp(
-        `Pallet Details report (${sailDesc}) (${sailDate})`,
-        fileOutput.uri
-      );
-    } else {
-      SocialSharing.canShareViaEmail().then(async () => {
-        await SocialSharing.shareViaEmail(
-          `Pallet Details (${sailDesc}) (${sailDate})`,
-          `Pallet Details Report`,
-          [],
-          undefined,
-          undefined,
-          fileOutput.uri
-        );
-      }).catch(() => {
-        Dialog.alert({
-          title: "Alert",
-          message: `Email is not configured. Please configure email.`,
-        });
+    // const fileOutput = await Filesystem.writeFile({
+    //   path: options.fileName,
+    //   data: base64Content,
+    //   directory: Directory.Data,
+    // });
+
+    const savePdf = async () => {
+      const result = await Filesystem.writeFile({
+        path: `${options.fileName}`,
+        data: base64Content,
+        directory: Directory.Cache
+        // encoding: Encoding.UTF8,
       });
+    
+      return result.uri;
+    
     }
+
+    const pdfUri = await savePdf();
+    await Share.share({
+      title: 'Pallet Details Report',
+      text: `Pallet Details (${sailDesc}) (${sailDate})`,
+      url: pdfUri,
+      dialogTitle: 'Share PDF',
+    });
+
+    // if (shareType === "whatsapp") {
+    //   // await SocialSharing.shareViaWhatsApp(
+    //   //   `Pallet Details report (${sailDesc}) (${sailDate})`,
+    //   //   fileOutput.uri
+    //   // );
+    //   await Share.share({
+    //     title: 'Pallet Details Report',
+    //     text: `Pallet Details (${sailDesc}) (${sailDate})`,
+    //     url: pdfUri,
+    //     dialogTitle: 'Share PDF',
+    //   });
+    // } else {
+    //   await Share.share({
+    //     title: 'Pallet Details Report',
+    //     text: `Pallet Details (${sailDesc}) (${sailDate})`,
+    //     url: pdfUri,
+    //     dialogTitle: 'Share PDF',
+    //   });
+    //   // SocialSharing.canShareViaEmail().then(async () => {
+    //   //   await SocialSharing.shareViaEmail(
+    //   //     `Pallet Details (${sailDesc}) (${sailDate})`,
+    //   //     `Pallet Details Report`,
+    //   //     [],
+    //   //     undefined,
+    //   //     undefined,
+    //   //     fileOutput.uri
+    //   //   );
+    //   // }).catch(() => {
+    //   //   Dialog.alert({
+    //   //     title: "Alert",
+    //   //     message: `Email is not configured. Please configure email.`,
+    //   //   });
+    //   // });
+    // }
   };
 
   const getIsPalletOrLoose = (palletNo: number): string => {
@@ -193,16 +226,16 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
         edge={true}
       >
         <IonFabButton color="medium">
-          <IonIcon icon={shareIcon}></IonIcon>
+          <IonIcon icon={shareIcon} onClick={() => shareFile()}></IonIcon>
         </IonFabButton>
-        <IonFabList side="bottom">
+        {/* <IonFabList side="bottom">
           <IonFabButton color="green" onClick={() => shareFile("whatsapp")}>
             <IonIcon icon={whatsappIcon}></IonIcon>
           </IonFabButton>
           <IonFabButton color="tertiary" onClick={() => shareFile("email")}>
             <IonIcon icon={mailIcon}></IonIcon>
           </IonFabButton>
-        </IonFabList>
+        </IonFabList> */}
       </IonFab>
       <div className="report-section">
         <IonList className="ion-no-padding">

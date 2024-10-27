@@ -105,6 +105,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   useEffect(() => {
     if (!isNew) {
       setValue("hwbNo", hwbNo);
+      dispatch(getSelectedHWBInfoForDropoff(locationId, hwbNo.toUpperCase()))
     }
 
     if (isNew) {
@@ -276,7 +277,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         const showConfirm = async () => {
           const { value } = await Dialog.confirm({
             title: "Confirm",
-            message: `Package # ${scanResult[1]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
+            message: `Package # ${scanResult[2]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
             okButtonTitle: "Continue",
             cancelButtonTitle: "Stop Scan"
           });
