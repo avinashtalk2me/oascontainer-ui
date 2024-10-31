@@ -1,4 +1,3 @@
-import { ErrorMessage } from "@hookform/error-message";
 import { IonText } from "@ionic/react";
 
 export interface ErrorProps {

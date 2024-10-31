@@ -19,7 +19,7 @@ import {
   IonTextarea,
   IonToolbar,
 } from "@ionic/react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Error from "../../components/Error";
 import { close as closeIcon, calendar as calendarIcon } from "ionicons/icons";
@@ -50,7 +50,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
   // setIsTransComplete,
   // selectedSailId,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const { sailId }: any = useParams();
   const [initialUnitType, setInitialUnitType] = useState("");
@@ -90,6 +90,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
   }, [container, isNew]);
 
   const {
+    control,
     handleSubmit,
     register,
     setValue,
@@ -157,7 +158,7 @@ const AddEditSailing: React.FC<SailingProps> = ({
   };
 
   const handleDateChange = (e: any) => {
-    setValue("sailDate", e.detail.value);
+    setValue("sailDate", e.detail.value.toString());
     setValue("displaySailDate", formatDate(e.detail.value));
   };
 
@@ -238,16 +239,30 @@ const AddEditSailing: React.FC<SailingProps> = ({
                     <IonIcon icon={calendarIcon} />
                   </IonButton>
                   <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                    <IonDatetime
-                      min={new Date().getUTCFullYear().toString()}
-                      max={"3500"}
+                    <Controller
+                      name="sailDate"
+                      control={control}
+                      render={({ field }) => (
+                        <IonDatetime {...field}
+                          min={new Date().getUTCFullYear().toString()}
+                          max="3500"
+                          onIonChange={handleDateChange}
+                          showDefaultButtons={true}
+                          presentation="date"
+                        />
+                      )}
+                    />
+
+                    {/* <IonDatetime
+                      min={(new Date().getUTCFullYear().toString() && undefined) || ''}
+                      max="3500"
                       // displayFormat="DD/MM/YYYY"
 
                       showDefaultButtons={true}
                       presentation="date"
                       {...register("sailDate")}
                       onIonChange={handleDateChange}
-                    />
+                    /> */}
                   </IonPopover>
                 </>}
 
@@ -306,9 +321,10 @@ const AddEditSailing: React.FC<SailingProps> = ({
                     position="stacked"
                   >
                     <IonText> Number of Pallets </IonText>
-                    <IonNote slot="start">
-                      {container?.data?.palletCount}
-                    </IonNote>
+                    {/* <IonNote slot="start"> */}
+                    <span className="noCount">{container?.data?.palletCount}</span>
+
+                    {/* </IonNote> */}
                   </IonLabel>
                 </IonItem>
               </div>

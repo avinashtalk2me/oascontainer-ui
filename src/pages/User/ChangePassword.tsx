@@ -24,7 +24,7 @@ import { LOGOUT } from "../../store/types";
 
 
 const ChangePaswword: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const history = useHistory();
   const userDetails = useSelector((state: any) => state.user);
   const { isloading, error, isPasswordUpdated } = userDetails;

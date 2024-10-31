@@ -19,7 +19,8 @@ import {
   createAnimation,
   IonTitle,
   IonAccordion,
-  IonAccordionGroup
+  IonAccordionGroup,
+  IonFooter
 } from "@ionic/react";
 import {
   close as closeIcon,
@@ -27,7 +28,7 @@ import {
   addCircle as addItem,
   camera,
 } from "ionicons/icons";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Error from "../../components/Error";
@@ -48,7 +49,6 @@ import "../../camera-scanner.css";
 import { Dialog } from "@capacitor/dialog";
 import debounce from "lodash.debounce";
 import NoItemFound from "../../components/NoItemFound";
-import { isNumber } from "util";
 
 interface AddEditPackageProps {
   isNew: boolean;
@@ -56,7 +56,7 @@ interface AddEditPackageProps {
 }
 
 const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed }) => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const { palletId, packageId, hwbNo }: any = useParams();
   const [hideBg, setHideBg] = useState("");
@@ -65,6 +65,8 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   // const [isScanSuccess, setIsScanSuccess] = useState<boolean>(false);
   const [isModal, setIsModal] = useState<boolean>(false);
   const [packageToastMsg, setPackageToastMsg] = useState<string>('');
+  const [deferredQuery, setDeferredQuery] = useState('');
+  const [isPending, startTransition] = useTransition();
 
   // const [scanLoadingMessage, setScanLoadingMessage] = useState<string>("");
 
@@ -105,12 +107,14 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
       setValue("hwbNo", hwbNo);
       // setValue("packageCount", "0");
       // dispatch(getSelectedPackageById(palletId, packageId));
+      dispatch(getSelectedHWBInfo(hwbNo.toUpperCase(), palletId))
     }
 
     if (isNew) {
       setIsHWBScanned(true)
     }
   }, [isNew]);
+
 
   // useEffect(() => {
   //   if (!isNew && packageData && packageData?.status === 0) {
@@ -160,7 +164,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   } = useForm({});
 
   // const watchPackageCount = watch("packageCount");
-  const watchHwbNo = watch("hwbNo");
+  const watchHwbNo = watch("hwbNo") && watch("hwbNo").toUpperCase();
   const watchNewPackageNo = watch("newPackageNo");
   const watchPkgNo = watch("pkgNo")
 
@@ -196,10 +200,10 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
         const showConfirm = async () => {
           const { value } = await Dialog.confirm({
             title: "Confirm",
-            message: `Package # ${scanResult[1]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
-            okButtonTitle:"YES",
+            message: `Package # ${scanResult[2]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
+            okButtonTitle: "YES",
             cancelButtonTitle: "NO"
-          }); 
+          });
           if (value) {
             startScan()
           } else {
@@ -263,17 +267,38 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
       });
       stopScan()
     } else if (isValidPackagePkgNo === false && isHWBScanned) {
-      Dialog.alert({
-        title: "Duplicate Package",
-        message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
-      });
-      startScan()
-      if (navigator.vibrate) {
-        // vibration API supported
-        navigator.vibrate(1000);
-        // stopScan();
-        // startScan();
+      // Dialog.alert({
+      //   title: "Duplicate Package",
+      //   message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
+      // });
+      // startScan()
+      // if (navigator.vibrate) {
+      //   // vibration API supported
+      //   navigator.vibrate(1000);
+      //   // stopScan();
+      //   // startScan();
+      // }
+      const showPrompt = async () => {
+        const { value } = await Dialog.confirm({
+          title: "Duplicate Package",
+          message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
+          okButtonTitle: 'Continue',
+          cancelButtonTitle: 'Stop Scan'
+        });
+        if (navigator.vibrate) {
+          // vibration API supported
+          navigator.vibrate(1000);
+          // stopScan();
+          if (value) {
+            startScan();
+          } else {
+            stopScan();
+          }
+        }
+
       }
+      showPrompt();
+
     }
   }, [setValue, isValidPackagePkgNo, scanResult, isHWBScanned])
 
@@ -301,15 +326,21 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
         };
         dispatch(getSelectedPackagePkgNo(palletId, data))
       } else {
-        Dialog.alert({
+        const { value } = await Dialog.confirm({
           title: "Invalid Package",
-          message: `This is not a valid HWB. Please try another one.`,
+          message: `This is not a valid HWB. Do you want to continue to scan.`,
+          okButtonTitle: 'Continue',
+          cancelButtonTitle: 'Stop Scan'
         });
         if (navigator.vibrate) {
           // vibration API supported
           navigator.vibrate(1000);
           // stopScan();
-          startScan();
+          if (value) {
+            startScan();
+          } else {
+            stopScan();
+          }
         }
       }
     };
@@ -363,7 +394,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   }
 
   const debouncedChangeHandler = useCallback(
-    debounce(handleHwbOnChange, 1000)
+    debounce(handleHwbOnChange, 3000)
     , []);
 
   useEffect(() => {
@@ -384,12 +415,27 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   }
 
   const handleOpenAddPackageNoModal = () => {
-    if (watchHwbNo && isEditAllowed) {
+    if (watchHwbNo && isEditAllowed && !isPending) {
       setIsModal(true);
       setValue("newPackageNo", "")
     }
   }
 
+  useEffect(() => {
+    if (deferredQuery) {
+      if (!isHWBScanned) {
+        dispatch({ type: "RESET_PKG_SCAN" })
+        dispatch(getSelectedHWBInfo(watchHwbNo.toUpperCase(), palletId))
+      }
+    }
+  }, [deferredQuery]);
+
+  const handleChange = (e: any) => {
+
+    startTransition(() => {
+      setDeferredQuery(watchHwbNo);
+    });
+  };
 
   const handleAddNewPackageNo = () => {
     const pkgList = watchPkgNo;
@@ -560,25 +606,26 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          {isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+          {isEditAllowed && <IonText className={`modalheader-menu  ${hideBg && 'text-indent'}`}>
             {isNew ? "Add Package" : "Edit Package"}
           </IonText>}
-          {!isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+          {!isEditAllowed && <IonText className={`modalheader-menu  ${hideBg && 'text-indent'}`}>
             View Package
           </IonText>}
-          <IonButtons
+
+          {!hideBg && <IonButtons
             hidden={!!hideBg}
             slot="end"
             onClick={() => closePage()}
             className="closeIcon"
           >
             <IonIcon icon={closeIcon} slot="icon-only" />
-          </IonButtons>
+          </IonButtons>}
         </IonToolbar>
       </IonHeader>
       <IonContent className={`ion-padding ${hideBg}`}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList hidden={!!hideBg}>
+          {!hideBg && <IonList hidden={!!hideBg}>
             {isNew && <div className="ion-padding-bottom">
               <IonItem lines="none" className="ion-no-padding">
                 <IonLabel
@@ -615,7 +662,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                     }
                   })}
                   onIonInput={(e: any) => setValue("hwbNo", e.target.value)}
-                  onIonChange={debouncedChangeHandler}
+                  onIonBlur={handleChange}
                 />
                 {isEditAllowed && <>
                   {isHWBScanned && isNew && <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />}
@@ -781,18 +828,22 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
             >
               RETURN
             </IonButton>}
-          </IonList>
+          </IonList>}
         </form>
-        <IonButton
-          color="danger"
-          className="stop-scan-button"
-          hidden={!hideBg}
-          onClick={()=>closePage()}
-        >
-          {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
-          Stop Scan
-        </IonButton>
-        <div hidden={!hideBg} className="scan-box" />
+        {hideBg &&
+          <>
+            <IonButton
+              color="danger"
+              className="stop-scan-button"
+              hidden={!hideBg}
+              onClick={() => closePage()}
+            >
+              {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
+              Stop Scan
+            </IonButton>
+            <div hidden={!hideBg} className="scan-box" />
+          </>
+        }
       </IonContent>
       <IonLoading
         isOpen={isloading}

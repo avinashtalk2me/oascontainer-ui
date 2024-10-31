@@ -28,7 +28,7 @@ import {
   addCircle as addItem,
   camera,
 } from "ionicons/icons";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Error from "../../components/Error";
@@ -55,7 +55,7 @@ interface AddEditDropOffProps {
 }
 
 const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAllowed }) => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const { locationId, deliveryId, packageId, hwbNo }: any = useParams();
   const [hideBg, setHideBg] = useState("");
@@ -64,11 +64,15 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isCheckSelected, setIsCheckSelected] = useState<boolean>(false);
 
+  const [deferredQuery, setDeferredQuery] = useState('');
+  const [isPending, startTransition] = useTransition();
 
   const { isloading, isItemSaved, error,    //packageData, 
     isValidPackagePkgNo, selectedHwbInfoForDropoff } = useSelector(
       (state: any) => state.dropOff
     );
+
+
 
   const modal = useRef<HTMLIonModalElement>(null);
 
@@ -101,6 +105,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   useEffect(() => {
     if (!isNew) {
       setValue("hwbNo", hwbNo);
+      dispatch(getSelectedHWBInfoForDropoff(locationId, hwbNo.toUpperCase()))
     }
 
     if (isNew) {
@@ -133,23 +138,21 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         }
 
       } else {
-        // setValue("hwbNo", "");
-        // if (isHWBScanned) {
-        //   setIsScanSuccess(true)
-        //   setValue("pkgNo", "");
-        // }
-        Dialog.alert({
-          title: "Invalid HWB!!",
-          message: `The Pkg# ${scanResult[2]} of HWB# ${watchHwbNo} is not available in our system. Please try another one.`,
-        });
+        setValue("totalPkgs", '');
+
         if (isHWBScanned) {
-          startScan()
+          // startScan()
           if (navigator.vibrate) {
             // vibration API supported
             navigator.vibrate(1000);
             // stopScan();
             // startScan();
           }
+        } else {
+          Dialog.alert({
+            title: "Invalid HWB!!",
+            message: `The HWB# ${watchHwbNo.toUpperCase()} is not available in our system. Please try another one.`,
+          });
         }
 
         // setValue("totalPkgs", "");
@@ -168,29 +171,48 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         setValue("pkgNo", scanResult[2]);
         dispatch(getSelectedHWBInfoForDropoff(locationId, scanResult[0]))
       } else if (isValidPackagePkgNo.isValidPackage === "DUPLICATE") {
-        Dialog.alert({
-          title: "Duplicate Package",
-          message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
-        });
-        startScan()
-        if (navigator.vibrate) {
-          // vibration API supported
-          navigator.vibrate(1000);
-          // stopScan();
-          // startScan();
+
+        const showPrompt = async () => {
+          const { value } = await Dialog.confirm({
+            title: "Duplicate Package",
+            message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0].toUpperCase()} has already been scanned. Please scan a new package.`,
+            okButtonTitle: 'Continue',
+            cancelButtonTitle: 'Stop Scan'
+          });
+          if (navigator.vibrate) {
+            // vibration API supported
+            navigator.vibrate(1000);
+            // stopScan();
+            if (value) {
+              startScan();
+            } else {
+              stopScan();
+            }
+          }
         }
+        showPrompt()
       } else if (isValidPackagePkgNo.isValidPackage === "INVALID") {
-        Dialog.alert({
-          title: "Invalid HWB!!",
-          message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} is not available in our system. Please try another one.`,
-        });
-        startScan()
-        if (navigator.vibrate) {
-          // vibration API supported
-          navigator.vibrate(1000);
-          // stopScan();
-          // startScan();
+
+
+        const showPrompt = async () => {
+          const { value } = await Dialog.confirm({
+            title: "Invalid Package!!",
+            message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0].toUpperCase()} is not available in our system. Please scan a new package.`,
+            okButtonTitle: 'Continue',
+            cancelButtonTitle: 'Stop Scan'
+          });
+          if (navigator.vibrate) {
+            // vibration API supported
+            navigator.vibrate(1000);
+            // stopScan();
+            if (value) {
+              startScan();
+            } else {
+              stopScan();
+            }
+          }
         }
+        showPrompt()
       }
 
       // stopScan();
@@ -255,10 +277,10 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         const showConfirm = async () => {
           const { value } = await Dialog.confirm({
             title: "Confirm",
-            message: `Package # ${scanResult[1]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
-            okButtonTitle:"YES",
-            cancelButtonTitle: "NO"
-          }); 
+            message: `Package # ${scanResult[2]} of HWB# ${scanResult[0]} successfully scanned. Scan another?`,
+            okButtonTitle: "Continue",
+            cancelButtonTitle: "Stop Scan"
+          });
           if (value) {
             startScan()
           } else {
@@ -324,15 +346,21 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
         };
         dispatch(getSelectedScanedHWBInfoForDropoff(locationId, data))
       } else {
-        Dialog.alert({
+        const { value } = await Dialog.confirm({
           title: "Invalid Package",
-          message: `This is not a valid HWB. Please try another one.`,
+          message: `This is not a valid HWB. Do you want to continue to scan.`,
+          okButtonTitle: 'Continue',
+          cancelButtonTitle: 'Stop Scan'
         });
         if (navigator.vibrate) {
           // vibration API supported
           navigator.vibrate(1000);
           // stopScan();
-          startScan();
+          if (value) {
+            startScan();
+          } else {
+            stopScan();
+          }
         }
       }
     };
@@ -380,7 +408,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   }
 
   const debouncedChangeHandler = useCallback(
-    debounce(handleHwbOnChange, 1000)
+    debounce(handleHwbOnChange, 4000)
     , []);
 
   useEffect(() => {
@@ -388,6 +416,21 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
       debouncedChangeHandler.cancel();
     }
   }, []);
+
+  useEffect(() => {
+    if (deferredQuery) {
+      if (!isHWBScanned) {
+        dispatch({ type: "RESET_PKG_SCAN" })
+        dispatch(getSelectedHWBInfoForDropoff(locationId, watchHwbNo.toUpperCase()))
+      }
+    }
+  }, [deferredQuery]);
+
+  const handleChange = (e: any) => {
+    startTransition(() => {
+      setDeferredQuery(watchHwbNo);
+    });
+  };
 
   const dismiss = () => {
     modal.current?.dismiss();
@@ -401,7 +444,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
   }
 
   const handleOpenAddPackageNoModal = () => {
-    if (watchHwbNo && isEditAllowed) {
+    if (watchHwbNo && isEditAllowed && selectedHwbInfoForDropoff?.isValidHwb === true) {
       setIsModal(true);
       setValue("newPackageNo", "")
     }
@@ -559,25 +602,25 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          {isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+          {isEditAllowed && <IonText className={`modalheader-menu  ${hideBg && 'text-indent'}`}>
             {isNew ? "Add Package" : "Edit Package"}
           </IonText>}
-          {!isEditAllowed && <IonText className={`modalheader-menu  ${!!hideBg && 'text-indent'}`}>
+          {!isEditAllowed && <IonText className={`modalheader-menu  ${hideBg && 'text-indent'}`}>
             View Dropoff Package
           </IonText>}
-          <IonButtons
+          {!hideBg && <IonButtons
             hidden={!!hideBg}
             slot="end"
             onClick={() => closePage()}
             className="closeIcon"
           >
             <IonIcon icon={closeIcon} slot="icon-only" />
-          </IonButtons>
+          </IonButtons>}
         </IonToolbar>
       </IonHeader>
       <IonContent className={`ion-padding ${hideBg}`}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList hidden={!!hideBg}>
+          {!hideBg && <IonList hidden={!!hideBg}>
             {isNew && <div className="ion-padding-bottom">
               <IonItem lines="none" className="ion-no-padding">
                 <IonLabel
@@ -614,7 +657,8 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                     }
                   })}
                   onIonInput={(e: any) => setValue("hwbNo", e.target.value)}
-                  onIonChange={debouncedChangeHandler}
+                  // onIonChange={debouncedChangeHandler}
+                  onIonBlur={handleChange}
                 />
                 {isEditAllowed && <>
                   {isHWBScanned && isNew && <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />}
@@ -721,18 +765,22 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
             >
               RETURN
             </IonButton>}
-          </IonList>
+          </IonList>}
         </form>
-        <IonButton
-          color="danger"
-          className="stop-scan-button"
-          hidden={!hideBg}
-          onClick={()=>closePage()}
-        >
-          {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
-          Stop Scan
-        </IonButton>
-        <div hidden={!hideBg} className="scan-box" />
+        {hideBg &&
+          <>
+            <IonButton
+              color="danger"
+              className="stop-scan-button"
+              hidden={!hideBg}
+              onClick={() => closePage()}
+            >
+              {/* <IonIcon icon={stopCircleOutline} slot="start" /> */}
+              Stop Scan
+            </IonButton>
+            <div hidden={!hideBg} className="scan-box" />
+          </>
+        }
       </IonContent>
       <IonLoading
         isOpen={isloading}

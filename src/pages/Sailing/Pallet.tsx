@@ -42,7 +42,7 @@ const Pallet: React.FC<PalletProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
   const { isloading, selectedSailId, error, pallets, isItemDeleted } =

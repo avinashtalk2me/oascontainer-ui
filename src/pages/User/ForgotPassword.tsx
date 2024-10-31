@@ -21,7 +21,7 @@ import { useHistory } from "react-router";
 
 
 const ForgotPassword: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const history = useHistory();
   const userDetails = useSelector((state: any) => state.user);
   const { isloading, isEmailValidate, error, isPasswordUpdated } = userDetails;

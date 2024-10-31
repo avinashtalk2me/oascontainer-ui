@@ -35,7 +35,7 @@ import ToastMsg from "../../components/ToastMsg";
 
 const Users: React.FC = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {

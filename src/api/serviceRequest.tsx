@@ -26,7 +26,7 @@ export const serviceRequest = (
 ): AxiosPromise<any> => {
   const accessToken = getAccessToken();
 
-  const headers: AxiosRequestHeaders = {
+  const headers: any = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   };

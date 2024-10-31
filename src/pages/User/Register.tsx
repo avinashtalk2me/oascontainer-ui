@@ -24,7 +24,7 @@ import UserDetail from "./UserDetail";
 
 const Register: React.FC = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const user = useSelector((state: any) => state.user);
   const { isloading, saveuserDetails } = user;
 

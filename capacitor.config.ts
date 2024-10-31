@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   webDir: 'build',
   bundledWebRuntime: false, 
   // server: {
-  //   url : "http://192.168.29.238:3000"
+  //   url : "http://192.168.181.87:3000"
   // },
   "plugins": {
     "SplashScreen": {

@@ -51,7 +51,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
   // selectedSailId,
   // selectedPalletId,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch:any = useDispatch();
   const history = useHistory();
   const { sailId, palletId }: any = useParams();
   const [palletType, setPalletType] = useState("");
@@ -325,7 +325,8 @@ const AddEditPallet: React.FC<PalletProps> = ({
                     position="stacked"
                   >
                     <IonText> Number of Packages </IonText>
-                    <IonNote slot="start">{pallet?.data?.packageCount}</IonNote>
+                    <span className="noCount">{pallet?.data?.packageCount}</span>
+                    {/* <IonNote slot="start">{pallet?.data?.packageCount}</IonNote> */}
                   </IonLabel>
                 </IonItem>
               </div>
