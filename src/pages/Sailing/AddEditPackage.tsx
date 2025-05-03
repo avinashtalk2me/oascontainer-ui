@@ -17,15 +17,11 @@ import {
   IonToolbar,
   IonModal,
   createAnimation,
-  IonTitle,
   IonAccordion,
   IonAccordionGroup,
-  IonFooter
 } from "@ionic/react";
 import {
   close as closeIcon,
-  removeCircle as removeItem,
-  addCircle as addItem,
   camera,
 } from "ionicons/icons";
 import { useCallback, useEffect, useState, useRef, useTransition } from "react";
@@ -41,9 +37,7 @@ import {
 } from "../../store/actions";
 import ServerError from "../../components/ServerError";
 import ToastMsg from "../../components/ToastMsg";
-import CameraScannerButton from "../../components/CameraScannerButton";
 import { useHistory, useParams } from "react-router";
-import SessionExpired from "../../components/SessionExpired";
 import { BarcodeScanner } from "@capacitor-community/barcode-scanner";
 import "../../camera-scanner.css";
 import { Dialog } from "@capacitor/dialog";
@@ -233,16 +227,16 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     }
   };
 
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      if (value) {
-        clearErrors(name);
-      } else {
-        // setError(name)
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
+  // useEffect(() => {
+  //   const subscription = watch((value, { name, type }) => {
+  //     if (value) {
+  //       clearErrors(name);
+  //     } else {
+  //       // setError(name)
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
 
   useEffect(() => {
     if (isValidPackagePkgNo === true && isHWBScanned) {
@@ -411,6 +405,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     return new Promise<boolean>((resolve, reject) => {
       resolve(true);
       setIsModal(false)
+      setPackageToastMsg("")
     });
   }
 
@@ -439,6 +434,10 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
 
   const handleAddNewPackageNo = () => {
     const pkgList = watchPkgNo;
+    if (!/^\d+$/.test(watchNewPackageNo)) {
+      setPackageToastMsg("Invalid Package No. Please enter number (e.g., 10, 25, 100).")
+      return;
+    }
     if (pkgList) {
       let pkgArr: string[] = pkgList.split(",");
       const isUnique = pkgArr.some(item => item === watchNewPackageNo);
@@ -698,7 +697,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                     />}
                   {isNew && isHWBScanned &&
                     <IonInput
-                      type="number"
+                      type="text"
                       maxlength={15}
                       disabled={!isEditAllowed}
                       readonly={(isHWBScanned || selectedHwbInfo?.isExistingHwb) && true}
@@ -706,6 +705,10 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                       aria-describedby={`${"pkgNo"}Error`}
                       {...register("pkgNo", {
                         required: "Package No(s) is required.",
+                        pattern: {
+                          value: /^\d+$/,
+                          message: "Invalid Package. Please enter number (e.g., 10, 25, 100).",
+                        },
                       })}
                       onIonChange={(event) => setValue("pkgNo", event.detail.value)}
                     />}
@@ -730,7 +733,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                     Total HWB Packages
                   </IonLabel>
                   <IonInput
-                    type="number"
+                    type="text"
                     maxlength={15}
                     disabled={!isEditAllowed}
                     readonly={(isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
@@ -738,6 +741,10 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                     aria-describedby={`${"totalPkgs"}Error`}
                     {...register("totalPkgs", {
                       required: "Total HWB Packages is required.",
+                      pattern: {
+                        value: /^\d+$/,
+                        message: "Invalid Total HWB Packages. Please enter number (e.g., 10, 25, 100).",
+                      },
                     })}
                     onIonChange={(event) => setValue("totalPkgs", event.detail.value)}
                   />
@@ -747,65 +754,6 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
               {/* {isHWBScanned ? : { shipperInfo }} */}
               {hwbAccordion}
             </>}
-
-            {/* <div
-              className="ion-padding-bottom ion-text-center"
-              hidden={!!hideBg}
-            >
-              <IonText color="medium" className="ion-no-padding">
-                OR
-              </IonText>
-            </div>
-            <div className="ion-padding-bottom ion-text-center">
-              <IonButton
-                color="medium"
-                className="start-scan-button"
-                hidden={!!hideBg}
-                onClick={startScan}
-              >
-                Scan HWB #
-              </IonButton>
-              
-            </div> */}
-
-            {/* {!isNew && (
-              <div className="ion-padding-bottom" hidden={!!hideBg}>
-                <IonItem className="ion-no-padding" lines="none">
-                  <IonLabel
-                    color="medium"
-                    className="form-input"
-                    position="stacked"
-                  >
-                    <IonText> Number of Packages </IonText>
-                    <IonNote slot="start" {...register("packageCount")}>
-                      {watchPackageCount}
-                    </IonNote>
-                  </IonLabel>
-                  <IonButtons
-                    slot="end"
-                    color="primary"
-                    className="ion-no-padding ion-no-margin"
-                    style={{ marginTop: "20px" }}
-                  >
-                    <IonIcon
-                      icon={removeItem}
-                      onClick={handleDecrementCount}
-                      color="primary"
-                      slot="icon-only"
-                    />
-                    <span> &nbsp; &nbsp; </span>
-                    <IonIcon
-                      icon={addItem}
-                      onClick={handleIncrementCount}
-                      color="primary"
-                      slot="icon-only"
-                    />
-                  </IonButtons>
-                </IonItem>
-
-                <Error errors={errors} name="packageCount" />
-              </div>
-            )} */}
 
             {error && error.status === -1 && (
               <ServerError errorMsg={error.message} />
@@ -900,21 +848,27 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                   Enter Package No.
                 </IonLabel>
                 <IonInput
-                  type="number"
+                  type="text"
                   maxlength={4}
                   aria-invalid={errors && errors["newPackageNo"] ? "true" : "false"}
                   aria-describedby={`${"newPackageNo"}Error`}
-                  {...register("newPackageNo")}
-                  onIonChange={handleAddPackageNoChange}
+                  {...register("newPackageNo", {
+                    required: "Package is required.",
+                    pattern: {
+                      value: /^\d+$/,
+                      message: "Invalid Package Input. Please enter number (e.g., 10, 25, 100).",
+                    },
+                  })}
+                  onIonInput={handleAddPackageNoChange}
                 />
               </IonItem>
               <IonButton
                 slot="end"
-                type="submit"
+                type="button"
                 className="ion-margin-top modal-addBtn"
                 color="primary"
                 // expand="block"
-                disabled={!watchNewPackageNo}
+                // disabled={!watchNewPackageNo}
                 onClick={handleAddNewPackageNo}
               >
                 Add

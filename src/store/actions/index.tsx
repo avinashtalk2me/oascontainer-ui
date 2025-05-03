@@ -9,7 +9,7 @@ export {
   getContainerSailing, getNextPalletNo, getPackageByPalletId, getPalletManifest, getPalletsBySailId,
   getSelectedHWBInfo, getSelectedPackagePkgNo, getSelectedPalletById,
   getSelectedSailingById, insertPackage, insertPallet, insertSailing, updatePackage, updatePallet,
-  updateSailingById
+  updateSailingById, getHWBManifest
 } from "./sailing_access";
 
 export {

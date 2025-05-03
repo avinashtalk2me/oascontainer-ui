@@ -144,20 +144,20 @@ const AddEditPallet: React.FC<PalletProps> = ({
     }
   }, [isItemSaved]);
 
-  useEffect(() => {
-    const palletType = watch("palletType");
-    if (palletType === "Loose") {
-      setShowHidePalletDesc(true);
-    }
-    const subscription = watch((value, { name }) => {
-      if (value) {
-        clearErrors(name);
-      } else {
-        // setError(name)
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
+  // useEffect(() => {
+  //   const palletType = watch("palletType");
+  //   if (palletType === "Loose") {
+  //     setShowHidePalletDesc(true);
+  //   }
+  //   const subscription = watch((value, { name }) => {
+  //     if (value) {
+  //       clearErrors(name);
+  //     } else {
+  //       // setError(name)
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
 
   const closePage = () => {
     history.goBack();
@@ -170,6 +170,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
     } else {
       setShowHidePalletDesc(false);
     }
+    clearErrors();
   };
   const onSubmit = (data: any) => {
     if (!isEditAllowed) {
@@ -286,7 +287,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                     Weight
                   </IonLabel>
                   <IonInput
-                    type="number"
+                    type="text"
                     disabled={!isEditAllowed}
                     aria-invalid={
                       errors && errors["palletWeight"] ? "true" : "false"
@@ -299,7 +300,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
                       required: "Weight is required.",
                       pattern: {
                         value: /^(?:\d*\.\d{1,2}|\d+)$/,
-                        message: "Invalid weight.",
+                        message: "Invalid weight. Please enter a valid number with a decimal point (e.g., 12.34).",
                       },
                     })}
                   />

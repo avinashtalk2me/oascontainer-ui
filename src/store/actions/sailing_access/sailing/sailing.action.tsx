@@ -21,6 +21,9 @@ import {
   DELETE_CONTAINER_REQUEST,
   DELETE_CONTAINER_SUCCESS,
   DELETE_CONTAINER_ERROR,
+  GET_HWB_MANIFEST_REQUEST,
+  GET_HWB_MANIFEST_SUCCESS,
+  GET_HWB_MANIFEST_ERROR,
 } from "../../../types";
 
 import {
@@ -31,6 +34,7 @@ import {
   getContainerManifestAPI,
   getPalletManifestAPI,
   deleteSailingByIdAPI,
+  getHWBManifestAPI,
 } from "../../../../api/fetch";
 
 export const getContainerSailing = () => async (dispatch: any) => {
@@ -147,6 +151,26 @@ export const getPalletManifest = (sailId: string) => async (dispatch: any) => {
     } else {
       dispatch({
         type: GET_PALLET_MANIFEST_ERROR,
+        payload: error.response.data,
+      });
+    }
+  }
+};
+
+export const getHWBManifest = (sailId: string) => async (dispatch: any) => {
+  dispatch({ type: GET_HWB_MANIFEST_REQUEST });
+  try {
+    const sailData = await getHWBManifestAPI(sailId);
+    dispatch({
+      type: GET_HWB_MANIFEST_SUCCESS,
+      payload: sailData.data,
+    });
+  } catch (error: any) {
+    if (error.response === undefined) {
+      dispatch({ type: SERVER_ERROR, payload: { status: 500 } });
+    } else {
+      dispatch({
+        type: GET_HWB_MANIFEST_ERROR,
         payload: error.response.data,
       });
     }
