@@ -108,16 +108,16 @@ const Login: React.FC = () => {
     );
   };
 
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      if (value) {
-        clearErrors(name);
-      } else {
-        // setError(name)
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
+  // useEffect(() => {
+  //   const subscription = watch((value, { name, type }) => {
+  //     if (value) {
+  //       clearErrors(name);
+  //     } else {
+  //       // setError(name)
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
 
   const onSubmit = (data: any) => {
     dispatch(validateUser(data));

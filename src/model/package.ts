@@ -4,4 +4,6 @@ export interface Package {
     packageType:string;
     hwbId?:number;
     hwbNo:string;
+    palletNo?: string;
+    totalPackages?: string;
 }

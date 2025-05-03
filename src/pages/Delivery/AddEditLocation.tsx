@@ -163,16 +163,16 @@ const AddEditLocation: React.FC<LocationProps> = ({
     }
   }, [isItemSaved]);
 
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (value) {
-        clearErrors(name);
-      } else {
-        // setError(name)
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
+  // useEffect(() => {
+  //   const subscription = watch((value, { name }) => {
+  //     if (value) {
+  //       clearErrors(name);
+  //     } else {
+  //       // setError(name)
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
 
   const closePage = () => {
     history.goBack();
