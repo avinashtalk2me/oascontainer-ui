@@ -156,14 +156,14 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
     }
   };
 
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (value) {
+        clearErrors(name);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   useEffect(() => {
     if (isUserSaved) {

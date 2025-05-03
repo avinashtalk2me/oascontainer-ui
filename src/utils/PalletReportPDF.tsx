@@ -1,4 +1,4 @@
-import { Pallet } from "../model/pallet";
+import { IPallet } from "../model/pallet";
 
 const PalletReportPDF = (
   sailDesc: string,
@@ -8,9 +8,9 @@ const PalletReportPDF = (
 ) => {
   const getPalletTotalDetails = (palletNo: number) => {
     const { quantity, total } = palletManifest.data
-      .filter((item: Pallet) => item.palletNo === palletNo)
+      .filter((item: IPallet) => item.palletNo === palletNo)
       .reduce(
-        ({ quantity, total }: any, item: Pallet, index: number) => ({
+        ({ quantity, total }: any, item: IPallet, index: number) => ({
           quantity: index + 1,
           total: total + item.packageCount,
         }),
@@ -24,7 +24,7 @@ const PalletReportPDF = (
   };
 
   const getIsPalletOrLoose = (palletNo: number): string => {
-    if (palletManifest.data.find((item: Pallet) => item.palletNo === palletNo).palletType === "Pallet") {
+    if (palletManifest.data.find((item: IPallet) => item.palletNo === palletNo).palletType === "Pallet") {
       return `<h2>Pallet# ${palletNo}</h2>`
     } else {
       return `<h2>Loose</h2>`
@@ -33,7 +33,7 @@ const PalletReportPDF = (
 
   const getPalletDetails = (palletNo: number) => {
     let filteredPallets: any[] = palletManifest.data.filter(
-      (item: Pallet) => item.palletNo === palletNo
+      (item: IPallet) => item.palletNo === palletNo
     );
 
     filteredPallets =
@@ -51,7 +51,7 @@ const PalletReportPDF = (
           .map((pallet: any) => {
             return `<div class="details-header-body">
                                  <div>  ${pallet.hwbNo}</div>
-                                 <div> ${pallet.packageCount} (of ${pallet.totalPackages} pieces)</div>
+                                 <div> ${pallet.packageCount}</div>
                               </div>`;
           })
           .join("")} </div>`;

@@ -21,9 +21,6 @@ import {
     DELETE_CONTAINER_REQUEST,
     DELETE_CONTAINER_SUCCESS,
     DELETE_CONTAINER_ERROR,
-    GET_HWB_MANIFEST_REQUEST,
-    GET_HWB_MANIFEST_SUCCESS,
-    GET_HWB_MANIFEST_ERROR,
 } from '../../types'
 
 const initialContainerState = {
@@ -34,8 +31,7 @@ const initialContainerState = {
     isItemSaved: false,
     isItemDeleted: false,
     containerManifest: {},
-    palletManifest: {},
-    hwbManifest: {}
+    palletManifest: {}
 }
 
 interface ActionType {
@@ -155,23 +151,6 @@ const containerReducer = (state = initialContainerState, action: ActionType) => 
                 palletManifest: payload
             }
         case GET_PALLET_MANIFEST_ERROR:
-            return {
-                ...state,
-                isloading: false,
-                error: payload
-            }
-        case GET_HWB_MANIFEST_REQUEST:
-            return {
-                ...state,
-                isloading: true
-            }
-        case GET_HWB_MANIFEST_SUCCESS:
-            return {
-                ...state,
-                isloading: false,
-                hwbManifest: payload
-            }
-        case GET_HWB_MANIFEST_ERROR:
             return {
                 ...state,
                 isloading: false,

@@ -311,16 +311,16 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
     }
   };
 
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     } else {
-  //       // setError(name)
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (value) {
+        clearErrors(name);
+      } else {
+        // setError(name)
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
 
   const closePage = () => {
@@ -694,7 +694,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                     />}
                   {isNew && isHWBScanned &&
                     <IonInput
-                      type="text"
+                      type="number"
                       maxlength={15}
                       disabled={!isEditAllowed}
                       readonly={(isHWBScanned || selectedHwbInfoForDropoff?.isValidHwb) && true}
@@ -702,10 +702,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                       aria-describedby={`${"pkgNo"}Error`}
                       {...register("pkgNo", {
                         required: "Package No(s) is required.",
-                        pattern: {
-                          value: /^\d+$/,
-                          message: "Invalid Package. Please enter number (e.g., 10, 25, 100).",
-                        },
                       })}
                       onIonChange={(event) => setValue("pkgNo", event.detail.value)}
                     />}
@@ -730,7 +726,7 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                     Total HWB Packages
                   </IonLabel>
                   <IonInput
-                    type="text"
+                    type="number"
                     maxlength={15}
                     disabled={!isEditAllowed}
                     readonly={true}
@@ -738,10 +734,6 @@ const AddEditDeliveryDropOff: React.FC<AddEditDropOffProps> = ({ isNew, isEditAl
                     aria-describedby={`${"totalPkgs"}Error`}
                     {...register("totalPkgs", {
                       required: "Total HWB Packages is required.",
-                      pattern: {
-                        value: /^\d+$/,
-                        message: "Invalid Total HWB Packages. Please enter number (e.g., 10, 25, 100).",
-                      },
                     })}
                     onIonChange={(event) => setValue("totalPkgs", event.detail.value)}
                   />

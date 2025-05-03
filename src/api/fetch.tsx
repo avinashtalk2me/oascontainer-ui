@@ -54,8 +54,7 @@ const {
   DEACTIVATE_USER,
   UPDATE_USER,
   GET_COMPANY_DETAILS,
-  UPDATE_COMPANY_DETAILS,
-  GET_HWB_MANIFEST
+  UPDATE_COMPANY_DETAILS
 } = config;
 
 export const getAppVersionAPI = () => {
@@ -275,14 +274,6 @@ export const getPalletManifestAPI = (selectedSailingId: string) => {
   url = url.replace("{sailId}", selectedSailingId);
   return serviceRequest(url, "GET", undefined);
 };
-
-
-export const getHWBManifestAPI = (selectedSailingId: string) => {
-  let url: string = `${process.env.REACT_APP_API_URL}${GET_HWB_MANIFEST}`;
-  url = url.replace("{sailId}", selectedSailingId);
-  return serviceRequest(url, "GET", undefined);
-};
-
 
 export const getSelectedPackagePkgNoAPI = (palletId: string, data: any) => {
   let url: string = `${process.env.REACT_APP_API_URL}${GET_PACKAGE_PKG_NO}`;

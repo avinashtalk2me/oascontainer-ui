@@ -66,14 +66,14 @@ const ForgotPassword: React.FC = () => {
   };
 
 
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (value) {
+        clearErrors(name);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
 
   useEffect(() => {

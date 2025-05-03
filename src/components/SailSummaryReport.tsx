@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonCol,
   IonGrid,
   IonItem,
@@ -7,17 +8,24 @@ import {
   IonIcon,
   IonFab,
   IonFabButton,
+  IonFabList,
+  IonContent,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Pallet } from "../model/pallet";
+import { IPallet } from "../model/pallet";
 import { Share } from "@capacitor/share";
 import { PDFGenerator } from "@awesome-cordova-plugins/pdf-generator";
 import { SailingReportPDF } from "../utils/SailingReportPDF";
 import {
   shareSocial as shareIcon,
+  logoWhatsapp as whatsappIcon,
+  mail as mailIcon,
+  informationCircleOutline as infoIcon,
 } from "ionicons/icons";
 import { Filesystem, Directory } from "@capacitor/filesystem";
+import { SocialSharing } from "@awesome-cordova-plugins/social-sharing";
+import { Dialog } from "@capacitor/dialog";
 
 
 interface SailSummaryReportProps {
@@ -38,33 +46,33 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
         unitType: containerManifest?.data[0].palletWeights.slice(-2),
 
         palletTotal: containerManifest?.data?.filter(
-          (item: Pallet) => item.palletType === "Pallet"
+          (item: IPallet) => item.palletType === "Pallet"
         ).length,
         looseTotal: containerManifest.data.filter(
-          (item: Pallet) => item.palletType === "Loose"
+          (item: IPallet) => item.palletType === "Loose"
         ).length,
         palletPieces: containerManifest.data
-          .filter((item: Pallet) => item.palletType === "Pallet")
+          .filter((item: IPallet) => item.palletType === "Pallet")
           .reduce(
-            (sum: number, item: Pallet) => (sum += +item.packageCount),
+            (sum: number, item: IPallet) => (sum += +item.packageCount),
             0
           ),
         loosePieces: containerManifest.data
-          .filter((item: Pallet) => item.palletType === "Loose")
+          .filter((item: IPallet) => item.palletType === "Loose")
           .reduce(
-            (sum: number, item: Pallet) => (sum += +item.packageCount),
+            (sum: number, item: IPallet) => (sum += +item.packageCount),
             0
           ),
         palletPiecesWeight: containerManifest.data
-          .filter((item: Pallet) => item.palletType === "Pallet")
+          .filter((item: IPallet) => item.palletType === "Pallet")
           .reduce(
-            (sum: number, item: Pallet) => (sum += +parseInt(item.palletWeights)),
+            (sum: number, item: IPallet) => (sum += +parseInt(item.palletWeights)),
             0
           ),
         loosePiecesWeight: containerManifest.data
-          .filter((item: Pallet) => item.palletType === "Loose")
+          .filter((item: IPallet) => item.palletType === "Loose")
           .reduce(
-            (sum: number, item: Pallet) => (sum += +parseInt(item.palletWeights)),
+            (sum: number, item: IPallet) => (sum += +parseInt(item.palletWeights)),
             0
           ),
       };
@@ -155,7 +163,7 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
           <h4>Weights</h4>
         </IonCol>
       </IonRow>
-      {(containerManifest.data || []).map((pallet: Pallet, index: number) => (
+      {(containerManifest.data || []).map((pallet: IPallet, index: number) => (
         <IonRow key={index} className="sailreport report-body">
           <div
             style={{ display: "flex", flexDirection: "row" }}
@@ -274,6 +282,14 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
         <IonFabButton color="medium">
           <IonIcon icon={shareIcon} onClick={() => shareFile()}></IonIcon>
         </IonFabButton>
+        {/* <IonFabList side="bottom">
+          <IonFabButton color="green" onClick={() => shareFile("whatsapp")}>
+            <IonIcon icon={whatsappIcon}></IonIcon>
+          </IonFabButton>
+          <IonFabButton color="tertiary" onClick={() => shareFile("email")}>
+            <IonIcon icon={mailIcon}></IonIcon>
+          </IonFabButton>
+        </IonFabList> */}
       </IonFab>
       <div className="report-section">{SailingReport}</div>
     </div>

@@ -32,7 +32,7 @@ import {
 import { getPalletsBySailId, deletePalletById } from "../../store/actions";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
-import { Pallet as IPallet } from "../../model/pallet";
+import { IPallet } from "../../model/pallet";
 
 export interface PalletProps {
   isEditAllowed: boolean;

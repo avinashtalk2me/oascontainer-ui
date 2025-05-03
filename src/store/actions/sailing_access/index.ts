@@ -5,8 +5,7 @@ export {
   updateSailingById,
   getContainerManifest,
   getPalletManifest,
-  deleteSailingById,
-  getHWBManifest
+  deleteSailingById
 } from "./sailing/sailing.action";
 export {
   getPalletsBySailId,

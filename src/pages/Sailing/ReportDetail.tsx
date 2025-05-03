@@ -5,11 +5,16 @@ import {
   IonIcon,
   IonItem,
   IonLabel,
+  IonList,
   IonLoading,
+  IonRadio,
+  IonRadioGroup,
   IonText,
   IonToolbar,
-  IonSelect,
-  IonSelectOption
+  IonFab,
+  IonFabButton,
+  IonFabList,
+  IonButton,
 } from "@ionic/react";
 import { close as closeIcon } from "ionicons/icons";
 import { useEffect, useState } from "react";
@@ -17,13 +22,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import PalletSummaryReport from "../../components/PalletSummaryReport";
 import SailSummaryReport from "../../components/SailSummaryReport";
-import HWBSummaryReport from "../../components/HWBSummaryReport";
 import { Container } from "../../model/container";
-import { getContainerManifest, getPalletManifest, getHWBManifest } from "../../store/actions";
+import { getContainerManifest, getPalletManifest } from "../../store/actions";
 
 
 const ReportDetail: React.FC = () => {
-  const dispatch: any = useDispatch();
+  const dispatch:any = useDispatch();
   const history = useHistory();
   const { sailId }: any = useParams();
   const [reportName, setReportName] = useState("sailingsummary");
@@ -45,10 +49,8 @@ const ReportDetail: React.FC = () => {
   useEffect(() => {
     if (reportName === "sailingsummary") {
       dispatch(getContainerManifest(sailId));
-    } else if (reportName === "palletmanifest")  {
-      dispatch(getPalletManifest(sailId));
     } else {
-      dispatch(getHWBManifest(sailId));
+      dispatch(getPalletManifest(sailId));
     }
   }, [dispatch, reportName, sailId]);
 
@@ -75,45 +77,50 @@ const ReportDetail: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonItem className="ion-no-padding">
-          <IonLabel
-            color="medium"
-            className="form-input"
-            position="stacked"
-          >
-            Report Type
-          </IonLabel>
-
-          <IonSelect
+        <IonList className="ion-no-padding">
+          <IonRadioGroup
+            className="ion-no-padding"
             value={reportName}
-            interface="popover"
             onIonChange={handleRadioGroup}
           >
-            <IonSelectOption value="sailingsummary">Sailing Summary</IonSelectOption>
-            <IonSelectOption value="palletmanifest">Pallet Detail</IonSelectOption>
-            <IonSelectOption value="hwbmanifest">HWB Detail</IonSelectOption>
-
-          </IonSelect>
-        </IonItem>
-        <IonItem lines="none">
-          <IonLabel color="medium" className="ion-text-center">
-            <h3
-              className="text-wrap"
-              style={{ fontSize: "22px", fontWeight: "normal" }}
-            >
-              {sailDesc}
-            </h3>
-            <h3 style={{ fontSize: "20px" }}>{sailDate}</h3>
-          </IonLabel>
-        </IonItem>
+            {/* <IonListHeader className="ion-no-padding">
+              <IonLabel color="medium">Select Report</IonLabel>
+            </IonListHeader> */}
+            <IonItem lines="full" className="ion-no-padding">
+              <IonLabel>Sailing Summary</IonLabel>
+              <IonRadio
+                slot="start"
+                color="success"
+                value="sailingsummary"
+              ></IonRadio>
+            </IonItem>
+            <IonItem lines="full" className="ion-no-padding">
+              <IonLabel>Pallet Detail</IonLabel>
+              <IonRadio
+                slot="start"
+                color="success"
+                value="palletmanifest"
+              ></IonRadio>
+            </IonItem>
+          </IonRadioGroup>
+          <IonItem lines="none">
+            <IonLabel color="medium" className="ion-text-center">
+              <h3
+                className="text-wrap"
+                style={{ fontSize: "22px", fontWeight: "normal" }}
+              >
+                {sailDesc}
+              </h3>
+              <h3 style={{ fontSize: "20px" }}>{sailDate}</h3>
+            </IonLabel>
+          </IonItem>
+        </IonList>
+        
         {reportName === "sailingsummary" && !isloading && (
           <SailSummaryReport sailDesc={sailDesc} sailDate={sailDate} />
         )}
         {reportName === "palletmanifest" && !isloading && (
           <PalletSummaryReport sailDesc={sailDesc} sailDate={sailDate} />
-        )}
-         {reportName === "hwbmanifest" && !isloading && (
-          <HWBSummaryReport sailDesc={sailDesc} sailDate={sailDate} />
         )}
         <IonLoading
           isOpen={isloading}

@@ -1,9 +1,13 @@
 import {
+  IonButton,
   IonCol,
   IonFab,
   IonFabButton,
+  IonFabList,
   IonGrid,
   IonIcon,
+  IonItem,
+  IonLabel,
   IonList,
   IonListHeader,
   IonRow,
@@ -11,14 +15,18 @@ import {
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Pallet } from "../model/pallet";
+import { IPallet } from "../model/pallet";
 import { PDFGenerator } from "@awesome-cordova-plugins/pdf-generator";
 import { PalletReportPDF } from "../utils/PalletReportPDF";
 import {
   shareSocial as shareIcon,
+  logoWhatsapp as whatsappIcon,
+  mail as mailIcon,
 } from "ionicons/icons";
-import { Filesystem, Directory } from "@capacitor/filesystem";
+import { Filesystem, Directory, FilesystemPlugin } from "@capacitor/filesystem";
+import { SocialSharing } from "@awesome-cordova-plugins/social-sharing";
 import { Share } from "@capacitor/share";
+import { Dialog } from "@capacitor/dialog";
 
 interface PalletSummaryReportProps {
   sailDesc: string;
@@ -36,7 +44,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
     if (palletManifest && palletManifest?.data?.length > 0) {
       setUniquePallets(
         Array.from(
-          new Set(palletManifest.data.map((item: Pallet) => item.palletNo))
+          new Set(palletManifest.data.map((item: IPallet) => item.palletNo))
         )
       );
     }
@@ -118,12 +126,12 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
   };
 
   const getIsPalletOrLoose = (palletNo: number): string => {
-    return palletManifest.data.find((item: Pallet) => item.palletNo === palletNo).palletType
+    return palletManifest.data.find((item: IPallet) => item.palletNo === palletNo).palletType
   }
 
   const getPalletDetails = (palletNo: number) => {
     const palletsByPalletNo = palletManifest.data.filter(
-      (pallet: Pallet) => pallet.palletNo === palletNo
+      (pallet: IPallet) => pallet.palletNo === palletNo
     );
     return palletsByPalletNo.length > 1 ? (
       <IonGrid>
@@ -137,7 +145,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
               <IonText color="medium">{pallet.hwbNo}</IonText>
             </IonCol>
             <IonCol>
-              <IonText color="medium">{pallet.packageCount} (of {pallet.totalPackages} pieces)</IonText>
+              <IonText color="medium">{pallet.packageCount}</IonText>
             </IonCol>
           </IonRow>
         ))}
@@ -177,7 +185,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
           </IonCol>
           <IonCol>
             <IonText color="medium">
-              {palletsByPalletNo[0].packageCount} (of {palletsByPalletNo[0].totalPackages} pieces)
+              {palletsByPalletNo[0].packageCount}
             </IonText>
           </IonCol>
         </IonRow>
@@ -220,6 +228,14 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
         <IonFabButton color="medium">
           <IonIcon icon={shareIcon} onClick={() => shareFile()}></IonIcon>
         </IonFabButton>
+        {/* <IonFabList side="bottom">
+          <IonFabButton color="green" onClick={() => shareFile("whatsapp")}>
+            <IonIcon icon={whatsappIcon}></IonIcon>
+          </IonFabButton>
+          <IonFabButton color="tertiary" onClick={() => shareFile("email")}>
+            <IonIcon icon={mailIcon}></IonIcon>
+          </IonFabButton>
+        </IonFabList> */}
       </IonFab>
       <div className="report-section">
         <IonList className="ion-no-padding">

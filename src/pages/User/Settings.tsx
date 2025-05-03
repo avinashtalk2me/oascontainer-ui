@@ -45,14 +45,14 @@ const Settings: React.FC = () => {
     defaultValues,
   });
 
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (value) {
+        clearErrors(name);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   useEffect(() => {
     dispatch(getCompanyDetails())
@@ -223,13 +223,9 @@ const Settings: React.FC = () => {
                   Email Port
                 </IonLabel>
                 <IonInput
-                  type="text"
+                  type="number"
                   {...register("emailPort", {
                     required: "Email Port is required.",
-                    pattern: {
-                      value: /^\d+$/,
-                      message: "Invalid Email Port. Please enter number (e.g., 10, 25, 100).",
-                    },
                   })}
                   onIonChange={(e: any) =>
                     setValue("emailPort", e.detail.value)

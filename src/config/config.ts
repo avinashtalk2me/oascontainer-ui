@@ -25,7 +25,6 @@ const envDetails: any = {
         DELETE_PACKAGE: "package/{packageId}",
         GET_CONTAINER_MANIFEST: "sailing/containermanifest/{sailId}",
         GET_PALLET_MANIFEST: "sailing/palletmanifest/{sailId}",
-        GET_HWB_MANIFEST: "sailing/hwbmanifest/{sailId}",
         GET_PACKAGE_PKG_NO: "package/getPkgNo/{palletId}",
         GET_HWBNO_INFO: "package/getHWBInfo/{hwbNo}/{palletId}",
         GET_DELIVERIES: "delivery",
