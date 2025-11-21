@@ -16,7 +16,7 @@ import ToastMsg from "../../components/ToastMsg";
 
 const Settings: React.FC = () => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const user = useSelector((state: any) => state.user);
   const { isloading, error, companyDetails, isCompanyDetailsUpdated } = user;
 
@@ -45,14 +45,6 @@ const Settings: React.FC = () => {
     defaultValues,
   });
 
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
 
   useEffect(() => {
     dispatch(getCompanyDetails())
@@ -95,206 +87,208 @@ const Settings: React.FC = () => {
           <IonText className="header-menu">Settings</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <form
           onSubmit={handleSubmit(onSubmit)}
         >
-          <IonList>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email Receipent
-                </IonLabel>
-                <IonTextarea
-                  rows={2}
-                  maxlength={50}
-                  {...register("emailReceipent", {
-                    required: "Email Receipent is required.",
-                    validate: (value: string) => {
-                      const emailIds = value.split(',');
-                      const invalidIds = emailIds.filter(emails => !emails.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i))
-                      if (invalidIds.length > 0) {
-                        return "Invalid email id(s)."
+          <IonList className="ion-no-padding">
+            <div className="listContainer">
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email Receipent
+                  </IonLabel>
+                  <IonTextarea
+                    rows={2}
+                    maxlength={50}
+                    {...register("emailReceipent", {
+                      required: "Email Receipent is required.",
+                      validate: (value: string) => {
+                        const emailIds = value.split(',');
+                        const invalidIds = emailIds.filter(emails => !emails.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i))
+                        if (invalidIds.length > 0) {
+                          return "Invalid email id(s)."
+                        }
                       }
+                    })}
+                    onIonChange={(e: any) => setValue("emailReceipent", e.detail.value)}
+                  />
+                </IonItem>
+                <IonText className="infotext">Mulitple email(s) will be displayed separated by commas.
+                </IonText><br />
+                <Error errors={errors} name="emailReceipent" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email Host
+                  </IonLabel>
+                  <IonInput
+                    maxlength={40}
+                    {...register("emailHost", {
+                      required: "Email Host is required.",
+                    })}
+                    onIonChange={(e: any) => setValue("emailHost", e.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="emailHost" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email Type
+                  </IonLabel>
+                  <IonInput
+                    maxlength={10}
+                    {...register("emailType", {
+                      required: "Email Type is required."
+                    })}
+                    onIonChange={(e: any) => setValue("emailType", e.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="emailType" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email User
+                  </IonLabel>
+                  <IonInput
+                    maxlength={40}
+                    {...register("emailUser", {
+                      required: "Email User is required.",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: "Invalid email address.",
+                      },
+                    })}
+                    onIonChange={(e: any) =>
+                      setValue("emailUser", e.detail.value)
                     }
-                  })}
-                  onIonChange={(e: any) => setValue("emailReceipent", e.detail.value)}
-                />
-              </IonItem>
-              <IonText className="infotext">Mulitple email(s) will be displayed separated by commas.
-              </IonText><br />
-              <Error errors={errors} name="emailReceipent" />
+                  />
+                </IonItem>
+                <Error errors={errors} name="emailUser" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email Security
+                  </IonLabel>
+                  <IonInput
+                    maxlength={5}
+                    {...register("emailSecurity", {
+                      required: "Email Security is required.",
+                    })}
+                    onIonChange={(e: any) =>
+                      setValue("emailSecurity", e.detail.value)
+                    }
+                  />
+                </IonItem>
+                <Error errors={errors} name="emailSecurity" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email Port
+                  </IonLabel>
+                  <IonInput
+                    type="text"
+                    {...register("emailPort", {
+                      required: "Email Port is required.",
+                      pattern: {
+                        value: /^\d+$/,
+                        message: "Invalid Email Port. Please enter number (e.g., 10, 25, 100).",
+                      },
+                    })}
+                    onIonChange={(e: any) =>
+                      setValue("emailPort", e.detail.value)
+                    }
+                  />
+                </IonItem>
+                <Error errors={errors} name="emailPort" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email From Address
+                  </IonLabel>
+                  <IonInput
+                    maxlength={40}
+                    {...register("emailFromAddress", {
+                      required: "Email From Address is required.",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: "Invalid email address.",
+                      },
+                    })}
+                    onIonChange={(e: any) =>
+                      setValue("emailFromAddress", e.detail.value)
+                    }
+                  />
+                </IonItem>
+                <Error errors={errors} name="emailFromAddress" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email From Signature
+                  </IonLabel>
+                  <IonInput
+                    maxlength={50}
+                    {...register("emailFromSignature", {
+                      required: "Email From Signature is required.",
+                    })}
+                    onIonChange={(e: any) =>
+                      setValue("emailFromSignature", e.detail.value)
+                    }
+                  />
+                </IonItem>
+                <Error errors={errors} name="emailFromSignature" />
+              </div>
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
             </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email Host
-                </IonLabel>
-                <IonInput
-                  maxlength={40}
-                  {...register("emailHost", {
-                    required: "Email Host is required.",
-                  })}
-                  onIonChange={(e: any) => setValue("emailHost", e.detail.value)}
-                />
-              </IonItem>
-              <Error errors={errors} name="emailHost" />
+            <div className="add-button-container">
+              <IonButton
+                type="submit"
+                expand="block" color={'secondary'} shape="round"
+              >
+                Save
+              </IonButton>
             </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email Type
-                </IonLabel>
-                <IonInput
-                  maxlength={10}
-                  {...register("emailType", {
-                    required: "Email Type is required."
-                  })}
-                  onIonChange={(e: any) => setValue("emailType", e.detail.value)}
-                />
-              </IonItem>
-              <Error errors={errors} name="emailType" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email User
-                </IonLabel>
-                <IonInput
-                  maxlength={40}
-                  {...register("emailUser", {
-                    required: "Email User is required.",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: "Invalid email address.",
-                    },
-                  })}
-                  onIonChange={(e: any) =>
-                    setValue("emailUser", e.detail.value)
-                  }
-                />
-              </IonItem>
-              <Error errors={errors} name="emailUser" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email Security
-                </IonLabel>
-                <IonInput
-                  maxlength={5}
-                  {...register("emailSecurity", {
-                    required: "Email Security is required.",
-                  })}
-                  onIonChange={(e: any) =>
-                    setValue("emailSecurity", e.detail.value)
-                  }
-                />
-              </IonItem>
-              <Error errors={errors} name="emailSecurity" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email Port
-                </IonLabel>
-                <IonInput
-                  type="text"
-                  {...register("emailPort", {
-                    required: "Email Port is required.",
-                    pattern: {
-                      value: /^\d+$/,
-                      message: "Invalid Email Port. Please enter number (e.g., 10, 25, 100).",
-                    },
-                  })}
-                  onIonChange={(e: any) =>
-                    setValue("emailPort", e.detail.value)
-                  }
-                />
-              </IonItem>
-              <Error errors={errors} name="emailPort" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email From Address
-                </IonLabel>
-                <IonInput
-                  maxlength={40}
-                  {...register("emailFromAddress", {
-                    required: "Email From Address is required.",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: "Invalid email address.",
-                    },
-                  })}
-                  onIonChange={(e: any) =>
-                    setValue("emailFromAddress", e.detail.value)
-                  }
-                />
-              </IonItem>
-              <Error errors={errors} name="emailFromAddress" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email From Signature
-                </IonLabel>
-                <IonInput
-                  maxlength={50}
-                  {...register("emailFromSignature", {
-                    required: "Email From Signature is required.",
-                  })}
-                  onIonChange={(e: any) =>
-                    setValue("emailFromSignature", e.detail.value)
-                  }
-                />
-              </IonItem>
-              <Error errors={errors} name="emailFromSignature" />
-            </div>
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              Save
-            </IonButton>
           </IonList>
         </form>
       </IonContent>
@@ -304,7 +298,7 @@ const Settings: React.FC = () => {
         showBackdrop={false}
         translucent={true}
       />
-        {isCompanyDetailsUpdated && (
+      {isCompanyDetailsUpdated && (
         <ToastMsg
           showToast={isCompanyDetailsUpdated}
           duration={5000}

@@ -36,7 +36,7 @@ const Package: React.FC<PackageProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
   const { isloading, selectedPalletId, error, packages, isItemDeleted } =
@@ -111,7 +111,7 @@ const Package: React.FC<PackageProps> = ({
         {(packages.data || []).map((packageItem: any, index: number) => (
           <div key={packageItem.hwbNo}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={` ${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel color="medium">
                   <h3
                     className="text-wrap"
@@ -127,7 +127,7 @@ const Package: React.FC<PackageProps> = ({
                 <IonButtons slot="end">
                   <IonIcon
                     icon={viewIcon}
-                    color="medium"
+                    style={{ color: '#007bff' }}
                     onClick={() => handleEditPackage(packageItem)}
                     className="ion-padding-horizontal"
                   />
@@ -159,10 +159,12 @@ const Package: React.FC<PackageProps> = ({
           <IonText className="header-menu">Package</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className={`ion-padding`}>
-        {isEditAllowed && <IonButton expand="block" fill="outline" onClick={handleAddPackage}>
-          Add Package
-        </IonButton>}
+      <IonContent className={`ion-no-padding`}>
+        {isEditAllowed && <div className="add-button-container">
+          <IonButton expand="block" color={'secondary'} shape="round" onClick={handleAddPackage}>
+            Add Package
+          </IonButton>
+        </div>}
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -173,24 +175,26 @@ const Package: React.FC<PackageProps> = ({
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
-              <IonItem className="ion-no-padding" key={index}>
-                <IonLabel color="medium" className="ion-no-margin">
-                  <h3>
-                    <IonSkeletonText
-                      animated
-                      style={{ width: "100%", height: "45px" }}
-                    />
-                  </h3>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                </IonLabel>
-              </IonItem>
+              <div className="ion-list-item">
+                <IonItem className="ion-no-padding" key={index}>
+                  <IonLabel color="medium" className="ion-no-margin">
+                    <h3>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100%", height: "45px" }}
+                      />
+                    </h3>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                  </IonLabel>
+                </IonItem>
+              </div>
             ))
-            : PackageList}
+            : <div className="ion-list-item" style={{ marginBottom: '50px' }}>{PackageList}</div>}
         </IonList>
       </IonContent>
       {isItemDeleted && (

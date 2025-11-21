@@ -18,6 +18,9 @@ import {
     DELETE_PALLET_REQUEST,
     DELETE_PALLET_SUCCESS,
     DELETE_PALLET_ERROR,
+    SPLIT_PALLET_REQUEST,
+    SPLIT_PALLET_SUCCESS,
+    SPLIT_PALLET_ERROR
 } from '../../types'
 
 const initialPalletState = {
@@ -29,6 +32,7 @@ const initialPalletState = {
     nextPalletNo: {},
     isItemSaved: false,
     isItemDeleted: false,
+    isItemSplitted: false,
 }
 
 interface ActionType {
@@ -117,11 +121,13 @@ const palletReducer = (state = initialPalletState, action: ActionType) => {
         case ADD_PALLET_REQUEST:
         case UPDATE_PALLET_REQUEST:
         case DELETE_PALLET_REQUEST:
+        case SPLIT_PALLET_REQUEST:
             return {
                 ...state,
                 isloading: true,
                 isItemSaved: false,
-                isItemDeleted: false
+                isItemDeleted: false,
+                isItemSplitted: false
             }
         case ADD_PALLET_SUCCESS:
         case UPDATE_PALLET_SUCCESS:
@@ -136,9 +142,16 @@ const palletReducer = (state = initialPalletState, action: ActionType) => {
                 isloading: false,
                 isItemDeleted: true
             }
+        case SPLIT_PALLET_SUCCESS:
+            return {
+                ...state,
+                isloading: false,
+                isItemSplitted: true
+            }
         case ADD_PALLET_ERROR:
         case UPDATE_PALLET_ERROR:
         case DELETE_PALLET_ERROR:
+        case SPLIT_PALLET_ERROR:
             return {
                 ...state,
                 isloading: false,

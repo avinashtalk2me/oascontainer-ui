@@ -227,29 +227,10 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     }
   };
 
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     } else {
-  //       // setError(name)
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
 
   useEffect(() => {
     if (isValidPackagePkgNo === true && isHWBScanned) {
-      // setValue("hwbNo", scanResult[0]);
-      // setValue("totalPkgs", scanResult[1]);
-      // setValue("pkgNo", scanResult[2]);
-      // setValue("shipperName", scanResult[3]);
-      // setValue("shipperContactName", scanResult[4]);
-      // setValue("shipperEmail", scanResult[5]);
-      // setValue("shipperPhone", scanResult[6]);
-      // setValue("isQR", true);
-      // setIsScanSuccess(true);
-      // stopScan();
+
       onSubmit({
         "hwbNo": scanResult[0],
         "pkgNo": scanResult[2],
@@ -261,17 +242,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
       });
       stopScan()
     } else if (isValidPackagePkgNo === false && isHWBScanned) {
-      // Dialog.alert({
-      //   title: "Duplicate Package",
-      //   message: `The Pkg# ${scanResult[2]} of HWB# ${scanResult[0]} has already been scanned. Please scan a new package.`,
-      // });
-      // startScan()
-      // if (navigator.vibrate) {
-      //   // vibration API supported
-      //   navigator.vibrate(1000);
-      //   // stopScan();
-      //   // startScan();
-      // }
+
       const showPrompt = async () => {
         const { value } = await Dialog.confirm({
           title: "Duplicate Package",
@@ -358,11 +329,6 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
     return () => { };
   }, []);
 
-  // if (error && error.status === -100) {
-  //   // return (
-  //   //   <SessionExpired headerText={isNew ? "Add Package" : "Edit Package"} />
-  //   // );
-  // }
 
   const stopScan = () => {
     BarcodeScanner.showBackground();
@@ -602,7 +568,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
   )
 
   return (
-    <IonPage>
+    <>
       <IonHeader>
         <IonToolbar>
           {isEditAllowed && <IonText className={`modalheader-menu  ${hideBg && 'text-indent'}`}>
@@ -622,55 +588,23 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
           </IonButtons>}
         </IonToolbar>
       </IonHeader>
-      <IonContent className={`ion-padding ${hideBg}`}>
+      <IonContent className={`ion-no-padding ${hideBg}`}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {!hideBg && <IonList hidden={!!hideBg}>
-            {isNew && <div className="ion-padding-bottom">
-              <IonItem lines="none" className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked">
-                  Scan HWB Number
-                </IonLabel>
-                <IonToggle color="primary" checked={isHWBScanned}
-                  onIonChange={(event) => handleToggleChange(event)} slot="end" />
-              </IonItem>
-            </div>}
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  HWB Number
-                </IonLabel>
-                <IonInput
-                  className="toUpperCase"
-                  maxlength={50}
-                  disabled={!isEditAllowed}
-                  readonly={(isHWBScanned || !isNew) ? true : false}
-                  aria-invalid={errors && errors["hwbNo"] ? "true" : "false"}
-                  aria-describedby={`${"hwbNo"}Error`}
-                  {...register("hwbNo", {
-                    required: "HWB No is required.",
-                    minLength: {
-                      value: 3,
-                      message: "Minimun 3 characters is required."
-                    }
-                  })}
-                  onIonInput={(e: any) => setValue("hwbNo", e.target.value)}
-                  onIonBlur={handleChange}
-                />
-                {isEditAllowed && <>
-                  {isHWBScanned && isNew && <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />}
-                </>
-                }
-              </IonItem>
-              <Error errors={errors} name="hwbNo" />
-            </div>
-            {!isHWBScanned && <>
+          {!hideBg && <IonList className="ion-no-padding" style={{ marginBottom: "80px" }} hidden={!!hideBg}>
+
+            <div className="listContainer">
+              {isNew && <div className="ion-padding-bottom">
+                <IonItem lines="none" className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked">
+                    Scan HWB Number
+                  </IonLabel>
+                  <IonToggle color="primary" checked={isHWBScanned}
+                    onIonChange={(event) => handleToggleChange(event)} slot="end" />
+                </IonItem>
+              </div>}
               <div className="ion-padding-bottom">
                 <IonItem className="ion-no-padding">
                   <IonLabel
@@ -678,110 +612,143 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
                     className="form-input"
                     position="stacked"
                   >
-                    Package No(s)
+                    HWB Number
                   </IonLabel>
-                  {!isHWBScanned &&
-                    <IonTextarea
-                      rows={2}
-                      id="open-custom-dialog"
-                      // maxlength={15}
-                      readonly={true}
-                      disabled={!isEditAllowed}
-                      aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
-                      aria-describedby={`${"pkgNo"}Error`}
-                      {...register("pkgNo", {
-                        required: "Package No(s) is required.",
-                      })}
-                      onClick={handleOpenAddPackageNoModal}
-                      onIonChange={(event) => setValue("pkgNo", event.detail.value)}
-                    />}
-                  {isNew && isHWBScanned &&
+                  <IonInput
+                    className="toUpperCase"
+                    maxlength={50}
+                    disabled={!isEditAllowed}
+                    readonly={(isHWBScanned || !isNew) ? true : false}
+                    aria-invalid={errors && errors["hwbNo"] ? "true" : "false"}
+                    aria-describedby={`${"hwbNo"}Error`}
+                    {...register("hwbNo", {
+                      required: "HWB No is required.",
+                      minLength: {
+                        value: 3,
+                        message: "Minimun 3 characters is required."
+                      }
+                    })}
+                    onIonInput={(e: any) => setValue("hwbNo", e.target.value)}
+                    onIonBlur={handleChange}
+                  />
+                  {isEditAllowed && <>
+                    {isHWBScanned && isNew && <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />}
+                  </>
+                  }
+                </IonItem>
+                <Error errors={errors} name="hwbNo" />
+              </div>
+              {!isHWBScanned && <>
+                <div className="ion-padding-bottom">
+                  <IonItem className="ion-no-padding">
+                    <IonLabel
+                      color="medium"
+                      className="form-input"
+                      position="stacked"
+                    >
+                      Package No(s)
+                    </IonLabel>
+                    {!isHWBScanned &&
+                      <IonTextarea
+                        rows={2}
+                        id="open-custom-dialog"
+                        // maxlength={15}
+                        readonly={true}
+                        disabled={!isEditAllowed}
+                        aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
+                        aria-describedby={`${"pkgNo"}Error`}
+                        {...register("pkgNo", {
+                          required: "Package No(s) is required.",
+                        })}
+                        onClick={handleOpenAddPackageNoModal}
+                        onIonChange={(event) => setValue("pkgNo", event.detail.value)}
+                      />}
+                    {isNew && isHWBScanned &&
+                      <IonInput
+                        type="text"
+                        maxlength={15}
+                        disabled={!isEditAllowed}
+                        readonly={(isHWBScanned || selectedHwbInfo?.isExistingHwb) && true}
+                        aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
+                        aria-describedby={`${"pkgNo"}Error`}
+                        {...register("pkgNo", {
+                          required: "Package No(s) is required.",
+                          pattern: {
+                            value: /^\d+$/,
+                            message: "Invalid Package. Please enter number (e.g., 10, 25, 100).",
+                          },
+                        })}
+                        onIonChange={(event) => setValue("pkgNo", event.detail.value)}
+                      />}
+                  </IonItem>
+                  {!isHWBScanned
+                    &&
+                    <>
+                      <IonText className="infotext">Mulitple Package No(s) will be displayed separated by commas.
+                      </IonText>
+                      <br />
+                    </>
+                  }
+                  <Error errors={errors} name="pkgNo" />
+                </div>
+                <div className="ion-padding-bottom">
+                  <IonItem className="ion-no-padding">
+                    <IonLabel
+                      color="medium"
+                      className="form-input"
+                      position="stacked"
+                    >
+                      Total HWB Packages
+                    </IonLabel>
                     <IonInput
                       type="text"
                       maxlength={15}
                       disabled={!isEditAllowed}
-                      readonly={(isHWBScanned || selectedHwbInfo?.isExistingHwb) && true}
-                      aria-invalid={errors && errors["pkgNo"] ? "true" : "false"}
-                      aria-describedby={`${"pkgNo"}Error`}
-                      {...register("pkgNo", {
-                        required: "Package No(s) is required.",
+                      readonly={(isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
+                      aria-invalid={errors && errors["totalPkgs"] ? "true" : "false"}
+                      aria-describedby={`${"totalPkgs"}Error`}
+                      {...register("totalPkgs", {
+                        required: "Total HWB Packages is required.",
                         pattern: {
                           value: /^\d+$/,
-                          message: "Invalid Package. Please enter number (e.g., 10, 25, 100).",
+                          message: "Invalid Total HWB Packages. Please enter number (e.g., 10, 25, 100).",
                         },
                       })}
-                      onIonChange={(event) => setValue("pkgNo", event.detail.value)}
-                    />}
-                </IonItem>
-                {!isHWBScanned
-                  &&
-                  <>
-                    <IonText className="infotext">Mulitple Package No(s) will be displayed separated by commas.
-                    </IonText>
-                    <br />
-                  </>
-                }
-                <Error errors={errors} name="pkgNo" />
-              </div>
-              <div className="ion-padding-bottom">
-                <IonItem className="ion-no-padding">
-                  <IonLabel
-                    color="medium"
-                    className="form-input"
-                    position="stacked"
-                  >
-                    Total HWB Packages
-                  </IonLabel>
-                  <IonInput
-                    type="text"
-                    maxlength={15}
-                    disabled={!isEditAllowed}
-                    readonly={(isHWBScanned || (selectedHwbInfo?.isExistingHwb && isNew)) && true}
-                    aria-invalid={errors && errors["totalPkgs"] ? "true" : "false"}
-                    aria-describedby={`${"totalPkgs"}Error`}
-                    {...register("totalPkgs", {
-                      required: "Total HWB Packages is required.",
-                      pattern: {
-                        value: /^\d+$/,
-                        message: "Invalid Total HWB Packages. Please enter number (e.g., 10, 25, 100).",
-                      },
-                    })}
-                    onIonChange={(event) => setValue("totalPkgs", event.detail.value)}
-                  />
-                </IonItem>
-                <Error errors={errors} name="totalPkgs" />
-              </div>
-              {/* {isHWBScanned ? : { shipperInfo }} */}
-              {hwbAccordion}
-            </>}
+                      onIonChange={(event) => setValue("totalPkgs", event.detail.value)}
+                    />
+                  </IonItem>
+                  <Error errors={errors} name="totalPkgs" />
+                </div>
+                {/* {isHWBScanned ? : { shipperInfo }} */}
+                {hwbAccordion}
+              </>}
 
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            {isEditAllowed && <IonButton
-              hidden={!!hideBg}
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              {isNew ? "Save" : "Update"}
-            </IonButton>
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
+            </div>
+            {isEditAllowed &&
+              <div className="add-button-container"> <IonButton
+                hidden={!!hideBg}
+                type="submit" expand="block" color={'secondary'} shape="round"
+              >
+                {isNew ? "Save" : "Update"}
+              </IonButton>
+              </div>
             }
-            {!isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
+            {!isEditAllowed && <div className="add-button-container"><IonButton
+              type="submit" expand="block" color={'secondary'} shape="round"
             >
               RETURN
-            </IonButton>}
+            </IonButton>
+            </div>}
           </IonList>}
         </form>
         {hideBg &&
           <>
             <IonButton
               color="danger"
+              shape="round"
               className="stop-scan-button"
               hidden={!hideBg}
               onClick={() => closePage()}
@@ -885,7 +852,7 @@ const AddEditPackage: React.FC<AddEditPackageProps> = ({ isNew, isEditAllowed })
           </div>
         </IonContent>
       </IonModal>
-    </IonPage >
+    </ >
   );
 };
 

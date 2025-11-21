@@ -13,8 +13,7 @@ const ToastMsg: React.FC<ToastProps> = ({
   message,
   type,
   duration,
-}) => {
-  console.log(message);
+}) => { 
   return (
     <IonToast
       isOpen={showToast}

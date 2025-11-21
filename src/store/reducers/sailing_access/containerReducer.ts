@@ -33,9 +33,9 @@ const initialContainerState = {
     error: undefined,
     isItemSaved: false,
     isItemDeleted: false,
-    containerManifest: {},
-    palletManifest: {},
-    hwbManifest: {}
+    containerManifest: [],
+    palletManifest: [],
+    hwbManifest: []
 }
 
 interface ActionType {

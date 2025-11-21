@@ -53,7 +53,8 @@ const envDetails: any = {
         DELETE_USER: "user/deleteUserByUserId/{userId}",
         UPDATE_USER: "user/updateUser/{userId}",
         GET_COMPANY_DETAILS: "getCompanyDetails",
-        UPDATE_COMPANY_DETAILS: "updateCompanyDetails"
+        UPDATE_COMPANY_DETAILS: "updateCompanyDetails",
+        SPLIT_PALLET: "pallet/split/{palletId}",
     }
 }
 

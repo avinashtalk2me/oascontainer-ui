@@ -182,78 +182,81 @@ const AddEditSailing: React.FC<SailingProps> = ({
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Sail Description
-                </IonLabel>
-                <IonTextarea
-                  rows={3}
-                  maxlength={50}
-                  disabled={!isEditAllowed}
-                  aria-invalid={errors && errors["sailDesc"] ? "true" : "false"}
-                  aria-describedby={`${"sailDesc"}Error`}
-                  {...register("sailDesc", {
-                    required: "Description is required.",
-                  })}
-                  onIonChange={(e: any) => setValue("sailDesc", e.detail.value)}
-                />
-              </IonItem>
-              <Error errors={errors} name="sailDesc" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Sail Date
-                </IonLabel>
-                <IonInput
-                  id="date-input-2"
-                  readonly
-                  disabled={!isEditAllowed}
-                  aria-invalid={
-                    errors && errors["displaySailDate"] ? "true" : "false"
-                  }
-                  aria-describedby={`${"sailDate"}Error`}
-                  {...register("displaySailDate", {
-                    required: "Date is required.",
-                  })}
-                />
-                {isEditAllowed && <>
-                  <IonButton
-                    slot="end"
-                    fill="clear"
-                    className="calendar-btn"
-                    id="open-date-input-2"
-                  >
-                    <IonIcon icon={calendarIcon} />
-                  </IonButton>
-                  <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                    <Controller
-                      name="sailDate"
-                      control={control}
-                      render={({ field }) => (
-                        <IonDatetime {...field}
-                          min={new Date().getUTCFullYear().toString()}
-                          max="3500"
-                          onIonChange={handleDateChange}
-                          showDefaultButtons={true}
-                          presentation="date"
-                        />
-                      )}
-                    />
+          <IonList className="ion-no-padding">
+            <div className="listContainer">
 
-                    {/* <IonDatetime
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Sail Description
+                  </IonLabel>
+                  <IonTextarea
+                    rows={3}
+                    maxlength={50}
+                    disabled={!isEditAllowed}
+                    aria-invalid={errors && errors["sailDesc"] ? "true" : "false"}
+                    aria-describedby={`${"sailDesc"}Error`}
+                    {...register("sailDesc", {
+                      required: "Description is required.",
+                    })}
+                    onIonChange={(e: any) => setValue("sailDesc", e.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="sailDesc" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Sail Date
+                  </IonLabel>
+                  <IonInput
+                    id="date-input-2"
+                    readonly
+                    disabled={!isEditAllowed}
+                    aria-invalid={
+                      errors && errors["displaySailDate"] ? "true" : "false"
+                    }
+                    aria-describedby={`${"sailDate"}Error`}
+                    {...register("displaySailDate", {
+                      required: "Date is required.",
+                    })}
+                  />
+                  {isEditAllowed && <>
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      className="calendar-btn"
+                      id="open-date-input-2"
+                      style={{ marginTop: "35px" }}
+                    >
+                      <IonIcon icon={calendarIcon} />
+                    </IonButton>
+                    <IonPopover trigger="open-date-input-2" showBackdrop={false}>
+                      <Controller
+                        name="sailDate"
+                        control={control}
+                        render={({ field }) => (
+                          <IonDatetime {...field}
+                            min={new Date().getUTCFullYear().toString()}
+                            max="3500"
+                            onIonChange={handleDateChange}
+                            showDefaultButtons={true}
+                            presentation="date"
+                          />
+                        )}
+                      />
+
+                      {/* <IonDatetime
                       min={(new Date().getUTCFullYear().toString() && undefined) || ''}
                       max="3500"
                       // displayFormat="DD/MM/YYYY"
@@ -263,10 +266,10 @@ const AddEditSailing: React.FC<SailingProps> = ({
                       {...register("sailDate")}
                       onIonChange={handleDateChange}
                     /> */}
-                  </IonPopover>
-                </>}
+                    </IonPopover>
+                  </>}
 
-                {/* <IonDatetime
+                  {/* <IonDatetime
                   // displayFormat="DD/MM/YYYY"
                   min={new Date().getUTCFullYear().toString()}
                   max={"3500"}
@@ -280,76 +283,75 @@ const AddEditSailing: React.FC<SailingProps> = ({
                     setValue("sailDate", new Date(e.detail.value).toISOString())
                   }
                 /> */}
-              </IonItem>
-              <Error errors={errors} name="displaySailDate" />
-            </div>
-            {unitType && <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Sail Weight Unit
-                </IonLabel>
-                <IonSelect
-                  disabled={!isEditAllowed}
-                  interface="popover"
-                  {...register("sailUnit")}
-                  onIonChange={(e: any) => setUnitType(e.target.value)}
-                >
-                  <IonSelectOption value="KG">KG</IonSelectOption>
-                  <IonSelectOption value="LB">LB</IonSelectOption>
-                </IonSelect>
-              </IonItem>
-              {/* <Error errors={errors} name="sailUnit" /> */}
-              {!isNew
-                && container?.data?.palletCount > 0
-                && initialUnitType !== unitType &&
-                <IonText color="danger" className="infotext">Changing this field will change weight units for all pallets.
-                  Weight fields will not be converted.
-                </IonText>
-              }
-            </div>}
-
-            {!isNew && container && (
-              <div className="ion-padding-bottom">
-                <IonItem className="ion-no-padding" lines="none">
+                </IonItem>
+                <Error errors={errors} name="displaySailDate" />
+              </div>
+              {unitType && <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
                   <IonLabel
                     color="medium"
-                    className="ion-no-margin"
+                    className="form-input"
                     position="stacked"
                   >
-                    <IonText> Number of Pallets </IonText>
-                    {/* <IonNote slot="start"> */}
-                    <span className="noCount">{container?.data?.palletCount}</span>
-
-                    {/* </IonNote> */}
+                    Sail Weight Unit
                   </IonLabel>
+                  <IonSelect
+                    disabled={!isEditAllowed}
+                    interface="popover"
+                    {...register("sailUnit")}
+                    onIonChange={(e: any) => setUnitType(e.target.value)}
+                  >
+                    <IonSelectOption value="KG">KG</IonSelectOption>
+                    <IonSelectOption value="LB">LB</IonSelectOption>
+                  </IonSelect>
                 </IonItem>
-              </div>
-            )}
+                {/* <Error errors={errors} name="sailUnit" /> */}
+                {!isNew
+                  && container?.data?.palletCount > 0
+                  && initialUnitType !== unitType &&
+                  <IonText color="danger" className="infotext">Changing this field will change weight units for all pallets.
+                    Weight fields will not be converted.
+                  </IonText>
+                }
+              </div>}
 
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            {isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              {isNew ? "Save" : "Update"}
-            </IonButton>
+              {!isNew && container && (
+                <div className="ion-padding-bottom">
+                  <IonItem className="ion-no-padding" lines="none">
+                    <IonLabel
+                      color="medium"
+                      className="ion-no-margin"
+                      position="stacked"
+                    >
+                      <IonText> Number of Pallets </IonText>
+                      {/* <IonNote slot="start"> */}
+                      <span className="noCount">{container?.data?.palletCount}</span>
+
+                      {/* </IonNote> */}
+                    </IonLabel>
+                  </IonItem>
+                </div>
+              )}
+
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
+            </div>
+            {isEditAllowed &&
+              <div className="add-button-container">
+                <IonButton type="submit" expand="block" color={'secondary'} shape="round">
+                  {isNew ? "Save" : "Update"}
+
+                </IonButton>
+              </div>
             }
-            {!isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              RETURN
-            </IonButton>}
+            {!isEditAllowed &&
+              <div className="add-button-container">
+                <IonButton type="submit" expand="block" color={'secondary'} shape="round">
+                  RETURN
+                </IonButton>
+              </div>
+            }
           </IonList>
         </form>
       </IonContent>

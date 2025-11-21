@@ -14,7 +14,8 @@ export {
   insertPallet,
   getSelectedPalletById,
   updatePallet,
-  deletePalletById
+  deletePalletById,
+  splitPalletById
 } from "./pallet/pallet.action";
 
 export {

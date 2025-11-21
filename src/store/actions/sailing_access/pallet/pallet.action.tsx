@@ -18,6 +18,9 @@ import {
   DELETE_PALLET_REQUEST,
   DELETE_PALLET_SUCCESS,
   DELETE_PALLET_ERROR,
+  SPLIT_PALLET_REQUEST,
+  SPLIT_PALLET_SUCCESS,
+  SPLIT_PALLET_ERROR,
 } from "../../../types";
 
 import {
@@ -27,6 +30,7 @@ import {
   getSelectedPalletByAPI,
   updatePalletAPI,
   deletePalletByIdAPI,
+  splitPalletByIdAPI,
 } from "../../../../api/fetch";
 
 export const getPalletsBySailId = (sailId: string) => async (dispatch: any) => {
@@ -113,6 +117,24 @@ export const deletePalletById = (palletId: string) => async (dispatch: any) => {
     } else {
       dispatch({
         type: DELETE_PALLET_ERROR,
+        payload: error.response.data,
+      });
+    }
+  }
+};
+
+
+export const splitPalletById = (palletId: string) => async (dispatch: any) => {
+  dispatch({ type: SPLIT_PALLET_REQUEST });
+  try {
+    await splitPalletByIdAPI(palletId);
+    dispatch({ type: SPLIT_PALLET_SUCCESS });
+  } catch (error: any) {
+    if (error.response === undefined) {
+      dispatch({ type: SERVER_ERROR, payload: { status: 500 } });
+    } else {
+      dispatch({
+        type: SPLIT_PALLET_ERROR,
         payload: error.response.data,
       });
     }

@@ -11,11 +11,7 @@ import {
   IonList,
   IonLoading,
   IonModal,
-  IonNote,
   IonPopover,
-  IonSelect,
-  IonSelectOption,
-  IonTabButton,
   IonText,
   IonTextarea,
   IonToolbar,
@@ -259,155 +255,157 @@ const AddEditLocation: React.FC<LocationProps> = ({
           </IonButtons>}
         </IonToolbar>
       </IonHeader>
-      <IonContent className={`ion-padding ${hideBg}`}>
+      <IonContent className={`ion-no-padding ${hideBg}`}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {!hideBg && <IonList hidden={!!hideBg}>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Location
-                </IonLabel>
-                <IonTextarea
-                  disabled={!isEditAllowed}
-                  rows={3}
-                  maxlength={40}
-                  aria-invalid={errors && errors["locationDesc"] ? "true" : "false"}
-                  aria-describedby={`${"locationDesc"}Error`}
-                  {...register("locationDesc")}
-                  onIonChange={(e: any) => setValue("locationDesc", e.detail.value)}
-                />
-                <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />
-              </IonItem>
-              <Error errors={errors} name="locationDesc" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Time
-                </IonLabel>
-                <IonInput
-                  disabled={!isEditAllowed}
-                  readonly
-                  aria-invalid={
-                    errors && errors["displayLocationTime"] ? "true" : "false"
-                  }
-                  aria-describedby={`${"displayLocationTime"}Error`}
-                  {...register("displayLocationTime", {
-                    required: "Time is required.",
-                  })}
-                />
-                {isEditAllowed && <>
-                  <IonButton
-                    slot="end"
-                    fill="clear"
-                    className="calendar-btn"
-                    id="open-date-input-2"
+            <div className="listContainer">
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
                   >
-                    <IonIcon icon={timer} />
-                  </IonButton>
-                  <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                    <Controller
-                      name="locationTime"
-                      control={control}
-                      render={({ field }) => (
-                        <IonDatetime {...field}
-                          presentation="time"
-                          hourCycle="h12"
-                          showDefaultButtons={true}
-                          // {...register("locationTime")}
-                          onIonChange={handleTimeChange}
-                        />
-                      )}
-                    />
-                  </IonPopover>
-                  {/* <IonDatetimeButton datetime="datetime"></IonDatetimeButton> */}
-                  {/*  */}
-                  <IonModal keepContentsMounted={true}>
-                    <IonDatetime id="datetime"></IonDatetime>
-                  </IonModal>
-                </>}
-              </IonItem>
-              <Error errors={errors} name="displayLocationTime" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Destination Country
-                </IonLabel>
-                <IonInput
-                  disabled={!isEditAllowed}
-                  aria-invalid={
-                    errors && errors["destinationCountry"] ? "true" : "false"
-                  }
-                  aria-describedby={`${"destinationCountry"}Error`}
-                  {...register("destinationCountry", {
-                    required: "Destination Country is required.",
-                  })}
-                  onIonChange={(e: any) => setValue("destinationCountry", e.detail.value)}
-                />
-              </IonItem>
-              <Error errors={errors} name="destinationCountry" />
-            </div>
-            {!isNew && location && (
-              <>
-                <div className="ion-padding-bottom">
-                  <IonItem className="ion-no-padding" lines="none">
-                    <IonLabel
-                      color="medium"
-                      className="ion-no-margin"
-                      position="stacked"
+                    Location
+                  </IonLabel>
+                  <IonTextarea
+                    disabled={!isEditAllowed}
+                    rows={3}
+                    maxlength={40}
+                    aria-invalid={errors && errors["locationDesc"] ? "true" : "false"}
+                    aria-describedby={`${"locationDesc"}Error`}
+                    {...register("locationDesc")}
+                    onIonChange={(e: any) => setValue("locationDesc", e.detail.value)}
+                  />
+                  <IonIcon onClick={startScan} className="ion-no-padding" style={{ display: 'flex', alignSelf: 'end' }} icon={camera} slot="end" />
+                </IonItem>
+                <Error errors={errors} name="locationDesc" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Time
+                  </IonLabel>
+                  <IonInput
+                    disabled={!isEditAllowed}
+                    readonly
+                    aria-invalid={
+                      errors && errors["displayLocationTime"] ? "true" : "false"
+                    }
+                    aria-describedby={`${"displayLocationTime"}Error`}
+                    {...register("displayLocationTime", {
+                      required: "Time is required.",
+                    })}
+                  />
+                  {isEditAllowed && <>
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      className="calendar-btn timeicon"
+                      id="open-date-input-2"
                     >
-                      <IonText> Drop Status: </IonText>
-                      <span className="noCount">{getDropStatus(location?.data?.dropStatus)}</span>
-                    </IonLabel>
-                  </IonItem>
-                  <IonItem className="ion-no-padding" lines="none">
-                    <IonLabel
-                      color="medium"
-                      className="ion-no-margin"
-                      position="stacked"
-                    >
-                      <IonText>Total Package Scanned: </IonText>
-                      <span className="noCount">{location?.data?.packageCount}</span>
-                    </IonLabel>
-                  </IonItem>
-                </div>
-              </>
-            )}
+                      <IonIcon icon={timer} />
+                    </IonButton>
+                    <IonPopover trigger="open-date-input-2" showBackdrop={false}>
+                      <Controller
+                        name="locationTime"
+                        control={control}
+                        render={({ field }) => (
+                          <IonDatetime {...field}
+                            presentation="time"
+                            hourCycle="h12"
+                            showDefaultButtons={true}
+                            // {...register("locationTime")}
+                            onIonChange={handleTimeChange}
+                          />
+                        )}
+                      />
+                    </IonPopover>
+                    {/* <IonDatetimeButton datetime="datetime"></IonDatetimeButton> */}
+                    {/*  */}
+                    <IonModal keepContentsMounted={true}>
+                      <IonDatetime id="datetime"></IonDatetime>
+                    </IonModal>
+                  </>}
+                </IonItem>
+                <Error errors={errors} name="displayLocationTime" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Destination Country
+                  </IonLabel>
+                  <IonInput
+                    disabled={!isEditAllowed}
+                    aria-invalid={
+                      errors && errors["destinationCountry"] ? "true" : "false"
+                    }
+                    aria-describedby={`${"destinationCountry"}Error`}
+                    {...register("destinationCountry", {
+                      required: "Destination Country is required.",
+                    })}
+                    onIonChange={(e: any) => setValue("destinationCountry", e.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="destinationCountry" />
+              </div>
+              {!isNew && location && (
+                <>
+                  <div className="ion-padding-bottom">
+                    <IonItem className="ion-no-padding" lines="none">
+                      <IonLabel
+                        color="medium"
+                        className="ion-no-margin"
+                        position="stacked"
+                      >
+                        <IonText> Drop Status: </IonText>
+                        <span className="noCount">{getDropStatus(location?.data?.dropStatus)}</span>
+                      </IonLabel>
+                    </IonItem> 
+                    <IonItem className="ion-no-padding" lines="none">
+                      <IonLabel
+                        color="medium"
+                        className="ion-no-margin"
+                        position="stacked"
+                      >
+                        <IonText>Total Package Scanned: </IonText>
+                        <span className="noCount">{location?.data?.packageCount}</span>
+                      </IonLabel>
+                    </IonItem>
+                  </div>
+                </>
+              )}
 
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            {isEditAllowed && <IonButton
-              hidden={!!hideBg}
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              {isNew ? "Save" : "Update"}
-            </IonButton>
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
+            </div>
+            {isEditAllowed &&
+              <div className="add-button-container">
+                <IonButton
+                  hidden={!!hideBg}
+                  type="submit"
+                  expand="block" color={'secondary'} shape="round"
+                >
+                  {isNew ? "Save" : "Update"}
+                </IonButton>
+              </div>
             }
-            {!isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              RETURN
-            </IonButton>}
+            {!isEditAllowed &&
+              <div className="add-button-container"><IonButton
+                type="submit"
+                expand="block" color={'secondary'} shape="round"
+              >
+                RETURN
+              </IonButton></div>}
           </IonList>}
         </form>
         {hideBg &&
