@@ -51,7 +51,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
   // selectedSailId,
   // selectedPalletId,
 }) => {
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const { sailId, palletId }: any = useParams();
   const [palletType, setPalletType] = useState("");
@@ -144,20 +144,7 @@ const AddEditPallet: React.FC<PalletProps> = ({
     }
   }, [isItemSaved]);
 
-  // useEffect(() => {
-  //   const palletType = watch("palletType");
-  //   if (palletType === "Loose") {
-  //     setShowHidePalletDesc(true);
-  //   }
-  //   const subscription = watch((value, { name }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     } else {
-  //       // setError(name)
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
+
 
   const closePage = () => {
     history.goBack();
@@ -206,153 +193,153 @@ const AddEditPallet: React.FC<PalletProps> = ({
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList>
-            {!isNew && !showHidePalletDesc && <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Number
-                </IonLabel>
-                <IonInput
-                  readonly
-                  disabled={!isEditAllowed}
-                  aria-invalid={errors && errors["palletNo"] ? "true" : "false"}
-                  aria-describedby={`${"palletNo"}Error`}
-                  {...register("palletNo")}
-                />
-              </IonItem>
-              <Error errors={errors} name="palletNo" />
-            </div>}
-            {palletType && <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Type
-                </IonLabel>
-                <IonSelect
-                  className="disabledSelect"
-                  disabled={!isEditAllowed || isLooseExists}
-                  interface="popover"
-                  {...register("palletType")}
-                  onIonChange={handleShowHideDesc}
-                >
-                  <IonSelectOption value="Pallet">Pallet</IonSelectOption>
-                  <IonSelectOption value="Loose">Loose</IonSelectOption>
-                </IonSelect>
-              </IonItem>
-              <Error errors={errors} name="palletType" />
-            </div>}
-            {showHidePalletDesc && (
-              <div className="ion-padding-bottom">
+          <IonList className="ion-no-padding">
+            <div className="listContainer">
+              {!isNew && !showHidePalletDesc && <div className="ion-padding-bottom">
                 <IonItem className="ion-no-padding">
                   <IonLabel
                     color="medium"
                     className="form-input"
                     position="stacked"
                   >
-                    Description
+                    Number
                   </IonLabel>
-                  <IonTextarea
-                    rows={3}
-                    maxlength={50}
+                  <IonInput
+                    readonly
                     disabled={!isEditAllowed}
-                    aria-invalid={
-                      errors && errors["palletDesc"] ? "true" : "false"
-                    }
-                    aria-describedby={`${"palletDesc"}Error`}
-                    {...register("palletDesc", {
-                      required: "Description is required.",
-                    })}
+                    aria-invalid={errors && errors["palletNo"] ? "true" : "false"}
+                    aria-describedby={`${"palletNo"}Error`}
+                    {...register("palletNo")}
                   />
                 </IonItem>
-                <Error errors={errors} name="palletDesc" />
-              </div>
-            )}
-            <div className="ion-padding-bottom">
-              <div className="weight-container">
-                <IonItem className="ion-no-padding pallet-weight">
+                <Error errors={errors} name="palletNo" />
+              </div>}
+              {palletType && <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
                   <IonLabel
                     color="medium"
                     className="form-input"
                     position="stacked"
                   >
-                    Weight
+                    Type
                   </IonLabel>
-                  <IonInput
-                    type="text"
-                    disabled={!isEditAllowed}
-                    aria-invalid={
-                      errors && errors["palletWeight"] ? "true" : "false"
-                    }
-                    aria-describedby={`${"palletWeight"}Error`}
-                    onIonChange={(e: any) =>
-                      setValue("palletWeight", e.detail.value)
-                    }
-                    {...register("palletWeight", {
-                      required: "Weight is required.",
-                      pattern: {
-                        value: /^(?:\d*\.\d{1,2}|\d+)$/,
-                        message: "Invalid weight. Please enter a valid number with a decimal point (e.g., 12.34).",
-                      },
-                    })}
-                  />
+                  <IonSelect
+                    className="disabledSelect"
+                    disabled={!isEditAllowed || isLooseExists}
+                    interface="popover"
+                    {...register("palletType")}
+                    onIonChange={handleShowHideDesc}
+                  >
+                    <IonSelectOption value="Pallet">Pallet</IonSelectOption>
+                    <IonSelectOption value="Loose">Loose</IonSelectOption>
+                  </IonSelect>
                 </IonItem>
-                {palletWeightType && <IonItem className="ion-no-padding pallet-weight-unit">
-                  <IonText slot="end">{palletWeightType}</IonText>
-                  {/* <IonSelect
+                <Error errors={errors} name="palletType" />
+              </div>}
+              {showHidePalletDesc && (
+                <div className="ion-padding-bottom">
+                  <IonItem className="ion-no-padding">
+                    <IonLabel
+                      color="medium"
+                      className="form-input"
+                      position="stacked"
+                    >
+                      Description
+                    </IonLabel>
+                    <IonTextarea
+                      rows={3}
+                      maxlength={50}
+                      disabled={!isEditAllowed}
+                      aria-invalid={
+                        errors && errors["palletDesc"] ? "true" : "false"
+                      }
+                      aria-describedby={`${"palletDesc"}Error`}
+                      {...register("palletDesc", {
+                        required: "Description is required.",
+                      })}
+                    />
+                  </IonItem>
+                  <Error errors={errors} name="palletDesc" />
+                </div>
+              )}
+              <div className="ion-padding-bottom">
+                <div className="weight-container">
+                  <IonItem className="ion-no-padding pallet-weight">
+                    <IonLabel
+                      color="medium"
+                      className="form-input"
+                      position="stacked"
+                    >
+                      Weight
+                    </IonLabel>
+                    <IonInput
+                      type="text"
+                      disabled={!isEditAllowed}
+                      aria-invalid={
+                        errors && errors["palletWeight"] ? "true" : "false"
+                      }
+                      aria-describedby={`${"palletWeight"}Error`}
+                      onIonChange={(e: any) =>
+                        setValue("palletWeight", e.detail.value)
+                      }
+                      {...register("palletWeight", {
+                        required: "Weight is required.",
+                        pattern: {
+                          value: /^(?:\d*\.\d{1,2}|\d+)$/,
+                          message: "Invalid weight. Please enter a valid number with a decimal point (e.g., 12.34).",
+                        },
+                      })}
+                    />
+                  </IonItem>
+                  {palletWeightType && <IonItem className="ion-no-padding pallet-weight-unit">
+                    <IonText slot="end">{palletWeightType}</IonText>
+                    {/* <IonSelect
                     {...register("palletWeightUnit")}
                   >
                     <IonSelectOption value="KG">KG</IonSelectOption>
                     <IonSelectOption value="LB">LB</IonSelectOption>
                   </IonSelect> */}
-                </IonItem>}
+                  </IonItem>}
+                </div>
+                <Error errors={errors} name="palletWeight" />
               </div>
-              <Error errors={errors} name="palletWeight" />
-            </div>
-            {!isNew && pallet && (
-              <div className="ion-padding-bottom">
-                <IonItem className="ion-no-padding" lines="none">
-                  <IonLabel
-                    color="medium"
-                    className="ion-no-margin"
-                    position="stacked"
-                  >
-                    <IonText> Number of Packages </IonText>
-                    <span className="noCount">{pallet?.data?.packageCount}</span>
-                    {/* <IonNote slot="start">{pallet?.data?.packageCount}</IonNote> */}
-                  </IonLabel>
-                </IonItem>
-              </div>
-            )}
+              {!isNew && pallet && (
+                <div className="ion-padding-bottom">
+                  <IonItem className="ion-no-padding" lines="none">
+                    <IonLabel
+                      color="medium"
+                      className="ion-no-margin"
+                      position="stacked"
+                    >
+                      <IonText> Number of Packages </IonText>
+                      <span className="noCount">{pallet?.data?.packageCount}</span>
+                      {/* <IonNote slot="start">{pallet?.data?.packageCount}</IonNote> */}
+                    </IonLabel>
+                  </IonItem>
+                </div>
+              )}
 
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            {isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              {isNew ? "Save" : "Update"}
-            </IonButton>
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
+            </div>
+            {isEditAllowed &&
+              <div className="add-button-container">
+                <IonButton
+                  type="submit" expand="block" color={'secondary'} shape="round"
+                >
+                  {isNew ? "Save" : "Update"}
+                </IonButton>
+              </div>
             }
-            {!isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
+            {!isEditAllowed && <div className="add-button-container"><IonButton
+              type="submit" expand="block" color={'secondary'} shape="round"
             >
               RETURN
-            </IonButton>}
+            </IonButton>
+            </div>}
           </IonList>
         </form>
       </IonContent>

@@ -17,8 +17,9 @@ import {
   IonRefresher,
   IonRefresherContent,
   RefresherEventDetail,
+  IonSearchbar,
 } from "@ionic/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavButton } from "../../components/NavButton";
 import NoItemFound from "../../components/NoItemFound";
@@ -37,14 +38,19 @@ import ToastMsg from "../../components/ToastMsg";
 
 export interface SailingProps {
   isEditAllowed: boolean;
+  sailDesc?: string;
+  date?: string;
+  pallets?: number;
+
 }
 
 const Sailing: React.FC<SailingProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
+  const [records, setRecords] = useState<SailingProps[] | undefined>(undefined);
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
     setTimeout(() => {
@@ -58,6 +64,10 @@ const Sailing: React.FC<SailingProps> = ({
       return state.sailing;
     }
   );
+
+  useEffect(() => {
+    !isloading && setRecords(containers.data);
+  }, [isloading, containers]);
 
   const { isUserDeleted } = useSelector((state: any) => state.user);
 
@@ -129,10 +139,28 @@ const Sailing: React.FC<SailingProps> = ({
       <NoItemFound />
     ) : (
       <>
-        {(containers.data || []).map((container: any, index: number) => (
+        <div className="rounded-search-container">
+          <IonSearchbar
+            placeholder="Search..."
+            class="rounded-search"
+            animated
+            debounce={300}
+            onIonInput={(e) => {
+              const query = e.detail?.value?.toLowerCase() || '';
+              setRecords(
+                containers.data?.filter((item: any) =>
+                  item?.sailDesc?.toLowerCase().includes(query)
+                )
+              );
+            }}
+            onIonClear={() => setRecords(containers.data)}
+          ></IonSearchbar>
+        </div>
+
+        {(records || []).map((container: any, index: number) => (
           <div key={container.sailId}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={`${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleNavigatePallet(container.sailId)}
@@ -155,19 +183,18 @@ const Sailing: React.FC<SailingProps> = ({
                 <IonButtons slot="end">
                   <IonIcon
                     icon={documentIcon}
-                    color="medium"
+                    style={{ color: '#f40f02' }}
                     onClick={() => handleViewReports(container)}
-                    className=""
                   />
                   <IonIcon
                     icon={viewIcon}
-                    color="medium"
+                    style={{ color: '#007bff' }}
                     onClick={() => handleEditSailing(container)}
                     className="ion-padding-horizontal"
                   />
                   <IonIcon
                     icon={forwardIcon}
-                    color="green"
+                    style={{ color: '#28a745' }}
                     onClick={() => handleNavigatePallet(container.sailId)}
                   />
                 </IonButtons>
@@ -196,10 +223,14 @@ const Sailing: React.FC<SailingProps> = ({
           <IonText className="header-menu">Sailing</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
-        {isEditAllowed && <IonButton expand="block" fill="outline" onClick={handleAddSailing}>
-          Add Sailing
-        </IonButton>}
+      <IonContent className="ion-no-padding">
+
+        {isEditAllowed &&
+          <div className="add-button-container">
+            <IonButton expand="block" color={'secondary'} shape="round" onClick={handleAddSailing}>
+              Add Sailing
+            </IonButton>
+          </div>}
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -210,24 +241,26 @@ const Sailing: React.FC<SailingProps> = ({
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
-              <IonItem className="ion-no-padding" key={index}>
-                <IonLabel color="medium" className="ion-no-margin item-box">
-                  <h3>
-                    <IonSkeletonText
-                      animated
-                      style={{ width: "100%", height: "45px" }}
-                    />
-                  </h3>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                </IonLabel>
-              </IonItem>
+              <div className="ion-list-item">
+                <IonItem className="ion-no-padding" key={index}>
+                  <IonLabel color="medium" className=" item-box">
+                    <h3>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100%", height: "45px" }}
+                      />
+                    </h3>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                  </IonLabel>
+                </IonItem>
+              </div>
             ))
-            : SailingList}
+            : <div className="ion-list-item" style={{ marginBottom: '50px' }}>{SailingList}</div>}
         </IonList>
       </IonContent>
       {isItemDeleted && (

@@ -17,8 +17,9 @@ import {
   RefresherEventDetail,
   IonRefresher,
   IonRefresherContent,
+  IonSearchbar,
 } from "@ionic/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavButton } from "../../components/NavButton";
 import NoItemFound from "../../components/NoItemFound";
@@ -26,7 +27,6 @@ import { getDeliveries, deleteDeliveryById } from "../../store/actions";
 import {
   chevronForward as forwardIcon,
   eye as viewIcon,
-  document as documentIcon,
   remove as removeIcon,
   chevronDownCircleOutline,
 } from "ionicons/icons";
@@ -42,8 +42,9 @@ const Delivery: React.FC<DeliveryProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
+  const [records, setRecords] = useState<DeliveryProps[] | undefined>(undefined);
 
   const { isloading, deliveries, error, isItemDeleted } = useSelector(
     (state: any) => {
@@ -52,6 +53,11 @@ const Delivery: React.FC<DeliveryProps> = ({
   );
 
   const { isUserDeleted } = useSelector((state: any) => state.user);
+
+  useEffect(() => {
+    !isloading && setRecords(deliveries.data);
+  }, [isloading, deliveries]);
+
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
     setTimeout(() => {
@@ -83,10 +89,6 @@ const Delivery: React.FC<DeliveryProps> = ({
     history.push(`/delivery-container/location/${deliveryId}`);
   };
 
-  // const handleViewReports = (container: Container) => {
-  //   dispatch({ type: "SELECTED_SAILID", payload: container.sailId });
-  //   history.push(`/sailing-container/report/${container.sailId}`);
-  // };
 
   if (isUserDeleted) {
     history.replace('/')
@@ -124,10 +126,27 @@ const Delivery: React.FC<DeliveryProps> = ({
       <NoItemFound />
     ) : (
       <>
-        {(deliveries.data || []).map((delivery: any, index: number) => (
+        <div className="rounded-search-container">
+          <IonSearchbar
+            placeholder="Search..."
+            class="rounded-search"
+            animated
+            debounce={300}
+            onIonInput={(e) => {
+              const query = e.detail?.value?.toLowerCase() || '';
+              setRecords(
+                deliveries.data?.filter((item: any) =>
+                  item?.deliveryDesc?.toLowerCase().includes(query)
+                )
+              );
+            }}
+            onIonClear={() => setRecords(deliveries.data)}
+          ></IonSearchbar>
+        </div>
+        {(records || []).map((delivery: any, index: number) => (
           <div key={delivery.deliveryId}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={`${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleNavigateToLocation(delivery.deliveryId)}
@@ -154,21 +173,15 @@ const Delivery: React.FC<DeliveryProps> = ({
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">
-                  {/* <IonIcon
-                    icon={documentIcon}
-                    color="medium"
-                    onClick={() => handleViewReports(delivery)}
-                    className=""
-                  /> */}
                   <IonIcon
                     icon={viewIcon}
-                    color="medium"
+                    style={{ color: '#007bff' }}
                     onClick={() => handleEditDelivery(delivery)}
                     className="ion-padding-horizontal"
                   />
                   <IonIcon
                     icon={forwardIcon}
-                    color="green"
+                    style={{ color: '#28a745' }}
                     onClick={() => handleNavigateToLocation(delivery.deliveryId)}
                   />
                 </IonButtons>
@@ -197,11 +210,13 @@ const Delivery: React.FC<DeliveryProps> = ({
           <IonText className="header-menu">Delivery</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         {isEditAllowed &&
-          <IonButton expand="block" fill="outline" onClick={handleAddDelivery}>
-            Add Delivery
-          </IonButton>
+          <div className="add-button-container">
+            <IonButton expand="block" color={'secondary'} shape="round" onClick={handleAddDelivery}>
+              Add Delivery
+            </IonButton>
+          </div>
         }
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
@@ -213,24 +228,26 @@ const Delivery: React.FC<DeliveryProps> = ({
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
-              <IonItem className="ion-no-padding" key={index}>
-                <IonLabel color="medium" className="ion-no-margin item-box">
-                  <h3>
-                    <IonSkeletonText
-                      animated
-                      style={{ width: "100%", height: "45px" }}
-                    />
-                  </h3>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                </IonLabel>
-              </IonItem>
+              <div className="ion-list-item">
+                <IonItem className="ion-no-padding" key={index}>
+                  <IonLabel color="medium" className="ion-no-margin item-box">
+                    <h3>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100%", height: "45px" }}
+                      />
+                    </h3>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                  </IonLabel>
+                </IonItem>
+              </div>
             ))
-            : DeliveryList}
+            : <div className="ion-list-item" style={{ marginBottom: '50px' }}>{DeliveryList}</div>}
         </IonList>
       </IonContent>
       {isItemDeleted && (

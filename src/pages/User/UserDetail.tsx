@@ -42,7 +42,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
   onSubmitData,
 }) => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const { userId }: any = useParams();
 
   const user = useSelector((state: any) => state.user);
@@ -155,15 +155,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
       !isNew && dispatch(updateUser(userId, formData))
     }
   };
-
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) => {
-  //     if (value) {
-  //       clearErrors(name);
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
+ 
 
   useEffect(() => {
     if (isUserSaved) {
@@ -181,147 +173,145 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
 
   const UserForm = () => (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <IonList>
-        <div className="ion-padding-bottom">
-          <IonItem className="ion-no-padding">
-            <IonLabel
-              color="medium"
-              className="form-input"
-              position="stacked"
-            >
-              First Name
-            </IonLabel>
-            <IonInput
-              aria-invalid={
-                errors && errors["firstName"] ? "true" : "false"
-              }
-              aria-describedby={`${"firstName"}Error`}
-              {...register("firstName", {
-                required: "First Name is required.",
-              })}
-              onIonChange={(e: any) =>
-                setValue("firstName", e.detail.value)
-              }
-            />
-          </IonItem>
-          <Error errors={errors} name="firstName" />
+      <IonList className="ion-no-padding">
+        <div className="listContainer">
+          <div className="ion-padding-bottom">
+            <IonItem className="ion-no-padding">
+              <IonLabel
+                color="medium"
+                className="form-input"
+                position="stacked"
+              >
+                First Name
+              </IonLabel>
+              <IonInput
+                aria-invalid={
+                  errors && errors["firstName"] ? "true" : "false"
+                }
+                aria-describedby={`${"firstName"}Error`}
+                {...register("firstName", {
+                  required: "First Name is required.",
+                })}
+                onIonChange={(e: any) =>
+                  setValue("firstName", e.detail.value)
+                }
+              />
+            </IonItem>
+            <Error errors={errors} name="firstName" />
+          </div>
+          <div className="ion-padding-bottom">
+            <IonItem className="ion-no-padding">
+              <IonLabel
+                color="medium"
+                className="form-input"
+                position="stacked"
+              >
+                Last Name
+              </IonLabel>
+              <IonInput
+                {...register("lastName", {
+                  required: "Last Name is required.",
+                })}
+                onIonChange={(e: any) => setValue("lastName", e.detail.value)}
+              />
+            </IonItem>
+            <Error errors={errors} name="lastName" />
+          </div>
+          <div className="ion-padding-bottom">
+            <IonItem className="ion-no-padding">
+              <IonLabel
+                color="medium"
+                className="form-input"
+                position="stacked"
+              >
+                Email
+              </IonLabel>
+              <IonInput
+                {...register("email", {
+                  required: "Email is required.",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                    message: "Invalid email address.",
+                  },
+                })}
+                onIonChange={(e: any) => setValue("email", e.detail.value)}
+              />
+            </IonItem>
+            <Error errors={errors} name="email" />
+          </div>
+          {isRegister &&
+            <>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Company
+                  </IonLabel>
+                  <IonInput
+                    {...register("companyName", {
+                      required: "Company is required.",
+                    })}
+                    onIonChange={(e: any) =>
+                      setValue("companyName", e.detail.value.toUpperCase())
+                    }
+                  />
+                </IonItem>
+                <Error errors={errors} name="companyName" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    className="form-input"
+                    color="medium"
+                    position="stacked"
+                  >
+                    Password
+                  </IonLabel>
+                  <IonInput
+                    type="password"
+                    {...register("password", {
+                      required: "Password is required.",
+                    })}
+                    onIonChange={(e: any) => setValue("password", e.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="password" />
+              </div>
+            </>
+          }
+          <div className="ion-padding-bottom">
+            <IonItem className="ion-no-padding">
+              <IonLabel
+                className="form-input"
+                color="medium"
+                position="stacked"
+              >
+                Access Role
+              </IonLabel>
+              <IonSelect multiple={true}
+                interface="popover"
+                {...register("userRoles", {
+                  required: "Access Role is required.",
+                })}>
+                {!isRegister && <IonSelectOption value="admin">Admin</IonSelectOption>}
+                <IonSelectOption value="delivery">Delivery</IonSelectOption>
+                <IonSelectOption value="sailing">Sailing </IonSelectOption>
+              </IonSelect>
+            </IonItem>
+            <Error errors={errors} name="userRoles" />
+          </div>
+          {error && error.status === -1 && (
+            <ServerError errorMsg={error.message} />
+          )}
         </div>
-        <div className="ion-padding-bottom">
-          <IonItem className="ion-no-padding">
-            <IonLabel
-              color="medium"
-              className="form-input"
-              position="stacked"
-            >
-              Last Name
-            </IonLabel>
-            <IonInput
-              {...register("lastName", {
-                required: "Last Name is required.",
-              })}
-              onIonChange={(e: any) => setValue("lastName", e.detail.value)}
-            />
-          </IonItem>
-          <Error errors={errors} name="lastName" />
+        <div className="add-button-container">
+          <IonButton type="submit" expand="block" color={'secondary'} shape="round">
+            {!isRegister ? 'Save' : 'Register'}
+          </IonButton>
         </div>
-        <div className="ion-padding-bottom">
-          <IonItem className="ion-no-padding">
-            <IonLabel
-              color="medium"
-              className="form-input"
-              position="stacked"
-            >
-              Email
-            </IonLabel>
-            <IonInput
-              {...register("email", {
-                required: "Email is required.",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: "Invalid email address.",
-                },
-              })}
-              onIonChange={(e: any) => setValue("email", e.detail.value)}
-            />
-          </IonItem>
-          <Error errors={errors} name="email" />
-        </div>
-        {isRegister &&
-          <>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Company
-                </IonLabel>
-                <IonInput
-                  {...register("companyName", {
-                    required: "Company is required.",
-                  })}
-                  onIonChange={(e: any) =>
-                    setValue("companyName", e.detail.value.toUpperCase())
-                  }
-                />
-              </IonItem>
-              <Error errors={errors} name="companyName" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  className="form-input"
-                  color="medium"
-                  position="stacked"
-                >
-                  Password
-                </IonLabel>
-                <IonInput
-                  type="password"
-                  {...register("password", {
-                    required: "Password is required.",
-                  })}
-                  onIonChange={(e: any) => setValue("password", e.detail.value)}
-                />
-              </IonItem>
-              <Error errors={errors} name="password" />
-            </div>
-          </>
-        }
-        <div className="ion-padding-bottom">
-          <IonItem className="ion-no-padding">
-            <IonLabel
-              className="form-input"
-              color="medium"
-              position="stacked"
-            >
-              Access Role
-            </IonLabel>
-            <IonSelect multiple={true}
-              interface="popover"
-              {...register("userRoles", {
-                required: "Access Role is required.",
-              })}>
-              {!isRegister && <IonSelectOption value="admin">Admin</IonSelectOption>}
-              <IonSelectOption value="delivery">Delivery</IonSelectOption>
-              <IonSelectOption value="sailing">Sailing </IonSelectOption>
-            </IonSelect>
-          </IonItem>
-          <Error errors={errors} name="userRoles" />
-        </div>
-        {error && error.status === -1 && (
-          <ServerError errorMsg={error.message} />
-        )}
-        {/* {children} */}
-        <IonButton
-          type="submit"
-          className="ion-margin-top"
-          color="primary"
-          expand="block"
-        >
-          {!isRegister ? 'Save' : 'Register'}
-        </IonButton>
       </IonList>
     </form >
   )
@@ -342,7 +332,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ isRegister,
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         {UserForm()}
       </IonContent>
       <IonLoading

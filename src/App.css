@@ -1,3 +1,36 @@
+@font-face {
+  font-family: "Poppins";
+  src: url("../public/assets/fonts/Poppins-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../public/assets/fonts/Poppins-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root {
+  --ion-font-family-base: "Poppins", sans-serif;
+}
+
+html.md {
+  --ion-default-font: "Poppins", sans-serif;
+}
+
+.errorMsg {
+  font-weight: 600;
+  display: block !important;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+form ion-label {
+  font-size: 20px !important;
+  font-weight: 600;
+}
+
 ion-toolbar,
 .ion-menu-header {
   text-align: center;
@@ -12,12 +45,25 @@ ion-toolbar,
   font-size: 1.15rem !important;
 }
 
-.odd {
-  --background: #e4e5e6;
-}
 .even {
-  /* --background: green; */
-  /* --background: #00416A; */
+  --background: #f0f6f6;
+  margin-bottom: 5px;
+}
+
+.odd {
+  --background: #dfe3fb;
+  margin-bottom: 5px;
+}
+
+.rounded-search-container {
+  margin: 0 30px 15px;
+}
+
+.rounded-search {
+  --border-radius: 20px;
+  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --color: #333;
+  --background: #f2f6fc;
 }
 
 .toUpperCase {
@@ -70,13 +116,17 @@ ion-item {
   justify-content: center;
   text-indent: -52px;
   text-transform: uppercase;
+  font-size: 24px;
 }
+
 ion-label {
   font-size: 18px !important;
 }
 
 ion-button {
-  /* height: 45px; */
+  height: 45px;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .disabledLabel,
@@ -92,9 +142,10 @@ ion-button {
 .text-wrapper {
   width: 100%;
   padding: 10px 10px;
-  border-radius: 5px;
+  border-radius: 11px;
   color: #ffff;
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .error {
@@ -102,7 +153,7 @@ ion-button {
 }
 
 .noitem {
-  background-color: #93c5fd;
+  background-color: #e9194a;
 }
 .menu-items ion-item {
   margin: 10px 10px;
@@ -124,6 +175,7 @@ ion-button {
   justify-content: center;
   text-indent: 45px;
   text-transform: uppercase;
+  font-size: 24px;
 }
 
 .modalheader-menu.text-indent {
@@ -197,6 +249,21 @@ ion-select {
   /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px; */
 }
 
+ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 8px;
+  --border-radius: 8px;
+  --border-width: 0px !important;
+  /* margin: 0px 8px; */
+}
+
+.ion-list-item {
+  margin: 0px 8px;
+}
+ion-item.alt-row {
+  background-color: #f2f6fc;
+}
+
 ion-fab-button button {
   width: 40px !important;
   height: 40px;
@@ -209,13 +276,21 @@ ion-fab-button button {
 
 .ion-unsubscribe ion-button {
   height: 45px;
-  --background: #dc3545;
+  --background: #e9194a;
   width: 99%;
   font-size: 1em;
 }
 
 .ion-page-invisible {
   opacity: 1;
+}
+
+.add-button-container {
+  padding: 16px 8px 10px;
+}
+
+ion-list {
+  /* margin-bottom: 50px !important; */
 }
 
 ion-select-popover {
@@ -244,28 +319,23 @@ ion-select-popover {
 }
 
 .multimenu-label {
-  --background: #ccc !important;
+  --background: linear-gradient(
+    10deg,
+    rgb(0, 0, 70),
+    rgb(28, 181, 224)
+  ) !important;
   font-weight: bold;
+  color: #fff;
 }
 
 .infotext {
   font-size: 0.75em;
 }
 
-.changePwdinfotext {
-  font-size: 1em;
+.changePwdinfotext { 
   display: flex;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
-  height: 3.5em;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  background-color: #ff2400;
-  border-color: #ff2400;
-  text-align: center;
-  color: #fff;
-  font-weight: normal;
+ text-align: center;
+ border-radius: 0;
 }
 
 .modal-addBtn {
@@ -348,6 +418,10 @@ ion-modal#example-modal ion-toolbar {
   text-decoration: underline;
 }
 
+ion-icon {
+  width: 1.3em !important;
+  height: 1.3em !important;
+}
 .accordion ion-icon {
   display: none;
 }
@@ -507,12 +581,12 @@ ion-checkbox {
 }
 
 .submenu ion-item {
-  margin: 0;
+  margin: 0 16px;
 }
 
 .submenu ion-label {
   margin: 10px 15px;
-  padding: 0px 0.6rem;
+  /* padding: 0px 0.6rem; */
 }
 
 ion-menu {
@@ -539,3 +613,14 @@ ion-popover::part(content) {
   font-weight: bold;
   color: initial;
 }
+
+.listContainer {
+  padding-inline-start: 16px;
+  padding-inline-end: 16px;
+}
+
+.timeicon {
+  margin-top: 35px;
+  margin-right: -9px;
+}
+ 

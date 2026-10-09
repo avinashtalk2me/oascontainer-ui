@@ -35,7 +35,7 @@ import ToastMsg from "../../components/ToastMsg";
 
 const Users: React.FC = () => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
   const handleRefresh = (event: CustomEvent<RefresherEventDetail>) => {
@@ -122,7 +122,7 @@ const Users: React.FC = () => {
         {(users?.data || []).map((user: any, index: number) => (
           <div key={user.UserID}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={`${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleEditUser(user)}
@@ -130,7 +130,7 @@ const Users: React.FC = () => {
                   <h3
                     className="text-wrap"
                     color="secondary"
-                    style={{ fontSize: "20px", fontWeight: "normal", textTransform : "capitalize" }}
+                    style={{ fontSize: "20px", fontWeight: "normal", textTransform: "capitalize" }}
                   >
                     {user.FirstName + ' ' + user.LastName}
                   </h3>
@@ -143,13 +143,13 @@ const Users: React.FC = () => {
                   </span>
                   <br />
                   <span style={{ fontSize: "14px" }}>
-                    Access Role: <span style={{ fontSize: "14px", textTransform:'capitalize' }}><b>{getRoles(JSON.parse(user.UserRole))}</b></span>
+                    Access Role: <span style={{ fontSize: "14px", textTransform: 'capitalize' }}><b>{getRoles(JSON.parse(user.UserRole))}</b></span>
                   </span>
                 </IonLabel>
                 <IonButtons slot="end">
                   <IonIcon
                     icon={viewIcon}
-                    color="medium"
+                    style={{ color: '#007bff' }}
                     onClick={() => handleEditUser(user)}
                     className="ion-padding-horizontal"
                   />
@@ -179,10 +179,12 @@ const Users: React.FC = () => {
           <IonText className="header-menu">Users</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
-        <IonButton expand="block" fill="outline" onClick={handleAddUser}>
-          Add User
-        </IonButton>
+      <IonContent className="ion-no-padding">
+        <div className="add-button-container">
+          <IonButton expand="block" color={'secondary'} shape="round" onClick={handleAddUser}>
+            Add User
+          </IonButton>
+        </div>
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -193,24 +195,26 @@ const Users: React.FC = () => {
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
-              <IonItem className="ion-no-padding" key={index}>
-                <IonLabel color="medium" className="ion-no-margin item-box">
-                  <h3>
-                    <IonSkeletonText
-                      animated
-                      style={{ width: "100%", height: "45px" }}
-                    />
-                  </h3>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                </IonLabel>
-              </IonItem>
+              <div className="ion-list-item">
+                <IonItem className="ion-no-padding" key={index}>
+                  <IonLabel color="medium" className="ion-no-margin item-box">
+                    <h3>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100%", height: "45px" }}
+                      />
+                    </h3>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                  </IonLabel>
+                </IonItem>
+              </div>
             ))
-            : UserList}
+             : <div className="ion-list-item" style={{ marginBottom: '50px' }}>{UserList}</div>}
         </IonList>
       </IonContent>
       {isUserDeleted && (

@@ -30,9 +30,11 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
   sailDesc,
 }) => {
   const [summary, setSummary] = useState<any>({});
-  const { containerManifest } = useSelector((state: any) => state.sailing);
+  const { isloading, containerManifest } = useSelector((state: any) => state.sailing);
 
   useEffect(() => {
+    if (isloading) return;
+
     if (containerManifest && containerManifest?.data?.length > 0) {
       const data = {
         unitType: containerManifest?.data[0].palletWeights.slice(-2),
@@ -70,7 +72,7 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
       };
       setSummary(data);
     }
-  }, [containerManifest]);
+  }, [isloading, containerManifest]);
 
 
   const shareFile = async () => {
@@ -95,7 +97,7 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
     // });
 
 
-    
+
     const savePdf = async () => {
       const result = await Filesystem.writeFile({
         path: `${options.fileName}`,
@@ -103,9 +105,9 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
         directory: Directory.Cache
         // encoding: Encoding.UTF8,
       });
-    
+
       return result.uri;
-    
+
     }
 
     const pdfUri = await savePdf();
@@ -156,7 +158,7 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
         </IonCol>
       </IonRow>
       {(containerManifest.data || []).map((pallet: Pallet, index: number) => (
-        <IonRow key={index} className="sailreport report-body">
+        <IonRow key={index} className={"sailreport report-body"} >
           <div
             style={{ display: "flex", flexDirection: "row" }}
             className={`${pallet.palletType === "Pallet" ? "borderDiv" : ""}`}
@@ -271,8 +273,8 @@ const SailSummaryReport: React.FC<SailSummaryReportProps> = ({
         slot="end"
         edge={true}
       >
-        <IonFabButton color="medium">
-          <IonIcon icon={shareIcon} onClick={() => shareFile()}></IonIcon>
+        <IonFabButton style={{ color: '#007bff' }}>
+          <IonIcon icon={shareIcon} style={{ color: '#fff' }} onClick={() => shareFile()}></IonIcon>
         </IonFabButton>
       </IonFab>
       <div className="report-section">{SailingReport}</div>

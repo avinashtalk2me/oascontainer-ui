@@ -36,7 +36,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
   const { deliveryId, locationId }: any = useParams();
 
@@ -110,7 +110,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
         {(dropOffs.data || []).map((packageItem: any, index: number) => (
           <div key={packageItem.hwbNo}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={`${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel color="medium">
                   <h3
                     className="text-wrap"
@@ -126,7 +126,7 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
                 <IonButtons slot="end">
                   <IonIcon
                     icon={viewIcon}
-                    color="medium"
+                    style={{ color: '#007bff' }}
                     onClick={() => handleEditPackage(packageItem)}
                     className="ion-padding-horizontal"
                   />
@@ -156,10 +156,12 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
           <IonText className="header-menu">Package</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className={`ion-padding`}>
-        <IonButton expand="block" fill="outline" onClick={handleAddPackage}>
-          Add Package
-        </IonButton>
+      <IonContent className={`ion-no-padding`}>
+        <div className="add-button-container">
+          <IonButton expand="block" color={'secondary'} shape="round" onClick={handleAddPackage}>
+            Add Package
+          </IonButton>
+        </div>
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -170,24 +172,27 @@ const DeliveryDropOff: React.FC<DropOffProps> = ({
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
-              <IonItem className="ion-no-padding" key={index}>
-                <IonLabel color="medium" className="ion-no-margin">
-                  <h3>
-                    <IonSkeletonText
-                      animated
-                      style={{ width: "100%", height: "45px" }}
-                    />
-                  </h3>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                </IonLabel>
-              </IonItem>
+              <div className="ion-list-item">
+
+                <IonItem className="ion-no-padding" key={index}>
+                  <IonLabel color="medium" className="ion-no-margin">
+                    <h3>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100%", height: "45px" }}
+                      />
+                    </h3>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                  </IonLabel>
+                </IonItem>
+              </div>
             ))
-            : PackageList}
+            : <div className="ion-list-item" style={{ marginBottom: '50px' }}>{PackageList}</div>}
         </IonList>
       </IonContent>
       {isItemDeleted && (

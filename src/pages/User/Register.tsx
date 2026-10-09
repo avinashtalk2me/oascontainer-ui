@@ -45,26 +45,6 @@ const Register: React.FC = () => {
     dispatch({ type: "RESET_FORM" });
     history.push('/login');
   };
-  // const resetForm = () => {
-  //   dispatch({ type: "RESET_FORM" });
-  //   setValue("firstName", "");
-  //   setValue("lastName", "");
-  //   setValue("email", "");
-  //   setValue("password", "");
-  //   setValue("companyName", "");
-  //   setValue("userRoles", "");
-  //   reset(
-  //     {},
-  //     {
-  //       keepErrors: false,
-  //       keepDirty: false,
-  //       keepIsSubmitted: false,
-  //       keepTouched: false,
-  //       keepIsValid: true,
-  //       keepSubmitCount: false,
-  //     }
-  //   );
-  // };
 
   const onSubmit = (data: any) => {
     const formattedData = { ...data };
@@ -75,10 +55,11 @@ const Register: React.FC = () => {
   return (
     <IonPage className="page">
       <IonHeader>
-        <IonToolbar>Register</IonToolbar>
+        <IonToolbar>REGISTER</IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <UserDetail isRegister={true} onSubmitData={onSubmit} /> 
+
         <IonButton
           type="submit"
           expand="full"

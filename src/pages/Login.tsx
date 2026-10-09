@@ -20,7 +20,7 @@ import ServerError from "../components/ServerError";
 import { useHistory } from "react-router";
 
 const Login: React.FC = () => {
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const userDetails = useSelector((state: any) => state.user);
   const { isloading, user, error } = userDetails;
@@ -131,63 +131,62 @@ const Login: React.FC = () => {
   return (
     <IonPage className="page">
       <IonHeader>
-        <IonToolbar>Login</IonToolbar>
+        <IonToolbar>LOGIN</IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Email
-                </IonLabel>
-                <IonInput
-                  {...register("email", {
-                    required: "Email is required.",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: "Invalid email address.",
-                    },
-                  })}
-                  onIonChange={(e: any) => setValue("email", e.detail.value.trim())}
-                />
-              </IonItem>
-              <Error errors={errors} name="email" />
+          <IonList className="ion-no-padding">
+            <div className="listContainer">
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Email
+                  </IonLabel>
+                  <IonInput
+                    {...register("email", {
+                      required: "Email is required.",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: "Invalid email address.",
+                      },
+                    })}
+                    onIonChange={(e: any) => setValue("email", e.detail.value.trim())}
+                  />
+                </IonItem>
+                <Error errors={errors} name="email" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    className="form-input"
+                    color="medium"
+                    position="stacked"
+                  >
+                    Password
+                  </IonLabel>
+                  <IonInput
+                    type="password"
+                    {...register("password", {
+                      required: "Password is required.",
+                    })}
+                    onIonChange={(e: any) => setValue("password", e.detail.value.trim())}
+                  />
+                </IonItem>
+                <Error errors={errors} name="password" />
+              </div>
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
             </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  className="form-input"
-                  color="medium"
-                  position="stacked"
-                >
-                  Password
-                </IonLabel>
-                <IonInput
-                  type="password"
-                  {...register("password", {
-                    required: "Password is required.",
-                  })}
-                  onIonChange={(e: any) => setValue("password", e.detail.value.trim())}
-                />
-              </IonItem>
-              <Error errors={errors} name="password" />
+            <div className="add-button-container">
+              <IonButton type="submit" expand="block" color={'secondary'} shape="round">
+                Login
+              </IonButton>
             </div>
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              Login
-            </IonButton>
           </IonList>
         </form>
         <IonButton

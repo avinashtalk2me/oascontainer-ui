@@ -30,9 +30,10 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
   sailDesc,
 }) => {
   const [uniquePallets, setUniquePallets] = useState([]);
-  const { palletManifest } = useSelector((state: any) => state.sailing);
+  const { isloading, palletManifest } = useSelector((state: any) => state.sailing);
 
   useEffect(() => {
+    if (isloading) return;
     if (palletManifest && palletManifest?.data?.length > 0) {
       setUniquePallets(
         Array.from(
@@ -40,7 +41,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
         )
       );
     }
-  }, [palletManifest]);
+  }, [palletManifest, isloading]);
 
 
   const shareFile = async () => {
@@ -68,9 +69,9 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
         directory: Directory.Cache
         // encoding: Encoding.UTF8,
       });
-    
+
       return result.uri;
-    
+
     }
 
     const pdfUri = await savePdf();
@@ -80,41 +81,6 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
       url: pdfUri,
       dialogTitle: 'Share PDF',
     });
-
-    // if (shareType === "whatsapp") {
-    //   // await SocialSharing.shareViaWhatsApp(
-    //   //   `Pallet Details report (${sailDesc}) (${sailDate})`,
-    //   //   fileOutput.uri
-    //   // );
-    //   await Share.share({
-    //     title: 'Pallet Details Report',
-    //     text: `Pallet Details (${sailDesc}) (${sailDate})`,
-    //     url: pdfUri,
-    //     dialogTitle: 'Share PDF',
-    //   });
-    // } else {
-    //   await Share.share({
-    //     title: 'Pallet Details Report',
-    //     text: `Pallet Details (${sailDesc}) (${sailDate})`,
-    //     url: pdfUri,
-    //     dialogTitle: 'Share PDF',
-    //   });
-    //   // SocialSharing.canShareViaEmail().then(async () => {
-    //   //   await SocialSharing.shareViaEmail(
-    //   //     `Pallet Details (${sailDesc}) (${sailDate})`,
-    //   //     `Pallet Details Report`,
-    //   //     [],
-    //   //     undefined,
-    //   //     undefined,
-    //   //     fileOutput.uri
-    //   //   );
-    //   // }).catch(() => {
-    //   //   Dialog.alert({
-    //   //     title: "Alert",
-    //   //     message: `Email is not configured. Please configure email.`,
-    //   //   });
-    //   // });
-    // }
   };
 
   const getIsPalletOrLoose = (palletNo: number): string => {
@@ -165,7 +131,7 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
           </IonCol>
         </IonRow>
       </IonGrid>
-    ) : palletsByPalletNo.length === 1 && palletsByPalletNo[0].hwbNo !== "" ? (
+    ) : (palletsByPalletNo.length === 1 && palletsByPalletNo[0].hwbNo !== "" ? (
       <IonGrid>
         <IonRow className="pallet-section-header">
           <IonCol className="ion-no-padding">HWB#</IonCol>
@@ -201,10 +167,10 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
       </IonGrid>
     ) : (
       <IonText color="medium">No details available</IonText>
-    );
+    ));
   };
 
-  return uniquePallets && uniquePallets.length === 0 ? (
+  return !isloading && uniquePallets && uniquePallets.length === 0 ? (
     <div className="text-wrapper noitem">
       <IonText className="ion-no-padding">No details available.</IonText>
     </div>
@@ -217,13 +183,13 @@ const PalletSummaryReport: React.FC<PalletSummaryReportProps> = ({
         slot="end"
         edge={true}
       >
-        <IonFabButton color="medium">
-          <IonIcon icon={shareIcon} onClick={() => shareFile()}></IonIcon>
+        <IonFabButton style={{ color: '#007bff' }}>
+          <IonIcon icon={shareIcon} style={{ color: '#fff' }} onClick={() => shareFile()}></IonIcon>
         </IonFabButton>
       </IonFab>
       <div className="report-section">
         <IonList className="ion-no-padding">
-          {(uniquePallets || []).map((palletNo: number) => (
+          {!isloading && (uniquePallets || []).map((palletNo: number) => (
             <div key={palletNo}>
               <IonListHeader className="ion-no-padding" key={palletNo}>
                 {getIsPalletOrLoose(palletNo) === "Pallet" ? <h3 color="medium">Pallet# {palletNo}</h3> :

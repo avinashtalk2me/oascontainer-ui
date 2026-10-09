@@ -18,7 +18,7 @@ import {
   IonRefresherContent,
   RefresherEventDetail,
 } from "@ionic/react";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Redirect } from "react-router";
 import { NavButton } from "../../components/NavButton";
@@ -28,24 +28,28 @@ import {
   chevronForward as forwardIcon,
   eye as viewIcon,
   remove as removeIcon,
+  shuffle as split
 } from "ionicons/icons";
-import { getPalletsBySailId, deletePalletById } from "../../store/actions";
+import { getPalletsBySailId, deletePalletById, splitPalletById } from "../../store/actions";
 import { Dialog } from "@capacitor/dialog";
 import ToastMsg from "../../components/ToastMsg";
 import { Pallet as IPallet } from "../../model/pallet";
+
 
 export interface PalletProps {
   isEditAllowed: boolean;
 }
 
+
+
 const Pallet: React.FC<PalletProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
 
-  const { isloading, selectedSailId, error, pallets, isItemDeleted } =
+  const { isloading, selectedSailId, error, pallets, isItemDeleted, isItemSplitted } =
     useSelector((state: any) => state.pallet);
 
   const handleAddPallet = () => {
@@ -72,10 +76,10 @@ const Pallet: React.FC<PalletProps> = ({
   }, [dispatch, selectedSailId]);
 
   useEffect(() => {
-    if (isItemDeleted) {
+    if (isItemDeleted || isItemSplitted) {
       dispatch(getPalletsBySailId(selectedSailId));
     }
-  }, [dispatch, isItemDeleted, selectedSailId]);
+  }, [dispatch, isItemDeleted, selectedSailId, isItemSplitted]);
 
   if (!selectedSailId) {
     return <Redirect to="/sailing-container/sails" />;
@@ -86,17 +90,8 @@ const Pallet: React.FC<PalletProps> = ({
     dispatch({ type: "SELECTED_PALLETID", payload: pallet.palletId });
     history.push(`/sailing-container/package/${pallet.palletId}`);
 
-    // } else {
-    //   noPackageAlertForPallet();
-    // }
   };
 
-  // const noPackageAlertForPallet = () => {
-  //   Dialog.alert({
-  //     title: "Not Allowed",
-  //     message: `Not available for loose pieces`,
-  //   });
-  // }
 
   if (error && error.status === -100) {
     history.replace("/sessionexpired");
@@ -124,6 +119,22 @@ const Pallet: React.FC<PalletProps> = ({
     showConfirm();
   };
 
+  const handleSplitPallet = (event: any, pallet: IPallet) => {
+    event.preventDefault();
+    const showConfirm = async () => {
+      const { value } = await Dialog.confirm({
+        title: "Confirm",
+        message: `Do you want to remove Pallet# ${pallet.palletNo} from the sailing and add attached packages as Loose Items?`,
+      });
+
+      if (value) {
+        dispatch(splitPalletById(pallet.palletId.toString()));
+      }
+      componentRef.current?.closeOpened();
+    };
+    showConfirm();
+  }
+
   const PalletList: JSX.Element =
     pallets && pallets?.data?.length === 0 ? (
       <NoItemFound />
@@ -132,7 +143,7 @@ const Pallet: React.FC<PalletProps> = ({
         {(pallets.data || []).map((pallet: any, index: number) => (
           <div key={pallet.palletId}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={`${index % 2 === 0 ? "even" : "odd"}`}>
                 <IonLabel
                   color="medium"
                   onClick={() => handleNavigatePackage(pallet)}
@@ -142,7 +153,7 @@ const Pallet: React.FC<PalletProps> = ({
                     color="secondary"
                     style={{ fontSize: "20px", fontWeight: "normal" }}
                   >
-                    {pallet.palletType === "Pallet" ?`${"Pallet#"} ${pallet.palletNo}` : `Loose`
+                    {pallet.palletType === "Pallet" ? `${"Pallet#"} ${pallet.palletNo}` : `Loose`
                     }
                   </h3>
                   <span style={{ fontSize: "14px" }}>
@@ -164,16 +175,22 @@ const Pallet: React.FC<PalletProps> = ({
                     </b>
                   </span>
                 </IonLabel>
-                <IonButtons>
+                <IonButtons slot="end">
+                  {pallet.packageCount > 1 && pallet.palletType !== 'Loose' &&
+                    <IonIcon
+                      icon={split}
+                      style={{ color: '#e9194a' }}
+                      onClick={(e) => handleSplitPallet(e, pallet)}
+                    />}
                   <IonIcon
                     icon={viewIcon}
-                    color="medium"
+                    style={{ color: '#007bff' }}
                     onClick={() => handleEditPallet(pallet)}
                     className="ion-padding-horizontal"
                   />
                   <IonIcon
                     icon={forwardIcon}
-                    color="green"
+                    style={{ color: '#28a745' }}
                     onClick={() => handleNavigatePackage(pallet)}
                   />
                 </IonButtons>
@@ -204,11 +221,13 @@ const Pallet: React.FC<PalletProps> = ({
           <IonText className="header-menu">Pallet</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         {isEditAllowed &&
-          <IonButton expand="block" fill="outline" onClick={handleAddPallet}>
-            Add Pallet
-          </IonButton>}
+          <div className="add-button-container">
+            <IonButton expand="block" color={'secondary'} shape="round" onClick={handleAddPallet}>
+              Add Pallet
+            </IonButton>
+          </div>}
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -219,24 +238,26 @@ const Pallet: React.FC<PalletProps> = ({
         <IonList lines="full">
           {isloading
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
-              <IonItem className="ion-no-padding item-box" key={index}>
-                <IonLabel color="medium" className="ion-no-margin">
-                  <h3>
-                    <IonSkeletonText
-                      animated
-                      style={{ width: "100%", height: "45px" }}
-                    />
-                  </h3>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                </IonLabel>
-              </IonItem>
+              <div className="ion-list-item">
+                <IonItem className="ion-no-padding item-box" key={index}>
+                  <IonLabel color="medium" className="ion-no-margin">
+                    <h3>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100%", height: "45px" }}
+                      />
+                    </h3>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                  </IonLabel>
+                </IonItem>
+              </div>
             ))
-            : PalletList}
+            : <div className="ion-list-item" style={{ marginBottom: '50px' }}>{PalletList}</div>}
         </IonList>
       </IonContent>
       {isItemDeleted && (

@@ -24,7 +24,7 @@ import { LOGOUT } from "../../store/types";
 
 
 const ChangePaswword: React.FC = () => {
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const userDetails = useSelector((state: any) => state.user);
   const { isloading, error, isPasswordUpdated } = userDetails;
@@ -73,16 +73,6 @@ const ChangePaswword: React.FC = () => {
 
 
   useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      if (value) {
-        clearErrors(name);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-
-  useEffect(() => {
     if (isPasswordUpdated) {
       resetForm();
       dispatch({ type: LOGOUT });
@@ -112,13 +102,21 @@ const ChangePaswword: React.FC = () => {
     <IonPage className="page">
       <IonHeader>
         <IonToolbar>
-          Change Password
+          CHANGE PASSWORD
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList>
-            {!isCreatedBy && <IonNote className="changePwdinfotext" color={"tertiary"}> You must change your password before logging on the first time.</IonNote>}
+          {!isCreatedBy &&
+            <div className="text-wrapper noitem changePwdinfotext">
+              <IonText className="ion-no-padding">
+                You must change your password before logging on the first time.
+              </IonText>
+            </div>
+          }
+          <div className="listContainer">
+
+            {/* <IonNote className="changePwdinfotext" color={"tertiary"}></IonNote>} */}
             <div className="ion-padding-bottom">
               <IonItem className="ion-no-padding">
                 <IonLabel
@@ -189,26 +187,24 @@ const ChangePaswword: React.FC = () => {
             {error && error.status === -1 && (
               <ServerError errorMsg={error.message} />
             )}
+          </div>
+          <div className="add-button-container">
             <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
+              type="submit" expand="block" color={'secondary'} shape="round"
             >
               {'Submit'}
             </IonButton>
-
-          </IonList>
+          </div>
         </form>
-        <IonButton
-          onClick={handleLogout}
-          type="button"
-          className="ion-margin-top"
-          color="primary"
-          expand="block"
-        >
-          {'Cancel'}
-        </IonButton>
+        <div className="add-button-container">
+          <IonButton
+            onClick={handleLogout}
+            type="button"
+            expand="block" color={'medium'} shape="round"
+          >
+            {'Cancel'}
+          </IonButton>
+        </div>
         <IonLoading
           isOpen={isloading}
           message="Please wait"

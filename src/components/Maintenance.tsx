@@ -16,7 +16,7 @@ const Maintenance: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>Maintenance</IonToolbar>
+        <IonToolbar>MAINTENANCE</IonToolbar>
       </IonHeader>
       <IonContent>
         <IonContent className="ion-padding">

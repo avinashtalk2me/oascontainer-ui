@@ -103,7 +103,6 @@ function LoadAccessModule() {
         <IonModal id="example-modal" ref={modal} trigger="open-custom-dialog" backdropDismiss={false}>
           <div className="wrapper">
             <h3>Select an access</h3>
-
             <IonList lines="none">
               <IonItem button={true} detail={false} onClick={() => dismiss('sailing')}>
                 {/* <IonIcon icon={personCircle}></IonIcon> */}
@@ -123,7 +122,7 @@ function LoadAccessModule() {
                 onClick={() => handleLogout()}
                 className="closeIcon"
               >
-                <IonIcon icon={logout} slot="icon-only" />
+                <IonIcon className='logoutIcon' icon={logout} slot="icon-only" />
               </IonButton>
             </div>
           </div>

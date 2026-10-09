@@ -21,7 +21,7 @@ import { useHistory } from "react-router";
 
 
 const ForgotPassword: React.FC = () => {
-  const dispatch:any = useDispatch();
+  const dispatch: any = useDispatch();
   const history = useHistory();
   const userDetails = useSelector((state: any) => state.user);
   const { isloading, isEmailValidate, error, isPasswordUpdated } = userDetails;
@@ -97,94 +97,93 @@ const ForgotPassword: React.FC = () => {
   return (
     <IonPage className="page">
       <IonHeader>
-        <IonToolbar>{!isEmailValidate ? `Forgot Password` : 'Change Password'}</IonToolbar>
+        <IonToolbar>{!isEmailValidate ? `FORGOT PASSWORD` : 'CHANGE PASSWORD'}</IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className={`form-input ${isEmailValidate && 'disabledLabel'}`}
-                  position="stacked"
-                >
-                  Email
-                </IonLabel>
-                <IonInput
-                  disabled={isEmailValidate}
-                  {...register("email", {
-                    required: "Email is required.",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: "Invalid email address.",
-                    },
-                  })}
-                  onIonChange={(e: any) => setValue("email", e.detail.value)}
-                />
-              </IonItem>
-              <Error errors={errors} name="email" />
-            </div>
+          <IonList className="ion-no-padding">
+            <div className="listContainer">
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className={`form-input ${isEmailValidate && 'disabledLabel'}`}
+                    position="stacked"
+                  >
+                    Email
+                  </IonLabel>
+                  <IonInput
+                    disabled={isEmailValidate}
+                    {...register("email", {
+                      required: "Email is required.",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: "Invalid email address.",
+                      },
+                    })}
+                    onIonChange={(e: any) => setValue("email", e.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="email" />
+              </div>
 
-            {isEmailValidate &&
-              <>
-                <div className="ion-padding-bottom">
-                  <IonItem className="ion-no-padding">
-                    <IonLabel
-                      className="form-input"
-                      color="medium"
-                      position="stacked"
-                    >
-                      Password
-                    </IonLabel>
-                    <IonInput
-                      type="password"
-                      {...register("password", {
-                        required: "Password is required.",
-                      })}
-                      onIonChange={(e: any) => setValue("password", e.detail.value)}
-                    />
-                  </IonItem>
-                  <Error errors={errors} name="password" />
-                </div>
-                <div className="ion-padding-bottom">
-                  <IonItem className="ion-no-padding">
-                    <IonLabel
-                      className="form-input"
-                      color="medium"
-                      position="stacked"
-                    >
-                      Confirm Password
-                    </IonLabel>
-                    <IonInput
-                      type="password"
-                      {...register("confirmPassword", {
-                        required: "Confirm Password is required.",
-                        validate: (value:string) => {
-                          if(watch('password') !== value) {
-                            return "Password and Confirm Password doesn't match"
+              {isEmailValidate &&
+                <>
+                  <div className="ion-padding-bottom">
+                    <IonItem className="ion-no-padding">
+                      <IonLabel
+                        className="form-input"
+                        color="medium"
+                        position="stacked"
+                      >
+                        Password
+                      </IonLabel>
+                      <IonInput
+                        type="password"
+                        {...register("password", {
+                          required: "Password is required.",
+                        })}
+                        onIonChange={(e: any) => setValue("password", e.detail.value)}
+                      />
+                    </IonItem>
+                    <Error errors={errors} name="password" />
+                  </div>
+                  <div className="ion-padding-bottom">
+                    <IonItem className="ion-no-padding">
+                      <IonLabel
+                        className="form-input"
+                        color="medium"
+                        position="stacked"
+                      >
+                        Confirm Password
+                      </IonLabel>
+                      <IonInput
+                        type="password"
+                        {...register("confirmPassword", {
+                          required: "Confirm Password is required.",
+                          validate: (value: string) => {
+                            if (watch('password') !== value) {
+                              return "Password and Confirm Password doesn't match"
+                            }
                           }
-                        }
-                      })}
-                      onIonChange={(e: any) => setValue("confirmPassword", e.detail.value)}
-                    />
-                  </IonItem>
-                  <Error errors={errors} name="confirmPassword" />
-                </div>
-              </>
-            }
+                        })}
+                        onIonChange={(e: any) => setValue("confirmPassword", e.detail.value)}
+                      />
+                    </IonItem>
+                    <Error errors={errors} name="confirmPassword" />
+                  </div>
+                </>
+              }
 
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              {!isEmailValidate ? 'Verify' : 'Submit'}
-            </IonButton>
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
+            </div>
+            <div className="add-button-container">
+              <IonButton type="submit" expand="block" color={'secondary'} shape="round">
+                {!isEmailValidate ? 'Verify' : 'Submit'}
+              </IonButton>
+            </div>
           </IonList>
         </form>
         <IonButton

@@ -8,12 +8,10 @@ export interface ErrorProps {
 const Error: React.FC<ErrorProps> = ({ name, errors }) => {
     return (<>
         {errors && errors[name] && (
-            <IonText color="danger" className="ion-no-padding">
-                <small>
+            <IonText color="danger" className="ion-no-padding errorMsg">
                     <span role="alert" id={`${name}Error`}>
                         {errors[name].message}
                     </span>
-                </small>
             </IonText>
         )}
     </>

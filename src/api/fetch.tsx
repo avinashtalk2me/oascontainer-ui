@@ -55,7 +55,8 @@ const {
   UPDATE_USER,
   GET_COMPANY_DETAILS,
   UPDATE_COMPANY_DETAILS,
-  GET_HWB_MANIFEST
+  GET_HWB_MANIFEST,
+  SPLIT_PALLET
 } = config;
 
 export const getAppVersionAPI = () => {
@@ -409,4 +410,10 @@ export const getSelectedScanedHWBInfoForDropoffAPI = (selectedLocationId: string
   let url: string = `${process.env.REACT_APP_API_URL}${GET_ROPOFF_PACKAGE_PKG_NO}`;
   url = url.replace("{locationId}", selectedLocationId);
   return serviceRequest(url, "POST", data);
+};
+
+export const splitPalletByIdAPI = (selectedPalletId: string) => {
+  let url: string = `${process.env.REACT_APP_API_URL}${SPLIT_PALLET}`;
+  url = url.replace("{palletId}", selectedPalletId);
+  return serviceRequest(url, "DELETE", undefined);
 };

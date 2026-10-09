@@ -12,9 +12,6 @@ import {
   IonLoading,
   IonNote,
   IonPopover,
-  IonSelect,
-  IonSelectOption,
-  IonTabButton,
   IonText,
   IonTextarea,
   IonToolbar,
@@ -181,64 +178,66 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <IonList>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Delivery Description
-                </IonLabel>
-                <IonTextarea
-                  disabled={!isEditAllowed}
-                  rows={3}
-                  maxlength={40}
-                  aria-invalid={errors && errors["deliveryDesc"] ? "true" : "false"}
-                  aria-describedby={`${"deliveryDesc"}Error`}
-                  {...register("deliveryDesc", {
-                    required: "Description is required.",
-                  })}
-                  onIonChange={(e: any) => setValue("deliveryDesc", e.detail.value)}
-                />
-              </IonItem>
-              <Error errors={errors} name="deliveryDesc" />
-            </div>
-            <div className="ion-padding-bottom">
-              <IonItem className="ion-no-padding">
-                <IonLabel
-                  color="medium"
-                  className="form-input"
-                  position="stacked"
-                >
-                  Delivery Date
-                </IonLabel>
-                <IonInput
-                  disabled={!isEditAllowed}
-                  id="date-input-2"
-                  readonly
-                  aria-invalid={
-                    errors && errors["displayDeliveryDate"] ? "true" : "false"
-                  }
-                  aria-describedby={`${"deliveryDate"}Error`}
-                  {...register("displayDeliveryDate", {
-                    required: "Date is required.",
-                  })}
-                />
-                {isEditAllowed && <>
-                  <IonButton
-                    slot="end"
-                    fill="clear"
-                    className="calendar-btn"
-                    id="open-date-input-2"
+          <IonList className="ion-no-padding">
+            <div className="listContainer">
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
                   >
-                    <IonIcon icon={calendarIcon} />
-                  </IonButton>
-                  <IonPopover trigger="open-date-input-2" showBackdrop={false}>
-                    {/* <IonDatetime
+                    Delivery Description
+                  </IonLabel>
+                  <IonTextarea
+                    disabled={!isEditAllowed}
+                    rows={3}
+                    maxlength={40}
+                    aria-invalid={errors && errors["deliveryDesc"] ? "true" : "false"}
+                    aria-describedby={`${"deliveryDesc"}Error`}
+                    {...register("deliveryDesc", {
+                      required: "Description is required.",
+                    })}
+                    onIonChange={(e: any) => setValue("deliveryDesc", e.detail.value)}
+                  />
+                </IonItem>
+                <Error errors={errors} name="deliveryDesc" />
+              </div>
+              <div className="ion-padding-bottom">
+                <IonItem className="ion-no-padding">
+                  <IonLabel
+                    color="medium"
+                    className="form-input"
+                    position="stacked"
+                  >
+                    Delivery Date
+                  </IonLabel>
+                  <IonInput
+                    disabled={!isEditAllowed}
+                    id="date-input-2"
+                    readonly
+                    aria-invalid={
+                      errors && errors["displayDeliveryDate"] ? "true" : "false"
+                    }
+                    aria-describedby={`${"deliveryDate"}Error`}
+                    {...register("displayDeliveryDate", {
+                      required: "Date is required.",
+                    })}
+                  />
+                  {isEditAllowed && <>
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      className="calendar-btn"
+                      id="open-date-input-2"
+                      style={{marginTop: "35px"}}
+                    >
+                      <IonIcon icon={calendarIcon} />
+                    </IonButton>
+                    <IonPopover trigger="open-date-input-2" showBackdrop={false}>
+                      {/* <IonDatetime
                       min={new Date().getUTCFullYear().toString()}
                       max={todaysDate}
                       // displayFormat="DD/MM/YYYY"
@@ -247,77 +246,73 @@ const AddEditDelivery: React.FC<DeliveryProps> = ({
                       {...register("deliveryDate")}
                       onIonChange={handleDateChange}
                     /> */}
-                    <Controller
-                      name="deliveryDate"
-                      control={control}
-                      render={({ field }) => (
-                        <IonDatetime {...field}
-                          min={new Date().getUTCFullYear().toString()}
-                          max={todaysDate}
-                          // displayFormat="DD/MM/YYYY"
-                          showDefaultButtons={true}
-                          presentation="date"
-                          // {...register("deliveryDate")}
-                          onIonChange={handleDateChange}
-                        />
-                      )}
-                    />
-                  </IonPopover>
-                </>}
-              </IonItem>
-              <Error errors={errors} name="displaySailDate" />
-            </div>
-            {!isNew && delivery && (
-              <div className="ion-padding-bottom">
-                <IonItem className="ion-no-padding" lines="none">
-                  <IonLabel
-                    color="medium"
-                    className="ion-no-margin"
-                    position="stacked"
-                  >
-                    <IonText> Number of Packages </IonText>
-                    {/* <IonNote slot="end"> */}
+                      <Controller
+                        name="deliveryDate"
+                        control={control}
+                        render={({ field }) => (
+                          <IonDatetime {...field}
+                            min={new Date().getUTCFullYear().toString()}
+                            max={todaysDate}
+                            // displayFormat="DD/MM/YYYY"
+                            showDefaultButtons={true}
+                            presentation="date"
+                            // {...register("deliveryDate")}
+                            onIonChange={handleDateChange}
+                          />
+                        )}
+                      />
+                    </IonPopover>
+                  </>}
+                </IonItem>
+                <Error errors={errors} name="displaySailDate" />
+              </div>
+              {!isNew && delivery && (
+                <div className="ion-padding-bottom">
+                  <IonItem className="ion-no-padding" lines="none">
+                    <IonLabel
+                      color="medium"
+                      className="ion-no-margin"
+                      position="stacked"
+                    >
+                      <IonText> Number of Packages </IonText>
+                      {/* <IonNote slot="end"> */}
                       <span className="noCount">{delivery?.data?.dropOffCount}</span>
-                    {/* </IonNote> */}
-                  </IonLabel>
-                </IonItem>
-              </div>
-            )}
-            {!isNew && !isEditAllowed && delivery && (
-              <div className="ion-padding-bottom">
-                <IonItem className="ion-no-padding" lines="none">
-                  <IonLabel
-                    color="medium"
-                    className="ion-no-margin"
-                    position="stacked"
-                  >
-                    <IonText> Driver Name</IonText>
-                    <IonNote slot="start">
-                      {delivery?.data?.driverName}
-                    </IonNote>
-                  </IonLabel>
-                </IonItem>
-              </div>
-            )}
-            {error && error.status === -1 && (
-              <ServerError errorMsg={error.message} />
-            )}
-            {isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              {isNew ? "Save" : "Update"}
-            </IonButton>}
-            {!isEditAllowed && <IonButton
-              type="submit"
-              className="ion-margin-top"
-              color="primary"
-              expand="block"
-            >
-              Return
-            </IonButton>}
+                      {/* </IonNote> */}
+                    </IonLabel>
+                  </IonItem>
+                </div>
+              )}
+              {!isNew && !isEditAllowed && delivery && (
+                <div className="ion-padding-bottom">
+                  <IonItem className="ion-no-padding" lines="none">
+                    <IonLabel
+                      color="medium"
+                      className="ion-no-margin"
+                      position="stacked"
+                    >
+                      <IonText> Driver Name</IonText>
+                      <IonNote slot="start">
+                        {delivery?.data?.driverName}
+                      </IonNote>
+                    </IonLabel>
+                  </IonItem>
+                </div>
+              )}
+              {error && error.status === -1 && (
+                <ServerError errorMsg={error.message} />
+              )}
+            </div>
+            {isEditAllowed && <div className="add-button-container">
+              <IonButton type="submit" expand="block" color={'secondary'} shape="round">
+                {isNew ? "Save" : "Update"}
+              </IonButton>
+            </div>}
+            {!isEditAllowed && <div className="add-button-container">
+              <IonButton type="submit" expand="block" color={'secondary'} shape="round">
+                Return
+              </IonButton>
+            </div>
+            }
           </IonList>
         </form>
       </IonContent>

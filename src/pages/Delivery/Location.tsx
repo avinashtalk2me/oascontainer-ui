@@ -46,7 +46,7 @@ const Location: React.FC<LocationProps> = ({
   isEditAllowed
 }) => {
   const history = useHistory();
-  const dispatch:any  = useDispatch();
+  const dispatch: any = useDispatch();
   const componentRef = useRef<HTMLIonItemSlidingElement>(null);
   const [isEmailClicked, setIsEmailClicked] = useState<boolean>(false);
   const [presentAlert] = useIonAlert();
@@ -138,18 +138,6 @@ const Location: React.FC<LocationProps> = ({
     event.preventDefault();
     setIsEmailClicked(true);
     dispatch(sendEmailForLocationWithPackages(selectedDeliveryId, locationId));
-    // const showConfirm = async () => {
-    //   const { value } = await Dialog.confirm({
-    //     title: "Confirm",
-    //     message: `Are you sure you'd like to delete the item?`,
-    //   });
-
-    //   if (value) {
-    //     dispatch(sendEmailForLocationWithPackages(selectedDeliveryId, locationId));
-    //   }
-    //   componentRef.current?.closeOpened();
-    // };
-    // showConfirm();
   };
 
 
@@ -161,7 +149,7 @@ const Location: React.FC<LocationProps> = ({
         {(locations.data || []).map((location: any, index: number) => (
           <div key={location.locationId}>
             <IonItemSliding ref={componentRef}>
-              <IonItem className={`ion-no-padding item-box ${index % 2 === 0 ? "even" : "odd"}`}>
+              <IonItem className={`${index % 2 === 0 ? "even" : "odd"}`}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div className={`roundDiv ${location.dropStatus === 0 ? "red" :
                     location.dropStatus === 1 ? "yellow" : "green"}`}>
@@ -203,19 +191,18 @@ const Location: React.FC<LocationProps> = ({
                 <IonButtons>
                   {(location.dropStatus === 1 || location.dropStatus === 2) && <IonIcon
                     icon={mailIcon}
-                    color="medium"
+                  style={{ color: '#1da1f2' }}
                     onClick={(e) => handleSendEmail(e, location.locationId)}
-                    className="ion-padding-horizontal"
                   />}
                   <IonIcon
                     icon={viewIcon}
-                    color="medium"
+                    style={{ color: '#007bff' }}
                     onClick={() => handleEditLocation(location.locationId)}
                     className="ion-padding-horizontal"
                   />
                   <IonIcon
                     icon={forwardIcon}
-                    color="green"
+                    style={{ color: '#28a745' }}
                     onClick={() => handleNavigatePackage(location.locationId)}
                   />
                 </IonButtons>
@@ -246,11 +233,13 @@ const Location: React.FC<LocationProps> = ({
           <IonText className="header-menu">Location</IonText>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent className="ion-no-padding">
         {isEditAllowed &&
-          <IonButton expand="block" fill="outline" onClick={handleAddLocation}>
-            Add Location
-          </IonButton>}
+          <div className="add-button-container">
+            <IonButton expand="block" color={'secondary'} shape="round" onClick={handleAddLocation}>
+              Add Location
+            </IonButton>
+          </div>}
         <IonRefresher slot="fixed" pullFactor={0.5} pullMin={100} pullMax={200} onIonRefresh={handleRefresh}>
           <IonRefresherContent
             pullingIcon={chevronDownCircleOutline}
@@ -261,24 +250,26 @@ const Location: React.FC<LocationProps> = ({
         <IonList lines="full">
           {isloading && !isEmailClicked
             ? Array.apply(null, Array(5)).map((item: any, index: number) => (
-              <IonItem className="ion-no-padding item-box" key={index}>
-                <IonLabel color="medium" className="ion-no-margin">
-                  <h3>
-                    <IonSkeletonText
-                      animated
-                      style={{ width: "100%", height: "45px" }}
-                    />
-                  </h3>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                  <span>
-                    <IonSkeletonText animated style={{ width: "50%" }} />
-                  </span>
-                </IonLabel>
-              </IonItem>
+              <div className="ion-list-item">
+                <IonItem className="ion-no-padding item-box" key={index}>
+                  <IonLabel color="medium" className="ion-no-margin">
+                    <h3>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100%", height: "45px" }}
+                      />
+                    </h3>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                    <span>
+                      <IonSkeletonText animated style={{ width: "50%" }} />
+                    </span>
+                  </IonLabel>
+                </IonItem>
+              </div>
             ))
-            : LocationList}
+            : <div className="ion-list-item" style={{ marginBottom: '50px' }}>{LocationList}</div>}
         </IonList>
       </IonContent>
       <IonLoading
